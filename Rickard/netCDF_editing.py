@@ -18,7 +18,7 @@ new_file = 'Met_v0001.nc'
 
 data = 'AtmPres' # RelHum, AtmPres, TempC
 
-path = 'Data/10JAN14XE/' + station + '/'
+path = '../../Data/10JAN14XE/' + station + '/'
 
 
 '''
