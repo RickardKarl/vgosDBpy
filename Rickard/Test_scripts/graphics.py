@@ -4,7 +4,7 @@ from os import listdir
 from os.path import isfile, join
 
 session = '10JAN14XE'
-path = 'Data/' + session + '/'
+path = '../../../Data/' + session + '/'
 wrp_file1 = session + '_V005_iGSFC_kall.wrp'
 wrp_file2 = session + '_V005_iGSFC_kngs.wrp'
 
