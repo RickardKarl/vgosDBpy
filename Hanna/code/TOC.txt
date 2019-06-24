@@ -1,0 +1,77 @@
+This is a test number 2 HEad
+Global Attributes:
+ No Global Attributes
+
+Dimensions:
+ Name:StubLen        Value: 4 
+ Name:CreateTimeLen        Value: 19 
+ Name:CreatedByLen        Value: 27 
+ Name:ProgramLen        Value: 64 
+ Name:SubroutineLen        Value: 44 
+ Name:DataOriginLen        Value: 36 
+ Name:SessionLen        Value: 6 
+ Name:vgosDB_VersionLen        Value: 17 
+ Name:Char00003        Value: 3 
+ Name:Char00004        Value: 4 
+ Name:Dim000001        Value: 1 
+ Name:NumStation        Value: 2 
+ Name:Char00008        Value: 8 
+ Name:Dim000005        Value: 5 
+ Name:Dim000002        Value: 2 
+ Name:NumSource        Value: 8 
+
+Variables:
+ Name:Stub
+        Type: |S1
+        Dimensions StubLen
+        Size: 4 
+ Name:CreateTime
+        Type: |S1
+        Dimensions CreateTimeLen
+        Size: 19 
+ Name:CreatedBy
+        Type: |S1
+        Dimensions CreatedByLen
+        Size: 27 
+ Name:Program
+        Type: |S1
+        Dimensions ProgramLen
+        Size: 64 
+ Name:Subroutine
+        Type: |S1
+        Dimensions SubroutineLen
+        Size: 44 
+ Name:DataOrigin
+        Type: |S1
+        Dimensions DataOriginLen
+        Size: 36 
+ Name:Session
+        Type: |S1
+        Dimensions SessionLen
+        Size: 6 
+ Name:vgosDB_Version
+        Type: |S1
+        Dimensions vgosDB_VersionLen
+        Size: 17 
+ Name:CorrelatorType
+        Type: |S1
+        Dimensions Char00003
+        Size: 3 
+ Name:PrincipalInvestigator
+        Type: |S1
+        Dimensions Char00004
+        Size: 4 
+ Name:NumScan
+        Type: int32
+        Dimensions Dim000001
+        Size: 1 
+ Name:Correlator
+        Type: |S1
+        Dimensions Char00004
+        Size: 4 
+ Name:NumObs
+        Type: int32
+        Dimensions Dim000001
+        Size: 1 
+ Name:StationList
+        Type: |S1
