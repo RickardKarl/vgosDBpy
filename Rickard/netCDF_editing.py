@@ -83,9 +83,6 @@ def update_netCDF_variable(file_name_path, new_file_name_path, variables):
             dst[name].setncatts(src[name].__dict__)
 
 
-
-
-
 var = get_netCDF_variable(path+file,data)
 var[-1] = -1
 var_dic = {data: var}

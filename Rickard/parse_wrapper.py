@@ -7,10 +7,19 @@ pp = pprint.PrettyPrinter()
 wrapper_path = getcwd() + '/' + sys.argv[1]
 
 class Parser:
+    '''
+    Class for parsing wrapper files (*.wrp) in vgosDB format
+    '''
+
+    # Constructor
     def __init__(self):
         self.wrapper = Wrapper(getcwd())
         self._active_scope = []
 
+    ##################################################
+    # Methods which keep track of the current scope in the wrapper_path
+    # Represented as a queue which keeps the most recent mentioned scope
+    # Scopes are defined in wrapper.py
 
     def getActiveScope(self):
         if len(self._active_scope) == 0:
@@ -27,34 +36,55 @@ class Parser:
     def removeScope(self, scope):
         self._active_scope.remove(scope)
 
+    ##################################################
+
     def parseWrapper(self,path):
+        '''
+        Methods that parses the wrapper files which contains information and
+        pointers to relevant files in one VLBI session
+
+        path [string] is the path to the wrapper file (*.wrp)
+        '''
+        # Define current folder, None if the wrapper has no default_dir
         active_folder = None
 
+        # Open file
         with open(path,'r') as src:
+
+            # Loop through each file
             for line in src:
-                line = line.lower().strip('\n')
+
+                # Correct format of line
+                line = line.lower().strip()
+
+                # Skip comments in wrapper
                 if line.startswith('!'):
                     continue
 
+                # Check for beginning of sections
                 elif line.startswith('begin'):
                     keyword = line.split()[1]
                     self.addScope(keyword)
 
+                # Check for end of sections
                 elif line.startswith('end'):
                     keyword = line.split()[1]
                     self.removeScope(keyword)
                     active_folder = None
 
+                # Check for setting the default_dir (active_folder)
                 elif line.startswith('default_dir'):
                     active_folder = line.split()[1]
                     if not Wrapper.inScope(active_folder):
-                        self.wrapper.addFolder(active_folder, self.getActiveScope())
+                        self.wrapper.addNode(active_folder, self.getActiveScope(), 'folder')
 
+                # Checks if line is giving a netCDF pointer
                 elif line.endswith('.nc'):
+                    #print(line)
                     file_name = line.split()[-1]
-                    self.wrapper.addFile(file_name, self.getActiveScope(), active_folder)
-
-                print(line, active_folder, self.getActiveScope())
+                    self.wrapper.addNode(file_name, active_folder, 'netCDF')
+                else:
+                    print(line) # For debugging
         return self.wrapper
 
 
@@ -62,4 +92,3 @@ if __name__ == "__main__":
     p = Parser()
     w = p.parseWrapper(wrapper_path)
     print(w)
-    print('Files in Session:',w.getRoot().returnChildNode('session').getChildren())
