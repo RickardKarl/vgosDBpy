@@ -31,7 +31,7 @@ class Wrapper:
             self.addNode(s, type = 'folder')
 
     '''
-    OLD CODE THAT I WONT REMOVE YET
+    OLD CODE THAT I WILL REMOVE SOON
 
     def addFile_old(self, name, scope = None, parent = None):
         if scope == None or parent == None:
