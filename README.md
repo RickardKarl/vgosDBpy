@@ -1,1 +1,2 @@
-# NVI_vgosDB_openv2
+
+Authors: Hanna Ek & Rickard Karlsson

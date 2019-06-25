@@ -55,7 +55,7 @@ class Wrapper:
         else:
             raise InvalidArgument('Invalid type in', type)
         parent_node.addChildNode(new_node)
-        self.addPointer(new_node)
+        self.pointer_map.addPointer(new_node)
 
     def addPointer(self, node):
         '''
@@ -161,7 +161,7 @@ class Node(object):
         '''
         return self.children
 
-    def returnChildNode(self, name):
+    def getChildNode(self, name):
         '''
         Returns a child node with the desired name
 
@@ -221,6 +221,53 @@ class NetCDF_File(Node):
     def addChildNode(self, obj):
         raise TypeError('Tried assigning files to another file, needs to be a folder.')
 
+class PointerMap():
+    '''
+    Hash map to keep track of pointers to nodes in the Tree
+    Each key to the map will be defined by a node's name and it's parent.
+    '''
+    def __init__(self):
+        self._map = {}
 
+    def addPointer(self, node, parent):
+        '''
+        node [Node]
+        parent [Node]
+        '''
+        self._map[PointerMap.generateKey(node,parent)] = node
+
+    def removePointer(self, node, parent):
+        '''
+        node [Node]
+        parent [Node]
+        '''
+        del self._map[generateKey(node, parent)]
+
+    def getPointer(self, node_name, parent_name):
+        '''
+        node_name [string] is the name of the node
+        parent_name [string] is the name of the parent
+
+        Returns the node [Node]
+        '''
+        return self._map[PointerMap.getKey(node_name, parent_name)]
+
+    def getKey(node_name, parent_name):
+        '''
+        node_name [string] is the name of the node
+        parent_name [string] is the name of the parent
+
+        Returns hash key [string]
+        '''
+        return node_name + '_' + parent_name
+
+    def generateKey(node, parent):
+        '''
+        node [Node]
+        parent [Node]
+
+        Returns hash key [string]
+        '''
+        return getKey(node.getName(), parent.getName())
 if __name__ == "__main__":
     print('Hello world!')
