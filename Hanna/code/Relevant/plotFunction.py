@@ -7,14 +7,18 @@ from matplotlib.dates import DateFormatter as DF
 import os
 
 def plotFunc(strX,xAxis,strY,yAxis, isTime):
-
+    """
+    TODO: write a code so that titel, legends and so on can be
+    produces automatically based on some into, path or node
+    Also do better code to handle Timestamp labels
+    """
     if isTime is 1:
         myFmt = md.DateFormatter("%H:%M:%S")
         plt.xticks( rotation= 80 )
         ax.xaxis.set_major_formatter(myFmt);
 
     plt.plot(xAxis,yAxis)
-    plt.title(strY+" over"+strX+ "obsvervation: 10 JAN 04 KOKEE ")
+    plt.title(" ")
     plt.show()
 
 def plot2Axis(xAxis, yAxis1, yAxis2, isTime):

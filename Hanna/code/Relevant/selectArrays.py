@@ -4,6 +4,13 @@ from turtle import *
 
 test = {"hej":2, "heej":3, "heeej":4}
 
+
+"""
+This will we rewritten to use together with an interface and viewer. So the choose will be made there.
+Perhaps it should call directly to a plot function.
+So that you choose 2 or 3, than submits then they are plotted,
+so this only works as a middle man between choosing an plotting.
+"""
 def select_arrays(map):
     print(list(map))
     done=0
