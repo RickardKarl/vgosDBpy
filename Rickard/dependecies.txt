@@ -1,2 +1,3 @@
 netCDF4
 matplotlib.pyplot
+pyside2 / qt

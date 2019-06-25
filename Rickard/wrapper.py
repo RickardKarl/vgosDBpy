@@ -158,7 +158,7 @@ class Wrapper:
                     s = s + indent + str(sub_child).capitalize() + '\n'
                     if type(sub_child) == Node:
                         for subsub_child in sub_child.getChildren():
-                            s = s + indent*2 + str(subsub_child) + '\n'
+                            s = s + indent*2 + str(subsub_child.getPath()) + '\n'
         return s
 
 
