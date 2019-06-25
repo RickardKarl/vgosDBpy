@@ -30,45 +30,6 @@ class Wrapper:
         for s in Wrapper.scopes:
             self.addNode(s, type = 'folder')
 
-    '''
-    OLD CODE THAT I WILL REMOVE SOON
-
-    def addFile_old(self, name, scope = None, parent = None):
-        if scope == None or parent == None:
-            self.root.addChildNode(NetCDF_File(name, self.root))
-        else:
-            scope_folder = self.root.returnChildNode(scope)
-            if parent in self.scopes:
-                scope_folder.addChildNode(NetCDF_File(name, scope))
-            else:
-                scope_folder.returnChildNode(parent).addChildNode(NetCDF_File(name, parent))
-
-
-    def addFolder_old(self, name, scope = None):
-        if scope == None:
-            self.root.addChildNode(Node(name, self.root))
-        else:
-            self.root.returnChildNode(scope).addChildNode(Node(name, scope))
-
-    def addFile(self, name, scope = None, parent = None):
-        if parent == None:
-            parent_node = self.root
-        else:
-            parent_node = self.getNode(parent)
-        new_file = NetCDF_File(name, parent_node)
-        parent_node.addChildNode(new_file)
-        self.addPointer(new_file)
-
-
-    def addFolder(self, name, parent = None):
-        if parent == None:
-            parent_node = self.root
-        else:
-            parent_node = self.getNode(parent)
-        new_folder = Node(name, parent_node)
-        parent_node.addChildNode(new_folder)
-        self.addPointer(new_folder)
-    '''
 
     def addNode(self, name, parent = None, type = 'netCDF'):
         '''
