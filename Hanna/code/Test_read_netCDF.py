@@ -16,22 +16,23 @@ import os
 
 
 from netCDF4 import Dataset
+from ncdump import ncdump
 
 
-pathOrigo = "./Files"
+pathOrigo = "./../Files"
 sessionPath = "10JAN04XU"
-stationPath = "KOKEE"
+stationPath = "WETTZELL"
 files = []
 files.append("Met.nc")
 files.append("TimeUTC")
 data = []
 data.append("AtmPres")
+pathMet= pathOrigo+sessionPath+stationPath
 
 
-
-metFile = Dataset("./Files/10JAN04XU/KOKEE/Met.nc","r",format="NETCDF4")
-timeFile = Dataset("./Files/10JAN04XU/WETTZELL/TimeUTC.nc","r",format="NETCDF4")
-calCableFile = Dataset("./Files/10JAN04XU/WETTZELL/Cal-Cable.nc","r",format="NETCDF4")
+metFile = Dataset(pathOrigo+"/10JAN04XU/WETTZELL/Met.nc","r",format="NETCDF4")
+timeFile = Dataset(pathOrigo+"/10JAN04XU/WETTZELL/TimeUTC.nc","r",format="NETCDF4")
+calCableFile = Dataset(pathOrigo+"/10JAN04XU/WETTZELL/Cal-Cable.nc","r",format="NETCDF4")
 #print(calCableFile.variables)
 calCable = calCableFile.variables["Cal-Cable"][:]
 #print(calCable)
@@ -39,7 +40,9 @@ calCable = calCableFile.variables["Cal-Cable"][:]
 #print(metFile.variables["AtmPres"][:])
 pressure =  metFile.variables["AtmPres"][:]
 seconds = timeFile.variables["Second"][:]
-YMDHM = timeFile.variables["YMDHM"][:]
+#YMDHM = timeFile.variables["YMDHM"][:]
+#print(pressure.nc_inq_vartype)
+nc_attrs, nc_dims, nc_vars = ncdump(metFile)
 
 # Plot pressure
 #plt.plot(pressure)
