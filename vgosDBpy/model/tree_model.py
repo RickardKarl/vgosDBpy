@@ -1,6 +1,6 @@
 from PySide2.QtCore import QAbstractItemModel
+import vgosDBpy.wrapper.wrapper_repr
 
-print(Node)
 class TreeModel(QAbstractItemModel):
     def __init__(self, parent=None):
         super(TreeModel, self).__init__(parent)
