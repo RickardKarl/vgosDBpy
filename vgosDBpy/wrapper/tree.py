@@ -55,7 +55,7 @@ class Wrapper:
         else:
             raise InvalidArgument('Invalid type in', type)
         parent_node.addChildNode(new_node)
-        self.pointer_map.addPointer(new_node)
+        self.addPointer(new_node)
 
     def addPointer(self, node):
         '''
@@ -174,6 +174,9 @@ class Node(object):
                 return obj
         raise AttributeError(name + ' was not found in the ' + str(self) + ' folder')
 
+    def getChildCount(self):
+        return len(self.children)
+
     def getName(self):
         '''
         Return name of current node [string]
@@ -182,6 +185,12 @@ class Node(object):
 
     def getPath(self):
         return self.path
+
+    def hasChildren(self):
+        if self.children == None:
+            return False
+        else:
+            return len(self.children)>0
 
     def childNodeExists(self, name):
         '''
@@ -269,5 +278,3 @@ class PointerMap():
         Returns hash key [string]
         '''
         return getKey(node.getName(), parent.getName())
-if __name__ == "__main__":
-    print('Hello world!')

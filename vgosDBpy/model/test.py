@@ -1,15 +1,23 @@
 import sys
-from PySide2.QtWidgets import QApplication, QDialog, QLineEdit, QPushButton, QVBoxLayout
-from PySide2.QtWidgets import QTreeView
+import os
+from PySide2.QtWidgets import QApplication, QDialog, QLineEdit, QPushButton, QVBoxLayout, QTreeView
 from PySide2.QtCore import QAbstractItemModel
+from abstract import TreeModel
+
 
 class Directory(QTreeView):
-    def __init__(self, parent=None):
+    def __init__(self, root_path, wrapper_file, parent=None):
         super(Directory, self).__init__(parent)
-        self.setWindowTitle("Wrapper content")
-        model = TreeModel(parent)
 
+        model = TreeModel('Name')
 
+        model.setupModel(root_path, wrapper_file)
+
+        self.setModel(model)
+
+        layout = QVBoxLayout()
+        layout.addWidget(self)
+        self.setLayout(layout)
 class Form(QDialog):
 
     def __init__(self, parent=None):
@@ -41,9 +49,9 @@ class Form(QDialog):
 if __name__ == '__main__':
     # Create the Qt Application
     app = QApplication(sys.argv)
-    a = Form()
 
-    # Create and show the form
-    a.show()
+    # Create and show
+    dir = Directory(os.getcwd(), sys.argv[1])
+    dir.show()
     # Run the main Qt loop
     sys.exit(app.exec_())

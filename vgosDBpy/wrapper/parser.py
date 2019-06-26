@@ -1,10 +1,18 @@
-from wrapper import Wrapper
+
 from os import getcwd
 import sys
 import pprint
+import importlib
 pp = pprint.PrettyPrinter()
 
-wrapper_path = getcwd() + '/' + sys.argv[1]
+def import_func(file, path):
+    spec = importlib.util.spec_from_file_location(file, path)
+    pack = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(pack)
+    return pack
+
+Wrapper = import_func('tree', '/Users/rickardkarlsson/Documents/NVI/vgosDBpy-git/vgosDBpy/wrapper/tree.py').Wrapper
+#wrapper_path = getcwd() + '/' + sys.argv[1]
 
 class Parser:
     '''
@@ -12,8 +20,8 @@ class Parser:
     '''
 
     # Constructor
-    def __init__(self):
-        self.wrapper = Wrapper(getcwd())
+    def __init__(self, root_path = getcwd()):
+        self.wrapper = Wrapper(root_path)
         self._active_scope = []
 
     ##################################################
@@ -37,6 +45,10 @@ class Parser:
         self._active_scope.remove(scope)
 
     ##################################################
+
+
+    def getWrapperRoot(self):
+        return self.wrapper.getRoot()
 
     def parseWrapper(self,path):
         '''
@@ -84,11 +96,11 @@ class Parser:
                     file_name = line.split()[-1]
                     self.wrapper.addNode(file_name, active_folder, 'netCDF')
                 else:
-                    print(line) # For debugging
+                    pass
+                    #print(line) # For debugging
         return self.wrapper
 
 
 if __name__ == "__main__":
     p = Parser()
     w = p.parseWrapper(wrapper_path)
-    print(w)
