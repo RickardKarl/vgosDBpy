@@ -1,5 +1,5 @@
 from PySide2.QtCore import QAbstractItemModel
-import vgosDBpy.wrapper.wrapper_repr
+from vgosDBpy.wrapper.representation import Node
 
 class TreeModel(QAbstractItemModel):
     def __init__(self, parent=None):
