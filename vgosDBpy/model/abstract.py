@@ -15,30 +15,26 @@ from PySide2.QtCore import QAbstractItemModel, QModelIndex
 
 class TreeItem():
     def __init__(self, data, parent = None):
-        if type(data) is not list:
-            data = [data]
-        elif type(data) is None:
-            data = []
         self.data = data
         assert isinstance(self.data, list), 'Argument of wrong type!'
         self.children = []
         self.parent = parent
 
-    def child(self, row):
+    def getChild(self, row):
         return self.children[row]
 
     def childCount(self):
         return len(self.children)
 
     def childNumber(self):
-        if self.parentItem != None:
-            return self.parentItem.childItems.index(self)
+        if self.parent != None:
+            return self.parent.children.index(self)
         return 0
 
     def columnCount(self):
         return len(self.data)
 
-    def parent(self):
+    def getParent(self):
         return self.parent
 
     def getData(self, column):
@@ -108,9 +104,10 @@ class TreeModel(QAbstractItemModel):
     # Pre-defined scopes will have the folder made automatically
     scopes = ['session','scan', 'observation', 'station']
 
-    def __init__(self, header, parent=None):
+    def __init__(self, header, root_path, wrapper_name, parent=None):
         super(TreeModel, self).__init__(parent)
         self.root = TreeItem(header)
+        self.setupModel(root_path, wrapper_name)
 
     #def createIndex(self, row, column):
 
@@ -122,8 +119,8 @@ class TreeModel(QAbstractItemModel):
         return self.root.columnCount()
 
     def rowCount(self, parent=QModelIndex()):
-        parent = self.getItem(parent)
-        return parent.childCount()
+        parentItem = self.getItem(parent)
+        return parentItem.childCount()
 
     def data(self, index, role):
         if not index.isValid():
@@ -141,7 +138,7 @@ class TreeModel(QAbstractItemModel):
             return QModelIndex()
 
         parentItem = self.getItem(parent)
-        childItem = parentItem.child(row)
+        childItem = parentItem.getChild(row)
         if childItem:
             return self.createIndex(row, column, childItem)
         else:
@@ -152,9 +149,9 @@ class TreeModel(QAbstractItemModel):
             return QModelIndex()
 
         childItem = self.getItem(index)
-        parentItem = childItem.parent()
+        parentItem = childItem.getParent()
 
-        if parentItem == self.rootItem:
+        if parentItem == self.root:
             return QModelIndex()
 
         return self.createIndex(parentItem.childNumber(), 0, parentItem)
@@ -210,7 +207,7 @@ class TreeModel(QAbstractItemModel):
     # Inserting and removing
     def insertColumns(self, position, columns, parent=QModelIndex()):
         self.beginInsertColumns(parent, position, position + columns - 1)
-        success = self.rootItem.insertColumns(position, columns)
+        success = self.root.insertColumns(position, columns)
         self.endInsertColumns()
 
         return success
@@ -219,17 +216,17 @@ class TreeModel(QAbstractItemModel):
         parentItem = self.getItem(parent)
         self.beginInsertRows(parent, position, position + rows - 1)
         success = parentItem.insertChildren(position, rows,
-                self.rootItem.columnCount())
+                self.root.columnCount())
         self.endInsertRows()
 
         return success
 
     def removeColumns(self, position, columns, parent=QModelIndex()):
         self.beginRemoveColumns(parent, position, position + columns - 1)
-        success = self.rootItem.removeColumns(position, columns)
+        success = self.root.removeColumns(position, columns)
         self.endRemoveColumns()
 
-        if self.rootItem.columnCount() == 0:
+        if self.root.columnCount() == 0:
             self.removeRows(0, rowCount())
 
         return success
@@ -256,15 +253,17 @@ class TreeModel(QAbstractItemModel):
         if node.getParent() == None:
             parent = QModelIndex()
 
-        item = TreeItem([node],parent)
+        if type(node) is not list:
+            data = [node]
+        item = TreeItem(data,parent)
         if node.hasChildren():
             item.insertChildren(item.childCount(), node.getChildCount(), column)
             children = node.getChildren()
             for row in range(node.getChildCount()):
                 c = children[row]
-                item.child(row).setData(0,c)
+                item.getChild(row).setData(0,str(c))
                 TreeModel.recursive(c, column + 1)
-
+        
 
 if __name__ == "__main__":
     p = Parser()

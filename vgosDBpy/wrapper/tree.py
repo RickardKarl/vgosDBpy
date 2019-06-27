@@ -219,8 +219,6 @@ class Node(object):
     def __repr__(self):
         return self.name
 
-
-
 class NetCDF_File(Node):
 
     def __init__(self, name, parent, path):
@@ -229,6 +227,7 @@ class NetCDF_File(Node):
 
     def addChildNode(self, obj):
         raise TypeError('Tried assigning files to another file, needs to be a folder.')
+
 
 class PointerMap():
     '''
