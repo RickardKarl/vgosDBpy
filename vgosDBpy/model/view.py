@@ -32,7 +32,7 @@ class QWrapper(QTreeView):
 
         # Selection of items
         self.setSelectionMode(QAbstractItemView.ExtendedSelection)
-
+        self.selection = self.selectionModel()
         # Expand first column
         self.expandToDepth(0)
 
