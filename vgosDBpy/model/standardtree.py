@@ -16,43 +16,73 @@ from PySide2.QtGui import QStandardItemModel, QStandardItem
 from PySide2 import QtCore
 
 class TreeModel(QStandardItemModel):
+    '''
+    Model that represents the wrapper
+    It is inherited from QStandardModel which can be used to implement a tree structure
+    Is used together with QTreeView to generate a visual representation
+
+    Constructor
+    root_path [string]
+    wrapper_name [string]
+    parent [QWidget]
+    '''
 
     def __init__(self, header, root_path, wrapper_name, parent=None):
         super(TreeModel,self).__init__(parent)
         self.setupModel(root_path,wrapper_name)
 
-        # Set header
-        self.setHorizontalHeaderLabels(header)
 
-    def itemFromIndex(self, index):
-        return 1
+    def flags(self, index):
+        '''
+        Let's us choose if the selected items should be enabled, editable, etc
+
+        index [QModelIndex]
+        '''
+
+        if not index.isValid():
+            return 0
+
+        return QtCore.Qt.ItemIsEnabled | QtCore.Qt.ItemIsSelectable #| QtCore.Qt.ItemIsEditable # Uncomment if you want to be able to edit it
 
     # Model setup
     def setupModel(self, root_path, wrapper_name):
+        '''
+        Parsing the wrapper
+        (Imports Parser class)
+
+        root_path [string]
+        wrapper_name [string]
+        '''
         parser = Parser()
         parser.parseWrapper(root_path + '/' + wrapper_name)
         root_parent = parser.getWrapperRoot()
         self.recursive(root_parent, self.invisibleRootItem())
 
     def recursive(self, node, parent):
-        #if not isinstance(node, list):
-        #    data = [node]
-        if type(node) == tree.NetCDF_File:
+        if node.isNetCDF():
             item = NetCDFItem(node)
         else:
             item = QNodeItem(node)
+        print(type(item))
+        item = QNodeItem(node)
         parent.appendRow(item)
         if node.hasChildren():
-            #item.insertChildren(item.childCount(), node.getChildCount(), column)
             children = node.getChildren()
             for row in range(node.getChildCount()):
                 c = children[row]
-                #item.getChild(row).setData(0,str(c))
                 self.recursive(c, item)
 
 
 
 class QNodeItem(QStandardItem):
+    '''
+    Custom data item for the QStandardItemModel
+
+    Not yet fully understood how it works
+
+    Constructor
+    node [Node]
+    '''
     _type = 1110
 
     def __init__(self, node):
@@ -61,6 +91,8 @@ class QNodeItem(QStandardItem):
         self.node = node
         self.path = node.getPath()
 
+        # Attributes
+        
 
     def type(self):
         return QNodeItem._type
@@ -88,23 +120,25 @@ class QNodeItem(QStandardItem):
         self.emitDataChanged()
         return True
 
+
     def __str__(self):
         return self.name
 
     def __repr__(self):
         return self.name
 
+
+
 class NetCDFItem(QNodeItem):
     _type = 1111
 
     def __init__(self, node):
-        super(NetCDFItem, self).__init__()
+        super(NetCDFItem, self).__init__(node)
 
     def type(self):
         NetCDFItem._type
 
-    def ifChecked(self):
-        print(self.name)
+
 
 '''
 class NetCDFVariable:

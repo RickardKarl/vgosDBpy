@@ -24,7 +24,8 @@ class Wrapper:
         root_path [string] is the path to the root folder
         '''
         self.root_path = root_path
-        self.root = Node('root', None, root_path)
+        self.session_name = root_path.split('/')[-1]
+        self.root = Node(self.session_name, None, root_path)
         self.pointer_map = {} # Keep track of pointers with a hash-map
 
         for s in Wrapper.scopes:
@@ -95,7 +96,7 @@ class Wrapper:
         parent [Node]
         '''
 
-        if name == 'root':
+        if name == self.session_name:
             return self.root_path
         elif parent is self.root:
             return self.root_path + '/' + name
@@ -138,6 +139,8 @@ class Node(object):
         self.children = []
         self.parent = parent
         self.path = path
+
+        self.netCDF = False
 
 
     def addChildNode(self, node):
@@ -212,6 +215,8 @@ class Node(object):
         '''
         return self.name == str(name)
 
+    def isNetCDF(self):
+        return self.netCDF
 
     def __str__(self):
         return self.name
@@ -224,6 +229,7 @@ class NetCDF_File(Node):
     def __init__(self, name, parent, path):
         super().__init__(name, parent, path)
         self.children = None
+        self.netCDF = True
 
     def addChildNode(self, obj):
         raise TypeError('Tried assigning files to another file, needs to be a folder.')
@@ -231,6 +237,8 @@ class NetCDF_File(Node):
 
 class PointerMap():
     '''
+    NOT USED
+
     Hash map to keep track of pointers to nodes in the Tree
     Each key to the map will be defined by a node's name and it's parent.
     '''
