@@ -1,7 +1,62 @@
+"""
+from PyQt5.QtWidgets import QApplication, QWidget, QInputDialog, QLineEdit, QFileDialog
+from PyQt5.QtGui import QIcon
+
+class App(QWidget):
+
+    def __init__(self):
+        super().__init__()
+        self.title = 'PyQt5 file dialogs - pythonspot.com'
+        self.left = 10
+        self.top = 10
+        self.width = 640
+        self.height = 480
+        self.initUI()
+
+    def initUI(self):
+        self.setWindowTitle(self.title)
+        self.setGeometry(self.left, self.top, self.width, self.height)
+
+        self.openFileNameDialog()
+        self.openFileNamesDialog()
+        self.saveFileDialog()
+
+        self.show()
+
+    def openFileNameDialog(self):
+        options = QFileDialog.Options()
+        options |= QFileDialog.DontUseNativeDialog
+        fileName, _ = QFileDialog.getOpenFileName(self,"QFileDialog.getOpenFileName()", "","All Files (*);;Python Files (*.py)", options=options)
+        if fileName:
+            print(fileName)
+
+    def openFileNamesDialog(self):
+        options = QFileDialog.Options()
+        options |= QFileDialog.DontUseNativeDialog
+        files, _ = QFileDialog.getOpenFileNames(self,"QFileDialog.getOpenFileNames()", "","All Files (*);;Python Files (*.py)", options=options)
+        if files:
+            print(files)
+
+    def saveFileDialog(self):
+        options = QFileDialog.Options()
+        options |= QFileDialog.DontUseNativeDialog
+        fileName, _ = QFileDialog.getSaveFileName(self,"QFileDialog.getSaveFileName()","","All Files (*);;Text Files (*.txt)", options=options)
+        if fileName:
+            print(fileName)
+
+if __name__ == '__main__':
+    app = QApplication(sys.argv)
+    ex = App()
+    sys.exit(app.exec_())
+
+"""
 
 import sys
 from PySide2.QtWidgets import (QLineEdit, QPushButton, QApplication,
     QVBoxLayout, QDialog)
+from plotFunction import plotFunc as pf
+from combineYMDHMS import combineYMDHMwithSec as combine
+#from createMap import createMap
 
 class Form(QDialog):
     queue=[]
@@ -10,35 +65,26 @@ class Form(QDialog):
         # Create widgets
         #self.edit = QLineEdit("Write my name here")
         array = ["b1", "b2","b3", "b4"]
-        """
-        self.b1=QPushButton(array[0])
-        self.b2=QPushButton(array[1])
+        queue=[]
         # Create layout and add widgets
-        layout = QVBoxLayout()
-        #layout.addWidget(self.edit)
-        layout.addWidget(self.b1)
-        layout.addWidget(self.b2)
-        # Set dialog layout
-        self.setLayout(layout)
-        # Add button signal to greetings slot
-        self.b1.clicked.connect(lambda:self.whichbtn(self.b1))
-        self.b2.clicked.connect(lambda:self.whichbtn(self.b2))
-        """
+
         self.btn =[]
         #for str in array:
         #    myButtons.append(str)
         i=0
         layout = QVBoxLayout()
         for str in array:
-            # add button
-            self.btn.append(QPushButton(str))
+            # add buttons
+            self.btn.append(QPushButton(str,self))
             #add characteristics of the button
-            self.btn[-1].clicked.connect(lambda:self.btnPressed(self.btn[-1]))
-            self.btn[-1].toggle()
+            self.btn[i].clicked.connect(self.btnClicked)
+            self.btn[i].toggle()
             #self.btn[-1].clicked.connect(lambda:self.btnstate(self.btn[-1]))
-            layout.addWidget(self.btn[-1])
+            layout.addWidget(self.btn[i])
             # Set dialog layout
             # Add button signal to greetings slot
+            i=i+1
+
 
         self.enter = QPushButton("Done -> plot")
         self.enter.clicked.connect(self.enterPressed)
@@ -46,22 +92,29 @@ class Form(QDialog):
         self.setLayout(layout)
 
 
-    def btnPressed(self,b):
-        #if queue.index(b) == -1.: # menaing in unpressed
-        add_to_plot(b)
+    def btnClicked(self):
+        sender = self.sender()
 
-        #else:
-        #    remove_from_plot(b)
+        if self.queue.count(sender.text())==0: # menaing in unpressed
+            self.add_to_plot(sender)
+        else:
+           self.remove_from_plot(sender)
 
-    def remove_from_plot(btn):
-        queue.remove(btn)
 
-    def add_to_plot(btn):
-        if len(queue)<=3:
-            queue.append(btn)
+    def remove_from_plot(self, btn):
+        self.queue.remove(btn.text())
 
-    def enterPressed():
-        print(queue)
+
+    def add_to_plot(self, btn):
+        if len(self.queue)<=3:
+            self.queue.append(btn.text())
+
+    def enterPressed(self):
+        #plot[]
+        for i in range(len(self.queue)):
+            #plot.append[map[self.queue[i]]]
+            print(self.queue[i])
+        self.queue.clear()
 
 if __name__ == '__main__':
     # Create the Qt Application
@@ -71,9 +124,8 @@ if __name__ == '__main__':
     form.show()
     # Run the main Qt loop
     sys.exit(app.exec_())
-
-
 """
+##################################################################
 import sys
 #from PyQt4.QtCore import *
 #from PyQt4.QtGui import *
@@ -122,4 +174,43 @@ def main():
 
 if __name__ == '__main__':
    main()
+
+
+
+import sys
+from PySide2.QtCore import *
+from PySide2.QtGui import *
+from PyQt5.QtWidgets import QApplication, QWidget, QInputDialog, QLineEdit, QFileDialog, QTreeWidget, QTreeWidgetItem
+from PyQt5.QtGui import QIcon
+from PySide2.QtWidgets import (QLineEdit, QPushButton, QApplication,
+    QVBoxLayout, QDialog)
+
+app = QApplication(sys.argv)
+
+data = ['folder1/file1', 'file2', 'file3', 'folder2/file4']
+
+treeWidget = QTreeWidget()
+treeWidget.setColumnCount(1)
+treeWidget.setMinimumSize(600, 400)
+
+items = []
+
+for item in data:
+    itemparts = item.split('/')
+
+    entry = QTreeWidgetItem(None, [itemparts[0]])
+    partentitem = entry
+
+    if len(itemparts) > 1:
+        for i in itemparts[1:]:
+            childitem = QTreeWidgetItem(None, [i])
+            partentitem.addChild(childitem)
+            partentitem = childitem
+
+    items.append(entry)
+
+treeWidget.insertTopLevelItems(0, items)
+
+treeWidget.show()
+app.exec_()
 """

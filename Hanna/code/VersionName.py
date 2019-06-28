@@ -12,8 +12,11 @@ def NewVersionName(path):
     path_to_file = path_split[0:-2]
     print(path_to_file)
     filename=path_split[-1]
+    parts =[]
+    parts = filename.split(".")
     lhs,rhs = filename.split(".")
     last= lhs[-1]
+    NewName = " "
 
     if last.isdigit():
         lastPlace = len(lhs) -1 ;
@@ -24,7 +27,7 @@ def NewVersionName(path):
         newName = lhs+"_V001."+rhs
 
     exists = os.path.isfile('/path/to/file')
-    if exist:
+    if exists:
         NewVersionName(path,newName)
 
     return NewName

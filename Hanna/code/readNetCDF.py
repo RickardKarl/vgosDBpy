@@ -6,30 +6,40 @@ from numpy.random import uniform
 from combineYMDHMS import combineYMDHMwithSec
 import os
 
-def read_var_content(seekedData,pathToNetCDF, Time,dtype):
+def read_var_content_float64(seekedData, pathToNetCDF, Time):
     with Dataset(pathToNetCDF,"r", format="NETCDF4_CLASSIC") as nc:
-        vars = nc.variables
-        dataCol = vars[seekedData][:]
-        if dtype == "float64" :
-            table = PT()
-            table.field_names= ["Index", "Time", "Data"]
-            for i in range(len(dataCol)):
-                table.add_row([i , Time[i], dataCol[i]])
-            table.get_string(title=seekedData+ "the unit is" )
-        elif dtype == "S1" :
-            parts = []
-            #table.field_names= ["Data",]
-            for i in range(len(dataCol)):
-                name = dataCol[i]
-                parts = name.split("'")
-                table.append(parts[1])
-            #print(table.get_string(title="Hej"))
-        else :
-            table =[1]
+        data = nc.variables[seekedData][:]
+        table = PT()
+        table.field_names = [seekedData, "Index", "Time", "Data"]
+        for i in range(len(data)):
+            table.add_row([" ", i, Time[i], data[i]])
+        table.get_string(title= seekedData)
+        return table
+
+def read_var_content_S1(seekedData,pathToNetCDF):
+    with Dataset(pathToNetCDF, "r", format= "NETCDF4_CLASSIC") as nc:
+        data= nc.variables[seekedData][:]
+        head = " "
+        if len(data[:][1]) != 1:
+            for i in range(len(data)):
+                data_row = data[i]
+                for column in data_row:
+                    letter = column.decode('ASCII')
+                    head += letter
+        else:
+            for column in data:
+                letter = column.decode('ASCII')
+                head += letter
+        return head
 
 
-
-    return table
+def read_var_content(seekedData,pathToNetCDF,Time,dtype):
+    #if dtype == "float64":
+    #    return read_var_content_float64(seekedData,pathToNetCDF,Time)
+    if dtype == "S1":
+        return read_var_content_S1(seekedData, pathToNetCDF)
+    else:
+        return read_var_content_float64(seekedData,pathToNetCDF, Time)
 
 
 def read_netCDF_vars(pathToNetCDF):
@@ -40,24 +50,62 @@ def read_netCDF_vars(pathToNetCDF):
             variables.append(var)
     return variables
 
+def read_netCDF_vars_info(pathToNetCDF):
+    info = ""
+    vars = read_netCDF_vars(pathToNetCDF)
+    dtypes = find_dtype(pathToNetCDF)
+    for i in range(len(vars)):
+        if dtypes[i] == "S1":
+            info += read_var_content_S1(vars[i], pathToNetCDF) + "\n"
+    return info
+
 
 def find_dtype(pathToNetCDF):
         with Dataset(pathToNetCDF, "r", format="NETCDF4_CLASSIC") as nc:
             vars= nc.variables
             dtype= []
             for var in vars:
+                #for ncattr in var.ncattrs():
+                    #print(var.getncattr(ncattr))
                 dtype.append(nc.variables[var].dtype)
         return dtype
 
 
-path = "./../Files/10JAN04XU/KOKEE/Met.nc"
-pathTime = "./../Files/10JAN04XU/KOKEE/TimeUTC.nc"
-YMDHMS= combineYMDHMwithSec(pathTime)
-vars_in_file  = read_netCDF_vars(path)
-dtypes = find_dtype(path)
-print(dtypes)
-print(vars_in_file)
-#print(iUTCinterval)
-#print(read_var_content("CreateTime",path, YMDHMS, dtypes[1]))
-for i in range(len(vars_in_file)):
-    print((read_var_content(vars_in_file[i], path, YMDHMS, dtypes[-1])))
+def possible_to_plot(pathToNetCDF):
+    pathh = "./../../../../Files/10JAN04XU/KOKEE/Met.nc"
+    dtypes = find_dtype(pathh)
+    vars = read_netCDF_vars(pathh)
+    plotVars = []
+    i=0;
+    for i in range(len(dtypes)):#type in dtypes:
+        if dtypes[i] != "S1":
+            plotVars.append(vars[i])
+
+    return plotVars
+#det get_info_from_var()
+
+#path = "./../../../../Files/10JAN04XU/KOKEE/FeedRotation.nc"
+#path= "./../../../../Files/10JAN04XU/Head.nc"
+
+#pathTime = "./../../../../Files/10JAN04XU/KOKEE/TimeUTC.nc"
+#YMDHMS= combineYMDHMwithSec(pathTime)
+#vars_in_file  = read_netCDF_vars(path)
+#dtypes = find_dtype(path)
+#print(vars_in_file)
+#print(dtypes)
+#print(vars_in_file)
+#print(read_netCDF_vars_info(path))
+
+#print(dtypes)
+#print(vars_in_file)
+
+#for i in range(len(vars_in_file)):
+#with Dataset(path, "r", format="NETCDF4_CLASSIC") as nc:
+     #print(len(nc.variables[vars_in_file[12]]))
+     #print(len(nc.variables[vars_in_file[13]]))
+
+    #else:
+#print(vars_in_file[StationList])
+    #print(nc.variables["StationList"][:])
+        #if vars_in_file[i]!= "StationList":
+    #print((read_var_content(vars_in_file[i], path, YMDHMS, dtypes[i])))
