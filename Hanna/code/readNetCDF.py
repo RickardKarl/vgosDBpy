@@ -72,9 +72,9 @@ def find_dtype(pathToNetCDF):
 
 
 def possible_to_plot(pathToNetCDF):
-    pathh = "./../../../../Files/10JAN04XU/KOKEE/Met.nc"
-    dtypes = find_dtype(pathh)
-    vars = read_netCDF_vars(pathh)
+    #pathh = "./../../../../Files/10JAN04XU/KOKEE/Met.nc"
+    dtypes = find_dtype(pathToNetCDF)
+    vars = read_netCDF_vars(pathToNetCDF)
     plotVars = []
     i=0;
     for i in range(len(dtypes)):#type in dtypes:
@@ -84,9 +84,9 @@ def possible_to_plot(pathToNetCDF):
     return plotVars
 #det get_info_from_var()
 
-#path = "./../../../../Files/10JAN04XU/KOKEE/FeedRotation.nc"
+path = "./../../../../Files/10JAN04XU/KOKEE/Met.nc"
+print(read_netCDF_vars_info(path))
 #path= "./../../../../Files/10JAN04XU/Head.nc"
-
 #pathTime = "./../../../../Files/10JAN04XU/KOKEE/TimeUTC.nc"
 #YMDHMS= combineYMDHMwithSec(pathTime)
 #vars_in_file  = read_netCDF_vars(path)
@@ -103,9 +103,9 @@ def possible_to_plot(pathToNetCDF):
 #with Dataset(path, "r", format="NETCDF4_CLASSIC") as nc:
      #print(len(nc.variables[vars_in_file[12]]))
      #print(len(nc.variables[vars_in_file[13]]))
-
+#     if dtypes[i] == "S1":
     #else:
 #print(vars_in_file[StationList])
     #print(nc.variables["StationList"][:])
         #if vars_in_file[i]!= "StationList":
-    #print((read_var_content(vars_in_file[i], path, YMDHMS, dtypes[i])))
+#        print((read_var_content(vars_in_file[i], path, YMDHMS, dtypes[i])))

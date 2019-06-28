@@ -54,20 +54,28 @@ if __name__ == '__main__':
 import sys
 from PySide2.QtWidgets import (QLineEdit, QPushButton, QApplication,
     QVBoxLayout, QDialog)
-from plotFunction import plotFunc as pf
+from plotFunction import plotFunc
 from combineYMDHMS import combineYMDHMwithSec as combine
-#from createMap import createMap
+from createMap import plotMap
+from readNetCDF import possible_to_plot
 
 class Form(QDialog):
+    #path = "./../../../../Files/10JAN04XU/KOKEE/Met.nc"
+    #array = possible_to_plot(path)
     queue=[]
+    path = "./../../../../Files/10JAN04XU/KOKEE/Met.nc"
+    pathToTime = "./../../../../Files/10JAN04XU/TimeUTC.nc"
+    m = plotMap()
     def __init__(self, parent=None):
         super(Form, self).__init__(parent)
         # Create widgets
         #self.edit = QLineEdit("Write my name here")
-        array = ["b1", "b2","b3", "b4"]
-        queue=[]
-        # Create layout and add widgets
 
+        #array = ["b1", "b2","b3", "b4"]
+        #path = "./../../../../Files/10JAN04XU/KOKEE/Met.nc"
+        array = possible_to_plot(self.path)
+        #queue=[]
+        # Create layout and add widgets
         self.btn =[]
         #for str in array:
         #    myButtons.append(str)
@@ -85,6 +93,9 @@ class Form(QDialog):
             # Add button signal to greetings slot
             i=i+1
 
+        self.time = QPushButton("Time",self)
+        layout.addWidget(self.time)
+        self.time.clicked.connect(self.btnClicked)
 
         self.enter = QPushButton("Done -> plot")
         self.enter.clicked.connect(self.enterPressed)
@@ -103,27 +114,41 @@ class Form(QDialog):
 
     def remove_from_plot(self, btn):
         self.queue.remove(btn.text())
+        self.m.removeFromMap(btn.text)
 
 
     def add_to_plot(self, btn):
         if len(self.queue)<=3:
+            if btn.text == "Time":
+                self.m.insertToMap(self.pathToTime,btn.text())
+            else:
+                self.m.insertToMap(self.path, btn.text())
             self.queue.append(btn.text())
 
     def enterPressed(self):
         #plot[]
-        for i in range(len(self.queue)):
+        #for i in range(len(self.queue)):
             #plot.append[map[self.queue[i]]]
-            print(self.queue[i])
+        print(self.m.getMapKeys())
+        xStr= self.queue[0]
+        xData = self.m.getKeyValue(xStr)
+        yStr= self.queue[1]
+        yData = self.m.getKeyValue(yStr)
+        plotFunc(xStr, xData, yStr, yData,0)
         self.queue.clear()
+
 
 if __name__ == '__main__':
     # Create the Qt Application
     app = QApplication(sys.argv)
     # Create and show the form
+    #path = "./../../../../Files/10JAN04XU/KOKEE/Met.nc"
     form = Form()
     form.show()
     # Run the main Qt loop
     sys.exit(app.exec_())
+
+
 """
 ##################################################################
 import sys

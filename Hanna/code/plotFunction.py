@@ -6,7 +6,7 @@ import pandas as pd
 from matplotlib.dates import DateFormatter as DF
 import os
 
-def plotFunc(strX,xAxis,strY,yAxis, isTime):
+def plotFunc( strX,xAxis,strY,yAxis, isTime):
     """
     TODO: write a code so that titel, legends and so on can be
     produces automatically based on some into, path or node
