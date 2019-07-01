@@ -134,7 +134,7 @@ class Form(QDialog):
         xData = self.m.getKeyValue(xStr)
         yStr= self.queue[1]
         yData = self.m.getKeyValue(yStr)
-        plotFunc(xStr, xData, yStr, yData,0)
+        plotFunc(xStr, xData, yStr, yData, 0)
         self.queue.clear()
 
 

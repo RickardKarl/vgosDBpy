@@ -12,10 +12,9 @@ class plotMap():
 
     map = {}
     def __init__(self):
-        nameeeee =[]
 
 
-    def insertToMap (self,path, name):
+    def insertToMap (self, path, names):
         """
         Takes in a path to a netCDF file and the names of the arrays in the file that one wants to plot.
         Checks if all dimensions are the same. before calling plot. Otherwise says that they are not the same.
@@ -26,7 +25,7 @@ class plotMap():
         with Dataset(path, "r", format= "NETCDF4_CLASSIC") as nc:
             vars= nc.variables
             for var in vars:
-                if var not in list(self.map) and var == name :
+                if var not in list(self.map) and var in names :
                     self.map[name] = nc.variables[var][:]
 
     def removeFromMap (self, name):

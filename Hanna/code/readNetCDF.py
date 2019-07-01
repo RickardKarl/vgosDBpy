@@ -86,14 +86,15 @@ def possible_to_plot(pathToNetCDF):
 
 path = "./../../../../Files/10JAN04XU/KOKEE/Met.nc"
 print(read_netCDF_vars_info(path))
+
 #path= "./../../../../Files/10JAN04XU/Head.nc"
 #pathTime = "./../../../../Files/10JAN04XU/KOKEE/TimeUTC.nc"
 #YMDHMS= combineYMDHMwithSec(pathTime)
 #vars_in_file  = read_netCDF_vars(path)
-#dtypes = find_dtype(path)
-#print(vars_in_file)
-#print(dtypes)
-#print(vars_in_file)
+dtypes = find_dtype(path)
+print(vars_in_file)
+print(dtypes)
+print(vars_in_file)
 #print(read_netCDF_vars_info(path))
 
 #print(dtypes)
