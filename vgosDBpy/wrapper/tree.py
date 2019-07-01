@@ -110,7 +110,6 @@ class Wrapper:
                 node = parent
                 parent = node.getParent()
             node_path = self.root_path + '/' + path
-        print(node_path)
         return re.sub(r'|/'.join(map(re.escape, Wrapper.scopes))+'/', '/', node_path)
 
     def __str__(self):

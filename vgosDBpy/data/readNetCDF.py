@@ -60,17 +60,22 @@ def read_netCDF_vars_info(pathToNetCDF):
 
 
 def find_dtype(pathToNetCDF):
-        print(pathToNetCDF)
-        with Dataset(pathToNetCDF, "r", format="NETCDF4_CLASSIC") as nc:
-            vars= nc.variables
-            dtype= []
-            for var in vars:
-                #for ncattr in var.ncattrs():
-                    #print(var.getncattr(ncattr))
-                dtype.append(nc.variables[var].dtype)
-        return dtype
+    with Dataset(pathToNetCDF, "r", format="NETCDF4_CLASSIC") as nc:
+        vars= nc.variables
+        dtype= []
+        for var in vars:
+            #for ncattr in var.ncattrs():
+                #print(var.getncattr(ncattr))
+            dtype.append(nc.variables[var].dtype)
+    return dtype
 
 
+def read_netCDF_dimension_for_var(var_name, pathToNetCDF):
+    with Dataset(pathToNetCDF, "r", format="NETCDF4_CLASSIC") as nc:
+        var = nc.variables[var_name]
+        dim_name = var.get_dims()[0].name
+    return dim_name
+    
 def possible_to_plot(pathToNetCDF):
     dtypes = find_dtype(pathToNetCDF)
     vars = read_netCDF_vars(pathToNetCDF)

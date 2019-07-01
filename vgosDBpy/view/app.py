@@ -5,7 +5,8 @@ from PySide2 import QtCore
 from vgosDBpy.model.standardtree import TreeModel
 from vgosDBpy.model.toolbox import Tools
 from vgosDBpy.view.widgets import QWrapper, VariableTable
-from vgosDBpy.data.readNetCDF import read_netCDF_vars, read_netCDF_vars_info
+from vgosDBpy.data.readNetCDF import read_netCDF_vars, read_netCDF_vars_info, read_netCDF_dimension_for_var
+from vgosDBpy.data.plot import plot_2
 
 class App(QWidget):
     '''
@@ -17,7 +18,6 @@ class App(QWidget):
 
 
         # Creating widgets
-
         # Wrapper view
         self.treeview = QWrapper(wrapper_path, self)
 
@@ -28,7 +28,7 @@ class App(QWidget):
         # Button
         self.button = QPushButton('& Plot',self)
         # Button event
-        #self.button.clicked.connect(self.showItemInfo)
+        self.button.clicked.connect(self._plotbutton)
 
         # Tools
         #self.toolbox = Tools(self)
@@ -40,18 +40,12 @@ class App(QWidget):
         layout = QGridLayout()
         layout.addWidget(self.treeview,0,0)
         layout.addWidget(self.text,0,1)
-        layout.addWidget(self.button,2,1)
+        layout.addWidget(self.button,3,0)
         layout.addWidget(self.table, 2,0)
         self.setLayout(layout)
 
-        # Time-dependent operations
-        self._status_update_timer = QtCore.QTimer(self)
-        self._status_update_timer.setSingleShot(False)
-        self._status_update_timer.timeout.connect(self._showItemInfo)
-        self._status_update_timer.start(100)
-
-        self.listener = QtCore.QObject()
-        QtCore.QObject.connect(SIGNAL('selectionChanged()'),SLOT('_showItemInfo()'))
+        # Listeners
+        self.treeview.selectionModel().selectionChanged.connect(self._showItemInfo)
 
     def _getSelected(self, widget):
         return widget.getSelected()
@@ -60,13 +54,15 @@ class App(QWidget):
         index = self._getSelected(self.treeview)
         if not index == []:
             item = self.treeview.model.itemFromIndex(index[0])
-            print(type(item))
             if item.isNetCDF():
                 text = read_netCDF_vars_info(item.getPath())
                 self.text.setPlainText(str(text))
                 self.table.updateVariables(item)
-        '''
-        for i in index:
-            item = self.treeview.model.itemFromIndex(i)
-            self.text.setPlainText(item.node.getPath())
-        '''
+
+    def _plotbutton(self):
+        index = self._getSelected(self.table)
+        if not index == []:
+            items = []
+            for i in range(2):
+                items.append(self.table.model.itemFromIndex(index[i]))
+        plot_2(items[0].getPath(), items[0].labels, items[1].getPath(), items[1].labels)
