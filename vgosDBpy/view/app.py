@@ -5,8 +5,9 @@ from PySide2 import QtCore
 from vgosDBpy.model.standardtree import TreeModel
 from vgosDBpy.model.toolbox import Tools
 from vgosDBpy.view.widgets import QWrapper, VariableTable
-from vgosDBpy.data.readNetCDF import read_netCDF_vars, read_netCDF_vars_info, read_netCDF_dimension_for_var
-from vgosDBpy.data.plot import plot_2
+from vgosDBpy.data.readNetCDF import read_netCDF_variables, read_netCDF_vars_info, read_netCDF_dimension_for_var
+from vgosDBpy.data.plotFunction import PlotToRickard, PlotToRickard2yAxis
+
 
 class App(QWidget):
     '''
@@ -63,6 +64,9 @@ class App(QWidget):
         index = self._getSelected(self.table)
         if not index == []:
             items = []
-            for i in range(2):
+            for i in range(len(index)):
                 items.append(self.table.model.itemFromIndex(index[i]))
-        plot_2(items[0].getPath(), items[0].labels, items[1].getPath(), items[1].labels)
+        if len(index) == 1:
+            PlotToRickard(items[0].getPath(), items[0].labels)
+        if len(index) == 2:
+            PlotToRickard2yAxis(items[0].getPath(), items[0].labels, items[1].getPath(), items[1].labels)

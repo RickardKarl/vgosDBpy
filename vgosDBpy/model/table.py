@@ -1,7 +1,7 @@
 from PySide2.QtGui import QStandardItemModel
 from PySide2 import QtCore
 from vgosDBpy.model.standardtree import Variable
-from vgosDBpy.data.readNetCDF import read_netCDF_vars, read_netCDF_dimension_for_var
+from vgosDBpy.data.readNetCDF import read_netCDF_variables, read_netCDF_dimension_for_var
 
 class TableModel(QStandardItemModel):
 
@@ -30,7 +30,7 @@ class TableModel(QStandardItemModel):
 
     def updateVariables(self, item):
         self.reset()
-        var_list = read_netCDF_vars(item.getPath())
+        var_list = read_netCDF_variables(item.getPath())
         i = 0
         for vars in var_list:
             self.setItem(i,0, Variable(vars,item))

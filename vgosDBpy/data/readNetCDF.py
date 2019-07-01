@@ -3,8 +3,8 @@ from prettytable import PrettyTable as PT
 from netCDF4 import Dataset
 import pandas as pd
 from numpy.random import uniform
-from combineYMDHMS import combineYMDHMwithSec
-from PathParser import findCorrespondingTime
+from vgosDBpy.data.combineYMDHMS import combineYMDHMwithSec
+from vgosDBpy.data.PathParser import findCorrespondingTime
 import os
 
 """
@@ -71,7 +71,7 @@ Returns a long string containing all the information stored in "S1" datatype vai
 """
 def read_netCDF_vars_info(pathToNetCDF):
     info = ""
-    vars = read_netCDF_vars(pathToNetCDF)
+    vars = read_netCDF_variables(pathToNetCDF)
     dtypes = find_dtype(pathToNetCDF)
     for i in range(len(vars)):
         if dtypes[i] == "S1":
@@ -104,7 +104,7 @@ def possible_to_plot(pathToNetCDF):
     plotVars = []
     i=0;
     for i in range(len(dtypes)):#type in dtypes:
-        if dtypes[i] != "S1" && len (vars[i]) == len(time):
+        if dtypes[i] != "S1" and len (vars[i]) == len(time):
             plotVars.append(vars[i])
 
     return plotVars
@@ -115,12 +115,20 @@ return an array of the data assosiated with an variable
 def getDataFromVar(path, var):
     with Dataset(path, "r", format="NETCDF4_CLASSIC") as nc:
         return(nc.variables[var][:])
+
+
+def read_netCDF_dimension_for_var(var_name, pathToNetCDF):
+    with Dataset(pathToNetCDF, "r", format="NETCDF4_CLASSIC") as nc:
+        var = nc.variables[var_name]
+        dim_name = var.get_dims()[0].name
+    return dim_name
+
 #det get_info_from_var()
 
 #path = "./../../../../Files/10JAN04XU/KOKEE/Met.nc"
 #print(read_netCDF_vars_info(path))
 
-path= "./../../../../Files/10JAN04XU/KOKEE/Met.nc"
+#path= "./../../../../Files/10JAN04XU/KOKEE/Met.nc"
 #pathTime = "./../../../../Files/10JAN04XU/KOKEE/TimeUTC.nc"
 #YMDHMS= combineYMDHMwithSec(pathTime)
 #vars_in_file  = read_netCDF_vars(path)

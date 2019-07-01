@@ -5,9 +5,9 @@ import datetime as dt
 import pandas as pd
 from matplotlib.dates import DateFormatter as DF
 import os
-from PathParser import findCorrespondingTime
-from combineYMDHMS import combineYMDHMwithSec
-from readNetCDF import getDataFromVar
+from vgosDBpy.data.PathParser import findCorrespondingTime
+from vgosDBpy.data.combineYMDHMS import combineYMDHMwithSec
+from vgosDBpy.data.readNetCDF import getDataFromVar
 
 # default plot mot tiden
 def PlotToRickard(path, var):

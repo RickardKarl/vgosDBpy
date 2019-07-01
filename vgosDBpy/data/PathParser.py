@@ -38,22 +38,9 @@ class PathParser():
         return False
 
 def findCorrespondingTime(path):
+    print(path)
     parts = path.split("/")
-    timePath = "."
-    for i in range(1,len(parts)-1 ):
-        timePath = timePath + "/" + parts[i]
-    timePath =  timePath + "/" + "TimeUTC.nc"
-    return timePath
-
-
-class netCDFPath():
-    path
-    ncPath={}
-    def __init__(self, path):
-        self.path = path
-
-    def addVar(name):
-        ncPath["variable"]=names
-
-    def getVar():
-        return ncPath["variable"]
+    parts[-1] = 'TimeUTC.nc'
+    time_path = '/'.join(parts)
+    print(time_path)
+    return time_path
