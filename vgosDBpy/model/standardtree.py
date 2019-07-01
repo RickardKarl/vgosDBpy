@@ -1,19 +1,10 @@
 import importlib.util
 import os
-
-def import_func(file, path):
-    spec = importlib.util.spec_from_file_location(file, path)
-    pack = importlib.util.module_from_spec(spec)
-    spec.loader.exec_module(pack)
-    return pack
-
-Parser = import_func('parser', '/Users/rickardkarlsson/Documents/NVI/vgosDBpy-git/vgosDBpy/wrapper/parser.py').Parser
-tree = import_func('tree', '/Users/rickardkarlsson/Documents/NVI/vgosDBpy-git/vgosDBpy/wrapper/tree.py')
-Node = tree.Node
-NetCDF_File = tree.NetCDF_File
-
 from PySide2.QtGui import QStandardItemModel, QStandardItem
 from PySide2 import QtCore
+from vgosDBpy.wrapper.parser import Parser
+from vgosDBpy.wrapper.tree import Node
+from vgosDBpy.data.readNetCDF import read_netCDF_vars
 
 class TreeModel(QStandardItemModel):
     '''
@@ -27,14 +18,14 @@ class TreeModel(QStandardItemModel):
     parent [QWidget]
     '''
 
-    def __init__(self, header, root_path, wrapper_name, parent=None):
+    def __init__(self, header, root_path, parent=None):
         super(TreeModel,self).__init__(parent)
-        self.setupModel(root_path,wrapper_name)
-
+        self.setupModel(root_path)
+        self.setHorizontalHeaderLabels(header)
 
     def flags(self, index):
         '''
-        Let's us choose if the selected items should be enabled, editable, etc
+        Let us choose if the selected items should be enabled, editable, etc
 
         index [QModelIndex]
         '''
@@ -45,7 +36,7 @@ class TreeModel(QStandardItemModel):
         return QtCore.Qt.ItemIsEnabled | QtCore.Qt.ItemIsSelectable #| QtCore.Qt.ItemIsEditable # Uncomment if you want to be able to edit it
 
     # Model setup
-    def setupModel(self, root_path, wrapper_name):
+    def setupModel(self, root_path):
         '''
         Parsing the wrapper
         (Imports Parser class)
@@ -53,8 +44,8 @@ class TreeModel(QStandardItemModel):
         root_path [string]
         wrapper_name [string]
         '''
-        parser = Parser()
-        parser.parseWrapper(root_path + '/' + wrapper_name)
+        parser = Parser(root_path)
+        parser.parseWrapper(root_path)
         root_parent = parser.getWrapperRoot()
         self.recursive(root_parent, self.invisibleRootItem())
 
@@ -63,8 +54,6 @@ class TreeModel(QStandardItemModel):
             item = NetCDFItem(node)
         else:
             item = QNodeItem(node)
-        print(type(item))
-        item = QNodeItem(node)
         parent.appendRow(item)
         if node.hasChildren():
             children = node.getChildren()
@@ -85,21 +74,26 @@ class QNodeItem(QStandardItem):
     '''
     _type = 1110
 
+
     def __init__(self, node):
-        super(QNodeItem, self).__init__()
-        self.name = str(node)
+        super(QNodeItem, self).__init__(0,2)
+        self.labels = str(node)
         self.node = node
-        self.path = node.getPath()
 
         # Attributes
-        
+
+    def getPath(self):
+        return self.node.getPath()
+
+    def isNetCDF(self):
+        return self.node.isNetCDF()
 
     def type(self):
         return QNodeItem._type
 
     def data(self, role = QtCore.Qt.DisplayRole):
         if role == QtCore.Qt.DisplayRole:
-            return self.name
+            return self.labels
 
         elif role == QtCore.Qt.EditRole:
             return self.node
@@ -109,10 +103,10 @@ class QNodeItem(QStandardItem):
 
     def setData(self, data, role = QtCore.Qt.EditRole):
         if role == QtCore.Qt.EditRole:
-            self.name = data
+            self.labels = data
 
         elif role == QtCore.Qt.DisplayRole: # Do not really do anything?
-            self.name = data
+            self.labels = data
 
         else:
             return False
@@ -120,12 +114,11 @@ class QNodeItem(QStandardItem):
         self.emitDataChanged()
         return True
 
-
     def __str__(self):
-        return self.name
+        return self.labels
 
     def __repr__(self):
-        return self.name
+        return self.labels
 
 
 
@@ -134,12 +127,27 @@ class NetCDFItem(QNodeItem):
 
     def __init__(self, node):
         super(NetCDFItem, self).__init__(node)
+        '''
+        self.variables = read_netCDF_vars(node.getPath())
+        item_list = []
+        i = 0
+        for vars in self.variables:
+            item_list.append(Variable(vars,self))
+            i += 1
+        self.appendColumn(item_list)
+        '''
 
     def type(self):
         NetCDFItem._type
 
 
 
-'''
-class NetCDFVariable:
-'''
+class Variable(QNodeItem):
+    _type = 1111
+
+    def __init__(self, variable_name, node):
+        super(Variable, self).__init__(node)
+        self.labels = variable_name
+
+    def type(self):
+        NetCDFItem._type

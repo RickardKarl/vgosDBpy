@@ -1,3 +1,4 @@
+import re
 
 '''
 TODO:
@@ -17,15 +18,17 @@ class Wrapper:
     # Pre-defined scopes will have the folder made automatically
     scopes = ['session','scan', 'observation', 'station']
 
-    def __init__(self, root_path):
+    def __init__(self, wrapper_path):
         '''
         Constructor
 
-        root_path [string] is the path to the root folder
+        wrapper_path [string] is the path to the wrapper file
         '''
-        self.root_path = root_path
-        self.session_name = root_path.split('/')[-1]
-        self.root = Node(self.session_name, None, root_path)
+        path = wrapper_path.split('/')
+        self.session_name = path[-2]
+        path.pop()
+        self.root_path = '/'.join(path)
+        self.root = Node(self.session_name, None, self.root_path)
         self.pointer_map = {} # Keep track of pointers with a hash-map
 
         for s in Wrapper.scopes:
@@ -97,17 +100,18 @@ class Wrapper:
         '''
 
         if name == self.session_name:
-            return self.root_path
+            node_path = self.root_path
         elif parent is self.root:
-            return self.root_path + '/' + name
+            node_path = self.root_path + '/' + name
         else:
             path = name
             while parent is not self.root:
                 path = str(parent) + '/' + path
                 node = parent
                 parent = node.getParent()
-            return self.root_path + '/' + path
-
+            node_path = self.root_path + '/' + path
+        print(node_path)
+        return re.sub(r'|/'.join(map(re.escape, Wrapper.scopes))+'/', '/', node_path)
 
     def __str__(self):
         indent = " " * 4
@@ -139,6 +143,7 @@ class Node(object):
         self.children = []
         self.parent = parent
         self.path = path
+
 
         self.netCDF = False
 
@@ -225,7 +230,6 @@ class Node(object):
         return self.name
 
 class NetCDF_File(Node):
-
     def __init__(self, name, parent, path):
         super().__init__(name, parent, path)
         self.children = None
@@ -233,6 +237,7 @@ class NetCDF_File(Node):
 
     def addChildNode(self, obj):
         raise TypeError('Tried assigning files to another file, needs to be a folder.')
+
 
 
 class PointerMap():
