@@ -2,4 +2,6 @@
 
 import numpy as np
 
-def 
+def polyfit(xdata, ydata, degree):
+
+    yhat = avitzky_golay(ydata, 51, 3)
