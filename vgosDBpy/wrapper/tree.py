@@ -34,7 +34,6 @@ class Wrapper:
         for s in Wrapper.scopes:
             self.addNode(s, type = 'folder')
 
-
     def addNode(self, name, parent = None, type = 'netCDF'):
         '''
         Add node in the tree, may be a file, data array or a folder
@@ -98,11 +97,8 @@ class Wrapper:
         name [string]
         parent [Node]
         '''
-
         if name == self.session_name:
             node_path = self.root_path
-        elif parent is self.root:
-            node_path = self.root_path + '/' + name
         else:
             path = name
             while parent is not self.root:
@@ -110,7 +106,17 @@ class Wrapper:
                 node = parent
                 parent = node.getParent()
             node_path = self.root_path + '/' + path
-        return re.sub(r'|/'.join(map(re.escape, Wrapper.scopes))+'/', '/', node_path)
+        print(node_path)
+        last_folder = node_path.split('/')[-2].strip()
+        if not last_folder in Wrapper.scopes:
+            scope_string = []
+            for s in Wrapper.scopes:
+                scope_string.append('/' + s + '/')
+                #
+            node_path = re.sub(r'|'.join(scope_string), '/', node_path)
+            node_path = re.sub(r'(/)\1*', '/', node_path)
+        print(node_path)
+        return node_path
 
     def __str__(self):
         indent = " " * 4

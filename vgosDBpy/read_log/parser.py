@@ -76,37 +76,41 @@ def readCableCal(file_path):
         return {'CableCal': CableCal, 'Time': time_index}
 
 
-def mergeSeries(series1, series2, timedelta = pd.Timedelta(seconds = 4)):
+def mergeTime(series1, series2, timedelta = pd.Timedelta(seconds = 3)):
     '''
     Merge two series with similar timestamps
     '''
+    # Setup of variables
     index1 = series1.index
     index2 = series2.index
     len1 = len(index1)
     len2 = len(index2)
     min_len = min(len1,len2)
     max_len = max(len1,len2)
-
     bool_arr_min = np.zeros((min_len))
     bool_arr_max = np.zeros((max_len))
-    for i in range(min_len):
-        for j in range(i+1, max_len):
-            if len1 > len2:
-                if abs(index1[j] - index2[i]) < timedelta:
-                    bool_arr_min[i] = True
-                    bool_arr_max[j] = True
-            else:
-                if abs(index1[i] - index2[j]) < timedelta:
-                    bool_arr_min[i] = True
-                    bool_arr_max[j] = True
 
+    merged = False
+    while not merged:
+        for i in range(min_len):
+            for j in range(i+1, max_len):
+                if len1 > len2:
+                    if abs(index1[j] - index2[i]) < timedelta:
+                        bool_arr_min[i] = True
+                        bool_arr_max[j] = True
+                else:
+                    if abs(index1[i] - index2[j]) < timedelta:
+                        bool_arr_min[i] = True
+                        bool_arr_max[j] = True
 
-    print(bool_arr_max[bool_arr_max == True])
-    print(bool_arr_min)
-
-
-
-
+        if len(bool_arr_min[bool_arr_min == True]) == len(bool_arr_max[bool_arr_max == True]):
+            merged = True
+        else:
+             timedelta = timedelta - pd.Timedelta(seconds = 1)
+    if len1 < len2:
+        return index1[bool_arr_min == True]
+    else:
+        return index2[bool_arr_min == True]
 
 def createTimeStamp(date, time_stamp):
 

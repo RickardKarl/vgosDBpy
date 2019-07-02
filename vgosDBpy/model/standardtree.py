@@ -60,7 +60,9 @@ class TreeModel(QStandardItemModel):
             for row in range(node.getChildCount()):
                 c = children[row]
                 self.recursive(c, item)
-
+        else:
+            if node.isNetCDF() is False:
+                item.appendRow(QStandardItem('Empty'))
 
 
 class QNodeItem(QStandardItem):

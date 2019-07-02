@@ -84,7 +84,7 @@ class Parser:
                 elif line.startswith('end'):
                     keyword = line.split()[1]
                     self.removeScope(keyword)
-                    active_folder = None
+                    #active_folder = None
 
                 # Check for setting the default_dir (active_folder)
                 elif line.startswith('default_dir'):
@@ -94,7 +94,8 @@ class Parser:
 
                 # Checks if line is giving a netCDF pointer
                 elif line.endswith('.nc'):
-                    #print(line)
+                    print(line)
+                    print(active_folder)
                     file_name = line.split()[-1]
                     self.wrapper.addNode(file_name, active_folder, 'netCDF')
                 else:
