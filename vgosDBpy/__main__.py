@@ -2,7 +2,8 @@
 import sys
 from PySide2.QtWidgets import QApplication
 from vgosDBpy.view.app import App
-from vgosDBpy.read_log.parser import readMetData, printFile
+from vgosDBpy.read_log.parser import readData, printFile
+from vgosDBpy.read_log.plotter import plotSeries
 
 if __name__ == '__main__':
 
@@ -20,4 +21,6 @@ if __name__ == '__main__':
 
     elif sys.argv[1].endswith('.log'):
         printFile(sys.argv[1], 1000)
-        data = readMetData(sys.argv[1])
+        data = readData(sys.argv[1])
+
+        plotSeries(data['AtmPres'])

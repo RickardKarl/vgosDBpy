@@ -34,27 +34,24 @@ class QWrapper(QTreeView):
         self.setSelectionMode(QAbstractItemView.ExtendedSelection)
         self.selection = self.selectionModel()
 
-        # Expand first column
+        # Expansion options
         self.expandToDepth(0)
-
-        # Quality of life features for the QTreeView
         self.setExpandsOnDoubleClick(True)
-
-        #self.setEditTriggers(QAbstractItemView.NoEditTriggers) # Sets through the view so that editing is not possible
 
         # Size-related
         self.resizeColumnToContents(0)
 
-    def currentSelectionModel(self):
-        return self.selectionModel()
-
-    def changeSelection(self):
-        pass
-
-    def getSelected(self):
-        return self.selection.selectedIndexes()
-
 class VariableTable(QTableView):
+    '''
+    Widget that inherits from QTableView
+    Visual representation of the items in a table
+
+    Imports TableModel
+
+    Constructor needs:
+    parent [QWidget]
+
+    '''
     def __init__(self, parent=None):
         super(VariableTable, self).__init__(parent)
 
@@ -74,9 +71,13 @@ class VariableTable(QTableView):
         self.setColumnWidth(1, 4/10*max_width)
         '''
     def updateVariables(self, var_list):
+        '''
+        Updates content of table model
+
+        var_list [list of QStandardItems]
+        '''
         self.model.updateVariables(var_list)
+
+        # Updates size of column when content is changed
         for i in range(self.model.columnCount()):
             self.resizeColumnToContents(i)
-
-    def getSelected(self):
-        return self.selection.selectedIndexes()

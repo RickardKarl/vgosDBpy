@@ -16,30 +16,38 @@ class App(QWidget):
     '''
 
     def __init__(self, wrapper_path, parent = None):
+        '''
+        Constructor
+
+        wrapper_path [string] is the path to the wrapper file which is to be displayed
+        parent [QWidet]
+        '''
+
         super(App,self).__init__(parent)
 
 
-        # Creating widgets
-        # Wrapper view
+        ########### Creating widgets
+
+        # Wrapperview
         self.treeview = QWrapper(wrapper_path, self)
+
+        # Tableview
+        self.table = VariableTable(self)
 
         # Text
         self.text = QTextEdit(self)
         self.text.setReadOnly(True)
 
         # Buttons
-        #plot and table
+        # Plot and display table
         self.button_plot = QPushButton('& Plot',self)
         self.button_table = QPushButton('& Table',self)
+
         # Button event
         self.button_plot.clicked.connect(self._plotbutton)
         self.button_table.clicked.connect(self._tablebutton)
 
-        # Tools
-        #self.toolbox = Tools(self)
 
-        # Table
-        self.table = VariableTable(self)
 
         # Layout
         layout = QGridLayout()
@@ -54,9 +62,18 @@ class App(QWidget):
         self.treeview.selectionModel().selectionChanged.connect(self._showItemInfo)
 
     def _getSelected(self, widget):
-        return widget.getSelected()
+        '''
+        Returns selected indices from a view widget (e.g. table or tree view)
+
+        widget [QWidget] that has a selection model, it requires that the widget
+        has a instance variable named selection which points to the selection model
+        '''
+        return widget.selection.selectedIndexes()
 
     def _showItemInfo(self):
+        '''
+        Updates information in the app, selected items are read from the wrapper directory
+        '''
         index = self._getSelected(self.treeview)
         if not index == []:
             item = self.treeview.model.itemFromIndex(index[0])
@@ -66,18 +83,23 @@ class App(QWidget):
                 self.table.updateVariables(item)
 
     def _plotbutton(self):
+        '''
+        Method for plotting variables
+        '''
         index = self._getSelected(self.table)
         if not index == []:
             items = []
             for i in range(len(index)):
                 items.append(self.table.model.itemFromIndex(index[i]))
         if len(index) == 1:
-            #tableFunction(items[0].getPath(), items[0].labels)
             PlotToRickard(items[0].getPath(), items[0].labels)
         if len(index) == 2:
             PlotToRickard2yAxis(items[0].getPath(), items[0].labels, items[1].getPath(), items[1].labels)
 
     def _tablebutton(self):
+        '''
+        Method for displaying variables in table
+        '''
         index = self._getSelected(self.table)
         if not index == [] :
             items = []
@@ -86,4 +108,4 @@ class App(QWidget):
             if len(index) == 1:
                 tableFunction(items[0].getPath(), items[0].labels)
             elif len(index) == 2:
-                tableFunction2data(items[0].getPath(), items[0].labels,items[1].getPath(), items[1].labels)
+                tableFunction2data(items[0].getPath(), items[0].labels, items[1].getPath(), items[1].labels)

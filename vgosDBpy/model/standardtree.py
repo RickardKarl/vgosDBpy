@@ -67,8 +67,6 @@ class QNodeItem(QStandardItem):
     '''
     Custom data item for the QStandardItemModel
 
-    Not yet fully understood how it works
-
     Constructor
     node [Node]
     '''
@@ -80,12 +78,16 @@ class QNodeItem(QStandardItem):
         self.labels = str(node)
         self.node = node
 
-        # Attributes
-
     def getPath(self):
+        '''
+        Returns path of node
+        '''
         return self.node.getPath()
 
     def isNetCDF(self):
+        '''
+        Checks if the node points to a netCDF
+        '''
         return self.node.isNetCDF()
 
     def type(self):
@@ -123,19 +125,17 @@ class QNodeItem(QStandardItem):
 
 
 class NetCDFItem(QNodeItem):
+
+    '''
+    Inherited from QNodeItem
+
+    This should be used to differ QNodeItem which points to netCDF files
+    '''
+
     _type = 1111
 
     def __init__(self, node):
         super(NetCDFItem, self).__init__(node)
-        '''
-        self.variables = read_netCDF_vars(node.getPath())
-        item_list = []
-        i = 0
-        for vars in self.variables:
-            item_list.append(Variable(vars,self))
-            i += 1
-        self.appendColumn(item_list)
-        '''
 
     def type(self):
         NetCDFItem._type
@@ -143,6 +143,13 @@ class NetCDFItem(QNodeItem):
 
 
 class Variable(QNodeItem):
+
+    '''
+    Inherited from QNodeItem
+
+    This should be used to differ variables that are stored in this format which points to netCDF files
+    '''
+
     _type = 1111
 
     def __init__(self, variable_name, node):

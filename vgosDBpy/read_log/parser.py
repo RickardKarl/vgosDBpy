@@ -10,11 +10,14 @@ def printFile(file_path, number_of_lines):
                 print(line)
             else:
                 break
-def readMetData(file_path):
+
+
+def readData(file_path):
     Time = []
     Temp = []
     AtmPres = []
     RelHum = []
+    CableCal = []
 
     with open(file_path,'r') as src:
         for line in src:
@@ -27,20 +30,26 @@ def readMetData(file_path):
             # Check if correct string (weather data contains /wx/ in line)
             if '/wx/' in data:
                 data = data.split('/')[-1].strip().split(',')
-
+                data = list(map(float, data))
                 Time.append(createTimeStamp(date,time_stamp))
                 Temp.append(data[0])
                 AtmPres.append(data[1])
                 RelHum.append(data[2])
+
+            elif '/cable/' in data:
+                data = data.split('/')[-1]
+                CableCal.append(float(data))
 
     time_index = pd.DatetimeIndex(Time)
     Temp = pd.Series(Temp, index = time_index)
     AtmPres = pd.Series(AtmPres, index = time_index)
     RelHum = pd.Series(RelHum, index = time_index)
 
-    plt.plot(Temp)
-    plt.show()
-    return (Temp, AtmPres, RelHum, time_index)
+    print(len(CableCal))
+    #CableCal = pd.Series(CableCal, index = time_index)
+
+    return {'Temp':Temp, 'AtmPres': AtmPres, 'RelHum': RelHum, 'CableCal': CableCal,
+    'Time': time_index}
 
 def createTimeStamp(date, time_stamp):
 
