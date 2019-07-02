@@ -41,11 +41,11 @@ class TableModel(QStandardItemModel):
         self.clear
         self.setHorizontalHeaderLabels(self.header)
 
-    def updateVariables(self, item_list):
+    def updateVariables(self, item):
         '''
         Resets content and then replaces it with items in the given list
 
-        item_list [list of QStandardItems] contains the item which replaces previous content
+        item [QStandardItems] contains the item which replaces previous content
         '''
         self.reset()
         var_list = read_netCDF_variables(item.getPath())
