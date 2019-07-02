@@ -4,19 +4,36 @@ import numpy as np
 import datetime as dt
 import pandas as pd
 from matplotlib.dates import DateFormatter as DF
-import os
+
 from vgosDBpy.data.PathParser import findCorrespondingTime
 from vgosDBpy.data.combineYMDHMS import combineYMDHMwithSec
 from vgosDBpy.data.readNetCDF import getDataFromVar
+from vgosDBpy.data.getRealName import get_name_to_print as name
+"""
+
+from PathParser import findCorrespondingTime
+from combineYMDHMS import combineYMDHMwithSec
+from readNetCDF import getDataFromVar
+from getRealName import get_name_to_print as name
+"""
+import os
 
 # default plot mot tiden
 def PlotToRickard(path, var):
     timePath = findCorrespondingTime(path)
     time = combineYMDHMwithSec(timePath)
     y = getDataFromVar(path, var)
+
     if len(time) == len(y):
-        plt.title("plot " + var + " versus Time ")
+        plt.title("Plot " + name(var) + " versus Time ")
         plt.plot(time,y)
+
+        #myFmt = md.DateFormatter("%H:%M:%S")
+        #plt.xticks( rotation= 80 )
+        #plt.xlabel.set_major_formatter(myFmt)
+
+        plt.xlabel('Time')
+        plt.ylabel(name(var))
         plt.show()
     else:
         print("Dimensions do not agree")
@@ -30,15 +47,17 @@ def PlotToRickard2yAxis(path1, var1, path2, var2):
         fig, ax1 = plt.subplots()
         color = 'tab:red'
         ax1.set_xlabel('time')
+        ax1.set_ylabel(name(var1))
         ax1.plot(time, y1, color=color)
         ax1.tick_params(axis=var1, labelcolor=color)
         ax2 = ax1.twinx()  # instantiate a second axes that shares the same x-axis
         color = 'tab:blue'
         #ax2.set_ylabel('sin', color=color)  # we already handled the x-label with ax1
         ax2.plot(time, y2, color=color)
+        ax2.set_ylabel(name(var2))
         ax2.tick_params(axis=var2, labelcolor=color)
             #plt.plot(xAxis,yAxis)
-        plt.title("Plot" +var1 + "and " + var2 + "over time ")
+        plt.title("Plot" +name(var1) + "and " + name(var2) + "over time ")
         plt.show()
     else:
         print("Dimensions do not agree")

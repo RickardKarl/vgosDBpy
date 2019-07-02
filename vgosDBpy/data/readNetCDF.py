@@ -3,9 +3,14 @@ from prettytable import PrettyTable as PT
 from netCDF4 import Dataset
 import pandas as pd
 from numpy.random import uniform
+
 from vgosDBpy.data.combineYMDHMS import combineYMDHMwithSec
 from vgosDBpy.data.PathParser import findCorrespondingTime
+"""
+from combineYMDHMS import combineYMDHMwithSec
+from PathParser import findCorrespondingTime
 import os
+"""
 
 """
 wierd name, Takes in a path to netCDf file and a name to a variable in it
@@ -106,7 +111,6 @@ def possible_to_plot(pathToNetCDF):
     for i in range(len(dtypes)):#type in dtypes:
         if dtypes[i] != "S1" and len (vars[i]) == len(time):
             plotVars.append(vars[i])
-
     return plotVars
 
 """
@@ -116,12 +120,13 @@ def getDataFromVar(path, var):
     with Dataset(path, "r", format="NETCDF4_CLASSIC") as nc:
         return(nc.variables[var][:])
 
-
 def read_netCDF_dimension_for_var(var_name, pathToNetCDF):
     with Dataset(pathToNetCDF, "r", format="NETCDF4_CLASSIC") as nc:
         var = nc.variables[var_name]
         dim_name = var.get_dims()[0].name
     return dim_name
+
+
 
 #det get_info_from_var()
 

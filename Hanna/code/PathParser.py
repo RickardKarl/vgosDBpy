@@ -44,16 +44,3 @@ def findCorrespondingTime(path):
         timePath = timePath + "/" + parts[i]
     timePath =  timePath + "/" + "TimeUTC.nc"
     return timePath
-
-
-class netCDFPath():
-    path
-    ncPath={}
-    def __init__(self, path):
-        self.path = path
-
-    def addVar(name):
-        ncPath["variable"]=names
-
-    def getVar():
-        return ncPath["variable"]
