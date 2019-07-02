@@ -25,8 +25,8 @@ def PlotToRickard(path, var):
     y = getDataFromVar(path, var)
 
     if len(time) == len(y):
-        #plt.title("Plot " + name(path,var) + " versus Time ")
-        plt.title(header_info_to_plot(path) )
+        plt.title("Plot " + name(path,var) + " versus Time ")
+        #plt.title(header_info_to_plot(path) )
         plt.plot(time,y)
 
         #myFmt = md.DateFormatter("%H:%M:%S")
