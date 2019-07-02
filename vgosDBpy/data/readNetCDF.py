@@ -57,7 +57,7 @@ def read_var_content_S1_header(seekedData, pathToNetCDF):
     if seekedData == 'Stub':
         header.append("File name: " + read_var_content_S1(seekedData, pathToNetCDF))
 
-def header_for_plot(pathToNetCDF)
+
 """
 Not really relevant for now I think
 """
@@ -68,7 +68,6 @@ def read_var_content(seekedData,pathToNetCDF,Time,dtype):
         return read_var_content_S1(seekedData, pathToNetCDF)
     else:
         return read_var_content_float64(seekedData,pathToNetCDF, Time)
-
 
 
 """
@@ -93,16 +92,6 @@ def read_netCDF_vars_info(pathToNetCDF):
     for i in range(len(dtypes)):
         if dtypes[i] == "S1":
             info += read_var_content_S1(vars[i], pathToNetCDF) + "\n"
-    return info
-
-def read_netCDF_vars_header(pathToNetCDF):
-    header = ""
-    vars = read_netCDF_variables(pathToNetCDF)
-    dtypes = find_dtype(pathToNetCDF)
-    for i in range(len(dtypes)):
-        if dtypes[i] == "S1":
-            info += read_var_content_S1(vars[i], pathToNetCDF) + "\n"
-
     return info
 
 """
@@ -148,6 +137,14 @@ def read_netCDF_dimension_for_var(var_name, pathToNetCDF):
     return dim_name
 
 
+def header_info_to_plot(path):
+    #get date of session
+    timePath = findCorrespondingTime(path)
+    time = combineYMDHMwithSec(timePath)
+    date = time[1].date()
+
+    station = read_var_content_S1("Station", path)
+    return ( "Station: " + station + "Date: " + date )
 
 #det get_info_from_var()
 

@@ -106,16 +106,6 @@ class Wrapper:
                 node = parent
                 parent = node.getParent()
             node_path = self.root_path + '/' + path
-<<<<<<< HEAD
-        #print("node_path:")
-        #print(node_path)
-        #print("long")
-        #print(re.sub(r'|/'.join(map(re.escape, Wrapper.scopes))+'/', '/', node_path))
-        #print("_____________________________________")
-        return re.sub(r'|/'.join(map(re.escape, Wrapper.scopes))+'/', '/', node_path)
-        #return node_path
-=======
-        print(node_path)
         last_folder = node_path.split('/')[-2].strip()
         if not last_folder in Wrapper.scopes:
             scope_string = []
@@ -126,7 +116,6 @@ class Wrapper:
             node_path = re.sub(r'(/)\1*', '/', node_path)
         print(node_path)
         return node_path
->>>>>>> c0e3ba631965938dc648f0cf534d2b2a9e910305
 
     def __str__(self):
         indent = " " * 4
