@@ -46,6 +46,18 @@ def read_var_content_S1(seekedData,pathToNetCDF):
                 head += letter
         return head
 
+def read_var_content_S1_header(seekedData, pathToNetCDF):
+    header = ""
+    if seekedData == 'Stub':
+        header.append("File name : " + read_var_content_S1(seekedData, pathToNetCDF))
+    if seekedData == 'CreateTime':
+        header.append("File Created: " + read_var_content_S1(seekedData, pathToNetCDF))
+    if seekedData == 'CreatedBy':
+        header.append("Author : " + read_var_content_S1(seekedData, pathToNetCDF))
+    if seekedData == 'Stub':
+        header.append("File name: " + read_var_content_S1(seekedData, pathToNetCDF))
+
+def header_for_plot(pathToNetCDF)
 """
 Not really relevant for now I think
 """
@@ -78,11 +90,20 @@ def read_netCDF_vars_info(pathToNetCDF):
     info = ""
     vars = read_netCDF_variables(pathToNetCDF)
     dtypes = find_dtype(pathToNetCDF)
-    for i in range(len(vars)):
+    for i in range(len(dtypes)):
         if dtypes[i] == "S1":
             info += read_var_content_S1(vars[i], pathToNetCDF) + "\n"
     return info
 
+def read_netCDF_vars_header(pathToNetCDF):
+    header = ""
+    vars = read_netCDF_variables(pathToNetCDF)
+    dtypes = find_dtype(pathToNetCDF)
+    for i in range(len(dtypes)):
+        if dtypes[i] == "S1":
+            info += read_var_content_S1(vars[i], pathToNetCDF) + "\n"
+
+    return info
 
 """
 Reads in the data type for alla variables in a netCDF file and returns as an vector
@@ -127,14 +148,6 @@ def read_netCDF_dimension_for_var(var_name, pathToNetCDF):
     return dim_name
 
 
-def header_info_to_plot(path):
-    #get date of session
-    timePath = findCorrespondingTime(path)
-    time = combineYMDHMwithSec(timePath)
-    date = time[1].date()
-
-    station = read_var_content_S1("station", path)
-    return ( "Station: " + station + "Date: " + date )
 
 #det get_info_from_var()
 

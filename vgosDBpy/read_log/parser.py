@@ -1,5 +1,6 @@
 import matplotlib.pyplot as plt
 import pandas as pd
+import numpy as np
 
 
 def printFile(file_path, number_of_lines):
@@ -13,6 +14,9 @@ def printFile(file_path, number_of_lines):
 
 
 def readMetData(file_path):
+    '''
+    Read meteorologic data from log files
+    '''
     Time = []
     Temp = []
     AtmPres = []
@@ -46,6 +50,9 @@ def readMetData(file_path):
     'Time': time_index}
 
 def readCableCal(file_path):
+    '''
+    Read cal-cable data from log files
+    '''
     Time = []
     CableCal = []
 
@@ -67,6 +74,43 @@ def readCableCal(file_path):
         CableCal = pd.Series(CableCal, index = time_index)
 
         return {'CableCal': CableCal, 'Time': time_index}
+
+
+def mergeTime(series1, series2, timedelta = pd.Timedelta(seconds = 3)):
+    '''
+    Merge two series with similar timestamps
+    '''
+    # Setup of variables
+    index1 = series1.index
+    index2 = series2.index
+    len1 = len(index1)
+    len2 = len(index2)
+    min_len = min(len1,len2)
+    max_len = max(len1,len2)
+    bool_arr_min = np.zeros((min_len))
+    bool_arr_max = np.zeros((max_len))
+
+    merged = False
+    while not merged:
+        for i in range(min_len):
+            for j in range(i+1, max_len):
+                if len1 > len2:
+                    if abs(index1[j] - index2[i]) < timedelta:
+                        bool_arr_min[i] = True
+                        bool_arr_max[j] = True
+                else:
+                    if abs(index1[i] - index2[j]) < timedelta:
+                        bool_arr_min[i] = True
+                        bool_arr_max[j] = True
+
+        if len(bool_arr_min[bool_arr_min == True]) == len(bool_arr_max[bool_arr_max == True]):
+            merged = True
+        else:
+             timedelta = timedelta - pd.Timedelta(seconds = 1)
+    if len1 < len2:
+        return index1[bool_arr_min == True]
+    else:
+        return index2[bool_arr_min == True]
 
 def createTimeStamp(date, time_stamp):
 
