@@ -16,7 +16,7 @@ class Wrapper:
     '''
 
     # Pre-defined scopes will have the folder made automatically
-    scopes = ['session','scan', 'observation', 'station']
+    scopes = ['session','scan','observation','station']
 
     def __init__(self, wrapper_path):
         '''
@@ -26,7 +26,7 @@ class Wrapper:
         '''
         path = wrapper_path.split('/')
         self.session_name = path[-2]
-        path.pop()
+        path.pop() #removes last which is the name of the wrapper file
         self.root_path = '/'.join(path)
         self.root = Node(self.session_name, None, self.root_path)
         self.pointer_map = {} # Keep track of pointers with a hash-map
@@ -110,7 +110,13 @@ class Wrapper:
                 node = parent
                 parent = node.getParent()
             node_path = self.root_path + '/' + path
+        #print("node_path:")
+        #print(node_path)
+        #print("long")
+        #print(re.sub(r'|/'.join(map(re.escape, Wrapper.scopes))+'/', '/', node_path))
+        #print("_____________________________________")
         return re.sub(r'|/'.join(map(re.escape, Wrapper.scopes))+'/', '/', node_path)
+        #return node_path
 
     def __str__(self):
         indent = " " * 4

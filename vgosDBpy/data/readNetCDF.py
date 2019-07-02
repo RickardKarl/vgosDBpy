@@ -127,6 +127,14 @@ def read_netCDF_dimension_for_var(var_name, pathToNetCDF):
     return dim_name
 
 
+def header_info_to_plot(path):
+    #get date of session
+    timePath = findCorrespondingTime(path)
+    time = combineYMDHMwithSec(timePath)
+    date = time[1].date()
+
+    station = read_var_content_S1("station", path)
+    return ( "Station: " + station + "Date: " + date )
 
 #det get_info_from_var()
 

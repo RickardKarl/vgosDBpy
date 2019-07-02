@@ -104,7 +104,7 @@ def possible_to_plot(pathToNetCDF):
     plotVars = []
     i=0;
     for i in range(len(dtypes)):#type in dtypes:
-        if dtypes[i] != "S1" && len (vars[i]) == len(time):
+        if dtypes[i] != "S1" and len (vars[i]) == len(time):
             plotVars.append(vars[i])
 
     return plotVars
@@ -117,27 +117,31 @@ def getDataFromVar(path, var):
         return(nc.variables[var][:])
 #det get_info_from_var()
 
+def get_header_to_plot(path):
+    time= get
+
 #path = "./../../../../Files/10JAN04XU/KOKEE/Met.nc"
 #print(read_netCDF_vars_info(path))
 
-path= "./../../../../Files/10JAN04XU/KOKEE/Met.nc"
+path= "./../../../../Files/10JAN04XU/KOKEE/TimeUTC.nc"
 #pathTime = "./../../../../Files/10JAN04XU/KOKEE/TimeUTC.nc"
 #YMDHMS= combineYMDHMwithSec(pathTime)
-#vars_in_file  = read_netCDF_vars(path)
-#dtypes = find_dtype(path)
-#print(vars_in_file)
-#print(dtypes)
+vars_in_file  = read_netCDF_variables(path)
+dtypes = find_dtype(path)
+print(vars_in_file)
+print(dtypes)
 #print(vars_in_file)
 #print(read_netCDF_vars_info(path))
 
 #print(dtypes)
 #print(vars_in_file)
 
-#for i in range(len(vars_in_file)):
-#with Dataset(path, "r", format="NETCDF4_CLASSIC") as nc:
-     #print(len(nc.variables[vars_in_file[12]]))
-     #print(len(nc.variables[vars_in_file[13]]))
-#     if dtypes[i] == "S1":
+for i in range(len(vars_in_file)):
+    with Dataset(path, "r", format="NETCDF4_CLASSIC") as nc:
+        print(len(nc.variables[vars_in_file[i]]))
+        #print(len(nc.variables[vars_in_file[13]]))
+        if dtypes[i] == "S1":
+            print(nc.variables[vars_in_file[i]][:])
     #else:
 #print(vars_in_file[StationList])
     #print(nc.variables["StationList"][:])

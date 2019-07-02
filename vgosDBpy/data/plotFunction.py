@@ -7,7 +7,7 @@ from matplotlib.dates import DateFormatter as DF
 
 from vgosDBpy.data.PathParser import findCorrespondingTime
 from vgosDBpy.data.combineYMDHMS import combineYMDHMwithSec
-from vgosDBpy.data.readNetCDF import getDataFromVar
+from vgosDBpy.data.readNetCDF import getDataFromVar, header_info_to_plot
 from vgosDBpy.data.getRealName import get_name_to_print as name, get_unit_to_print as unit
 """
 
@@ -25,7 +25,8 @@ def PlotToRickard(path, var):
     y = getDataFromVar(path, var)
 
     if len(time) == len(y):
-        plt.title("Plot " + name(path,var) + " versus Time ")
+        #plt.title("Plot " + name(path,var) + " versus Time ")
+        plt.title(header_info_to_plot(path) )
         plt.plot(time,y)
 
         #myFmt = md.DateFormatter("%H:%M:%S")
