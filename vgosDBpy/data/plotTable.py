@@ -5,6 +5,8 @@ import matplotlib.dates as md
 import numpy as np
 import datetime as dt
 import pandas as pd
+#import qgrid
+
 
 from matplotlib.dates import DateFormatter as DF
 from vgosDBpy.data.PathParser import findCorrespondingTime
@@ -27,7 +29,6 @@ Default: shows path´s var against time.
 """
 def tableFunction(path, var):
 
-
     fig, ax = plt.subplots()
 
     # hide axes
@@ -35,17 +36,22 @@ def tableFunction(path, var):
     ax.axis('off')
     ax.axis('tight')
 
+    #collect all data
     timePath = findCorrespondingTime(path)
     time = combineYMDHMwithSec(timePath)
     y = getDataFromVar(path, var)
     index = list(range(0,len(time)))
 
     data = {'Index': index , 'Time':time , name(var): y }
-    #col = ['Index', 'Time', name(var)]
-    df = pd.DataFrame(data)
-    ax.table(cellText=df.values, colLabels=df.columns, loc='center')
 
-    fig.tight_layout()
+    df = pd.DataFrame(data)
+    def display_():
+        pd.set_option("display.max_rows", None)
+        from IPython.core.display import display
+        display(df)
+    ax.table(cellText=df.values, colLabels=df.columns, loc='center')
+    #display_()
+    #fig.tight_layout()
 
     plt.show()
 

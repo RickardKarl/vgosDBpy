@@ -8,7 +8,7 @@ from matplotlib.dates import DateFormatter as DF
 from vgosDBpy.data.PathParser import findCorrespondingTime
 from vgosDBpy.data.combineYMDHMS import combineYMDHMwithSec
 from vgosDBpy.data.readNetCDF import getDataFromVar
-from vgosDBpy.data.getRealName import get_name_to_print as name
+from vgosDBpy.data.getRealName import get_name_to_print as name, get_unit_to_print as unit
 """
 
 from PathParser import findCorrespondingTime
@@ -25,16 +25,17 @@ def PlotToRickard(path, var):
     y = getDataFromVar(path, var)
 
     if len(time) == len(y):
-        plt.title("Plot " + name(var) + " versus Time ")
+        plt.title("Plot " + name(path,var) + " versus Time ")
         plt.plot(time,y)
 
         #myFmt = md.DateFormatter("%H:%M:%S")
         #plt.xticks( rotation= 80 )
         #plt.xlabel.set_major_formatter(myFmt)
 
-        plt.xlabel('Time')
-        plt.ylabel(name(var))
+        plt.xlabel('Time H:M:S')
+        plt.ylabel(name(path,var)+unit(path,var))
         plt.show()
+        plt.tight_layout()
     else:
         print("Dimensions do not agree")
 
@@ -47,18 +48,19 @@ def PlotToRickard2yAxis(path1, var1, path2, var2):
         fig, ax1 = plt.subplots()
         color = 'tab:red'
         ax1.set_xlabel('time')
-        ax1.set_ylabel(name(var1))
+        ax1.set_ylabel(name(path1,var1)+ unit(path1,var1))
         ax1.plot(time, y1, color=color)
         ax1.tick_params(axis=var1, labelcolor=color)
         ax2 = ax1.twinx()  # instantiate a second axes that shares the same x-axis
         color = 'tab:blue'
         #ax2.set_ylabel('sin', color=color)  # we already handled the x-label with ax1
         ax2.plot(time, y2, color=color)
-        ax2.set_ylabel(name(var2))
+        ax2.set_ylabel(name(path2,var2)+ unit(path2,var2))
         ax2.tick_params(axis=var2, labelcolor=color)
             #plt.plot(xAxis,yAxis)
-        plt.title("Plot" +name(var1) + "and " + name(var2) + "over time ")
+        plt.title("Plot " +name(path1,var1) + "and " + name(path2, var2) + " over time ")
         plt.show()
+        plt.tight_layout()
     else:
         print("Dimensions do not agree")
 
