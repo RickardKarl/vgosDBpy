@@ -94,8 +94,6 @@ class Parser:
 
                 # Checks if line is giving a netCDF pointer
                 elif line.endswith('.nc'):
-                    print(line)
-                    print(active_folder)
                     file_name = line.split()[-1]
                     self.wrapper.addNode(file_name, active_folder, 'netCDF')
                 else:
