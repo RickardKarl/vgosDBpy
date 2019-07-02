@@ -2,7 +2,7 @@
 import sys
 from PySide2.QtWidgets import QApplication
 from vgosDBpy.view.app import App
-from vgosDBpy.read_log.parser import readMetData, readCableCal, printFile
+from vgosDBpy.read_log.parser import readMetData, readCableCal, printFile, mergeSeries
 from vgosDBpy.read_log.plotter import plotSeries
 
 if __name__ == '__main__':
@@ -29,3 +29,5 @@ if __name__ == '__main__':
 
         print(len(data['CableCal']))
         print(len(metData['AtmPres']))
+
+        mergeSeries(metData['AtmPres'], data['CableCal'])
