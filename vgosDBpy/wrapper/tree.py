@@ -114,7 +114,6 @@ class Wrapper:
                 #
             node_path = re.sub(r'|'.join(scope_string), '/', node_path)
             node_path = re.sub(r'(/)\1*', '/', node_path)
-        print(node_path)
         return node_path
 
     def __str__(self):
