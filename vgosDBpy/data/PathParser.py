@@ -38,9 +38,7 @@ class PathParser():
         return False
 
 def findCorrespondingTime(path):
-    print(path)
     parts = path.split("/")
     parts[-1] = 'TimeUTC.nc'
     time_path = '/'.join(parts)
-    print(time_path)
     return time_path
