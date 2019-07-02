@@ -2,7 +2,7 @@
 import sys
 from PySide2.QtWidgets import QApplication
 from vgosDBpy.view.app import App
-from vgosDBpy.read_log.parser import readData, printFile
+from vgosDBpy.read_log.parser import readMetData, readCableCal, printFile
 from vgosDBpy.read_log.plotter import plotSeries
 
 if __name__ == '__main__':
@@ -21,6 +21,11 @@ if __name__ == '__main__':
 
     elif sys.argv[1].endswith('.log'):
         printFile(sys.argv[1], 1000)
-        data = readData(sys.argv[1])
+        data = readCableCal(sys.argv[1])
+        metData = readMetData(sys.argv[1])
 
-        plotSeries(data['AtmPres'])
+        print(data['CableCal'])
+        print(metData['AtmPres'])
+
+        print(len(data['CableCal']))
+        print(len(metData['AtmPres']))

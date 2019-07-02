@@ -12,12 +12,11 @@ def printFile(file_path, number_of_lines):
                 break
 
 
-def readData(file_path):
+def readMetData(file_path):
     Time = []
     Temp = []
     AtmPres = []
     RelHum = []
-    CableCal = []
 
     with open(file_path,'r') as src:
         for line in src:
@@ -36,20 +35,38 @@ def readData(file_path):
                 AtmPres.append(data[1])
                 RelHum.append(data[2])
 
-            elif '/cable/' in data:
-                data = data.split('/')[-1]
-                CableCal.append(float(data))
 
+    # Turn data into time series
     time_index = pd.DatetimeIndex(Time)
     Temp = pd.Series(Temp, index = time_index)
     AtmPres = pd.Series(AtmPres, index = time_index)
     RelHum = pd.Series(RelHum, index = time_index)
 
-    print(len(CableCal))
-    #CableCal = pd.Series(CableCal, index = time_index)
-
-    return {'Temp':Temp, 'AtmPres': AtmPres, 'RelHum': RelHum, 'CableCal': CableCal,
+    return {'Temp':Temp, 'AtmPres': AtmPres, 'RelHum': RelHum,
     'Time': time_index}
+
+def readCableCal(file_path):
+    Time = []
+    CableCal = []
+
+    with open(file_path,'r') as src:
+        for line in src:
+            # Split string
+            line = line.split('.')
+            date = line[0:2]
+            time_stamp = line[2]
+            data = '.'.join(line[3:])
+
+            if '/cable/' in data:
+                Time.append(createTimeStamp(date, time_stamp))
+
+                data = data.split('/')[-1]
+                CableCal.append(float(data))
+
+        time_index = pd.DatetimeIndex(Time)
+        CableCal = pd.Series(CableCal, index = time_index)
+
+        return {'CableCal': CableCal, 'Time': time_index}
 
 def createTimeStamp(date, time_stamp):
 

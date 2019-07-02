@@ -1,6 +1,5 @@
 import matplotlib.pyplot as plt
 import pandas as pd
-from vgosDBpy.read_log.parser import readData
 
 
 def plotSeries(series):
