@@ -142,9 +142,11 @@ def header_info_to_plot(path):
     timePath = findCorrespondingTime(path)
     time = combineYMDHMwithSec(timePath)
     date = time[1].date()
+    date1= time[1].date
+
 
     station = read_var_content_S1("Station", path)
-    #return ( "Station: " + station + "Date: " + date.strftime('ASCII')  )
+    return ( station + "   " + str(date) )
 
 #det get_info_from_var()
 
