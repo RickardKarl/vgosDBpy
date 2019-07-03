@@ -38,7 +38,7 @@ class TableModel(QStandardItemModel):
         Resets content of the table without removing the header
         (Has to be done since clear otherwise would remove the header)
         '''
-        self.clear
+        self.clear()
         self.setHorizontalHeaderLabels(self.header)
 
     def updateVariables(self, item):

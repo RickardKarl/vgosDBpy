@@ -4,22 +4,6 @@
 import netCDF4 as nc
 import matplotlib.pyplot as plt
 
-import pprint # For debugging
-pp = pprint.PrettyPrinter()
-
-
-
-
-station = 'WETTZELL'
-
-file = 'Met.nc'
-
-new_file = 'Met_v0001.nc'
-
-data = 'AtmPres' # RelHum, AtmPres, TempC
-
-path = '../../Data/10JAN14XE/' + station + '/'
-
 
 '''
 TODO:
@@ -81,14 +65,3 @@ def update_netCDF_variable(file_name_path, new_file_name_path, variables):
 
             # Copy variable attributes
             dst[name].setncatts(src[name].__dict__)
-
-
-var = get_netCDF_variable(path+file,data)
-var[-1] = -1
-var_dic = {data: var}
-
-update_netCDF_variable(path+file, path+new_file, var_dic)
-
-with nc.Dataset(path+file) as file, nc.Dataset(path+new_file) as new_file:
-    print(file.getattr()
-    #print(new_file)

@@ -37,7 +37,7 @@ def readMetData(file_path):
                 Time.append(createTimeStamp(date,time_stamp))
                 Temp.append(data[0])
                 AtmPres.append(data[1])
-                RelHum.append(data[2])
+                RelHum.append(data[2]/100)
 
 
     # Turn data into time series

@@ -2,6 +2,7 @@ import importlib.util
 import os
 from PySide2.QtGui import QStandardItemModel, QStandardItem
 from PySide2 import QtCore
+
 from vgosDBpy.wrapper.parser import Parser
 from vgosDBpy.wrapper.tree import Node
 from vgosDBpy.data.readNetCDF import read_netCDF_variables

@@ -2,9 +2,7 @@ from PySide2.QtWidgets import QApplication, QTreeView, QAbstractItemView, QWidge
 from PySide2 import QtCore
 
 from vgosDBpy.view.widgets import QWrapper, VariableTable
-
 from vgosDBpy.data.readNetCDF import read_netCDF_variables, read_netCDF_vars_info, read_netCDF_dimension_for_var
-
 from vgosDBpy.data.plotFunction import PlotToRickard, PlotToRickard2yAxis
 from vgosDBpy.data.plotTable import tableFunction, tableFunction2data
 
