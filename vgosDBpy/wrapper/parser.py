@@ -71,7 +71,6 @@ class Parser:
                 elif line.startswith('end'):
                     keyword = line.split()[1]
                     self.removeScope(keyword)
-                    #active_folder = None
 
                 # Check for setting the default_dir (active_folder)
                 elif line.startswith('default_dir'):
