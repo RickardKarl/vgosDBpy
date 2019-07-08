@@ -95,12 +95,8 @@ class Parser:
                 elif line.endswith('.nc'):
                     file_name = line.split()[-1]
                     self.wrapper.addNode(file_name, active_folder, 'netCDF')
+
                 else:
                     pass
                     #print(line) # For debugging
         return self.wrapper
-
-
-if __name__ == "__main__":
-    p = Parser()
-    w = p.parseWrapper(wrapper_path)
