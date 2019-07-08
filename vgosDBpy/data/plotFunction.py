@@ -1,7 +1,6 @@
 import matplotlib.pyplot as plt
 import matplotlib.dates as md
 import numpy as np
-import datetime as dt
 import pandas as pd
 from matplotlib.dates import DateFormatter as DF
 
@@ -19,7 +18,8 @@ from getRealName import get_name_to_print as name
 import os
 
 # default plot mot tiden
-def PlotToRickard(path, var):
+def plotVariable(path, var, figure):
+    ax = figure.add_subplot(1,1,1)
     timePath = findCorrespondingTime(path)
     time_plot= []
     y = getDataFromVar(path, var)
@@ -28,10 +28,10 @@ def PlotToRickard(path, var):
         #time_plot=[]
         for t in time:
             time_plot.append( t.time() )
-            plt.title(header_info_to_plot(path)+ "\n "  "Plot " + name(path,var) + " versus Time " )
+            ax.set_title(header_info_to_plot(path)+ "\n " + "Plot " + name(path,var) + " versus Time " )
     else:
         time_plot = range(0,len(y))
-        plt.title(header_info_to_plot(path)+ "\n "  "Plot " + name(path,var) )
+        ax.set_title(header_info_to_plot(path)+ "\n " + "Plot " + name(path,var) )
 
     if len(time) == len(y):
         #plt.title("Plot " + name(path,var) + " versus Time ")
@@ -45,18 +45,21 @@ def PlotToRickard(path, var):
         #plt.xticks( rotation= 80 )
         #plt.xlabel.set_major_formatter(myFmt)
 
-        plt.plot(time_plot,y)
-        plt.xlabel('Time H:M:S')
-        plt.ylabel(name(path,var)+unit(path,var))
-        plt.show()
-        plt.tight_layout()
+        ax.plot(time_plot,y)
+        ax.set_xlabel('Time H:M:S')
+        ax.set_ylabel(name(path,var)+unit(path,var))
+        #plt.show()
+        #plt.tight_layout()
+
+        return ax, pd.Series(y, index = time_plot)
     else:
         print("Dimensions do not agree")
 
-def PlotToRickard2yAxis(path1, var1, path2, var2):
+
+def plotVariable2yAxis(path1, var1, path2, var2, fig):
     timePath = findCorrespondingTime(path1)
     time= combineYMDHMwithSec(timePath)
-    print(len(time))
+
     time_plot= []
     i=0
     for t in time:
@@ -64,7 +67,7 @@ def PlotToRickard2yAxis(path1, var1, path2, var2):
     y1 = getDataFromVar(path1, var1)
     y2 = getDataFromVar(path2, var2)
     if len(time) == len(y1) and len(time) == len(y2):
-        fig, ax1 = plt.subplots()
+        ax1 = fig.add_subplot(1,1,1)
         color = 'tab:red'
         ax1.set_xlabel('Time H:M:S')
         ax1.set_ylabel(name(path1,var1)+ unit(path1,var1))
@@ -79,8 +82,8 @@ def PlotToRickard2yAxis(path1, var1, path2, var2):
         ax2.tick_params(axis=var2, labelcolor=color)
             #plt.plot(xAxis,yAxis)
         plt.title(header_info_to_plot(path1)+ "\nPlot " +name(path1,var1) + "and " + name(path2, var2) + " over time ")
-        plt.show()
-        plt.tight_layout()
+
+        return ax1, ax2
     else:
         print("Dimensions do not agree")
 

@@ -29,7 +29,7 @@ class Wrapper:
         path.pop() #removes last which is the name of the wrapper file
         self.root_path = '/'.join(path)
         self.root = Node(self.session_name, None, self.root_path)
-        self.pointer_map = {} # Keep track of pointers with a hash-map
+        self.pointer_map = {} # Keep track of pointers with a map
 
         for s in Wrapper.scopes:
             self.addNode(s, type = 'folder')
@@ -57,6 +57,7 @@ class Wrapper:
             new_node = NetCDF_File(name, parent_node, path)
         else:
             raise InvalidArgument('Invalid type in', type)
+            
         parent_node.addChildNode(new_node)
         self.addPointer(new_node)
 
@@ -281,7 +282,7 @@ class PointerMap():
         node_name [string] is the name of the node
         parent_name [string] is the name of the parent
 
-        Returns hash key [string]
+        Returns key [string]
         '''
         return node_name + '_' + parent_name
 
@@ -290,6 +291,6 @@ class PointerMap():
         node [Node]
         parent [Node]
 
-        Returns hash key [string]
+        Returns key [string]
         '''
         return getKey(node.getName(), parent.getName())

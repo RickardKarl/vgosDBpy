@@ -2,5 +2,6 @@ matplotlib
 numpy
 pandas
 netCDF4
+PySide2
 pprint
 prettytable
