@@ -6,11 +6,9 @@ from numpy.random import uniform
 
 from vgosDBpy.data.combineYMDHMS import combineYMDHMwithSec
 from vgosDBpy.data.PathParser import findCorrespondingTime
-"""
-from combineYMDHMS import combineYMDHMwithSec
-from PathParser import findCorrespondingTime
+
 import os
-"""
+
 
 """
 wierd name, Takes in a path to netCDf file and a name to a variable in it
