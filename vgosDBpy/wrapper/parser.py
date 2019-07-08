@@ -1,21 +1,8 @@
-
 from os import getcwd
 import sys
-import pprint
 import importlib
 from vgosDBpy.wrapper.tree import Wrapper
 
-pp = pprint.PrettyPrinter()
-'''
-def import_func(file, path):
-    spec = importlib.util.spec_from_file_location(file, path)
-    pack = importlib.util.module_from_spec(spec)
-    spec.loader.exec_module(pack)
-    return pack
-
-Wrapper = import_func('tree', '/Users/rickardkarlsson/Documents/NVI/vgosDBpy-git/vgosDBpy/wrapper/tree.py').Wrapper
-#wrapper_path = getcwd() + '/' + sys.argv[1]
-'''
 class Parser:
     '''
     Class for parsing wrapper files (*.wrp) in vgosDB format
@@ -84,7 +71,6 @@ class Parser:
                 elif line.startswith('end'):
                     keyword = line.split()[1]
                     self.removeScope(keyword)
-                    #active_folder = None
 
                 # Check for setting the default_dir (active_folder)
                 elif line.startswith('default_dir'):
@@ -96,12 +82,8 @@ class Parser:
                 elif line.endswith('.nc'):
                     file_name = line.split()[-1]
                     self.wrapper.addNode(file_name, active_folder, 'netCDF')
+
                 else:
                     pass
                     #print(line) # For debugging
         return self.wrapper
-
-
-if __name__ == "__main__":
-    p = Parser()
-    w = p.parseWrapper(wrapper_path)

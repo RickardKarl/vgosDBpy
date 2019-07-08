@@ -23,5 +23,7 @@ if __name__ == '__main__':
 
         data = readCableCal(sys.argv[1])
         metData = readMetData(sys.argv[1])
+        print(data['CableCal'])
         print(metData['Temp'])
-        plotSeries(metData['Temp'])
+        data = mergeSeries(data['CableCal'], metData['Temp'], return_right = False)
+        plotSeries(data)

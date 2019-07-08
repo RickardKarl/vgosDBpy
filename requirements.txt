@@ -1,0 +1,6 @@
+matplotlib
+numpy
+pandas
+netCDF4
+pprint
+prettytable
