@@ -18,13 +18,4 @@ def get_name_to_print(path, var):
 def get_unit_to_print(path,var):
     with Dataset(path, "r", format="NETCDF4") as nc:
         unit=nc.variables[var].Units
-        if var == 'AtmPres':
-            return  "[" +unit+ "]"
-        elif var == 'TempC':
-            return " [" +unit+ "]"
-        elif var == 'RealHum':
-            return " [" +unit+ "]"
-        elif var == 'Cal-Cabel':
-            return " [" +unit+ "]"
-        else:
-            return var
+        return "  ["+unit+"]" 

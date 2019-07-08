@@ -21,15 +21,21 @@ import os
 # default plot mot tiden
 def PlotToRickard(path, var):
     timePath = findCorrespondingTime(path)
-    time = combineYMDHMwithSec(timePath)
+    time_plot= []
     y = getDataFromVar(path, var)
-    time_plot=[]
-    for t in time:
-        time_plot.append( t.time() )
+    if timePath != "":
+        time = combineYMDHMwithSec(timePath)
+        #time_plot=[]
+        for t in time:
+            time_plot.append( t.time() )
+            plt.title(header_info_to_plot(path)+ "\n "  "Plot " + name(path,var) + " versus Time " )
+    else:
+        time_plot = range(0,len(y))
+        plt.title(header_info_to_plot(path)+ "\n "  "Plot " + name(path,var) )
 
     if len(time) == len(y):
         #plt.title("Plot " + name(path,var) + " versus Time ")
-        plt.title(header_info_to_plot(path)+ "\n "  "Plot " + name(path,var) + " versus Time " )
+        #plt.title(header_info_to_plot(path)+ "\n "  "Plot " + name(path,var) + " versus Time " )
 
         #myFmt = md.DateFormatter("%H:%M:%S")
         plt.xticks( rotation= 80 )

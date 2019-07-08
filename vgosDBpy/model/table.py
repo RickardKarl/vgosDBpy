@@ -1,7 +1,7 @@
 from PySide2.QtGui import QStandardItemModel
 from PySide2 import QtCore
 from vgosDBpy.model.standardtree import Variable
-from vgosDBpy.data.readNetCDF import read_netCDF_variables, read_netCDF_dimension_for_var
+from vgosDBpy.data.readNetCDF import read_netCDF_variables, read_netCDF_dimension_for_var, is_possible_to_plot
 
 class TableModel(QStandardItemModel):
     '''
@@ -50,9 +50,9 @@ class TableModel(QStandardItemModel):
         self.reset()
         var_list = read_netCDF_variables(item.getPath())
         i = 0
-
         # Puts variable in first column and associated dimension in another
         for vars in var_list:
-            self.setItem(i,0, Variable(vars,item))
-            self.setItem(i,1,Variable(read_netCDF_dimension_for_var(vars, item.getPath()),item))
-            i += 1
+            if is_possible_to_plot(item.getPath(), vars):
+                self.setItem(i,0, Variable(vars,item))
+                #self.setItem(i,1,Variable(read_netCDF_dimension_for_var(vars, item.getPath()),item))
+                i += 1

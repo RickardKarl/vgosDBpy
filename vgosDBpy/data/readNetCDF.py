@@ -111,6 +111,7 @@ def find_dtype(pathToNetCDF):
 returns all variables in a netCDF file that can be plotted versus time, mening they have same Dimensions
 and data type is not S1
 """
+
 def possible_to_plot(pathToNetCDF):
     #pathh = "./../../../../Files/10JAN04XU/KOKEE/Met.nc"
     dtypes = find_dtype(pathToNetCDF)
@@ -124,6 +125,25 @@ def possible_to_plot(pathToNetCDF):
     return plotVars
 
 """
+currently only returning true if dimension is numscan
+"""
+def is_possible_to_plot(path, var):
+    #dtypes = find_dtype(pathToNetCDF)
+    #vars = read_netCDF_vars(pathToNetCDF)
+    #timePath = findCorrespondingTime(pathToNetCDF)
+    #plotVars = []
+    #with Dataset(path, "r", format="NETCDF4_CLASSIC") as nc:
+    dimension = read_netCDF_dimension_for_var(var, path)
+    data_type = get_dtype_for_var(path,var)
+    if dimension == "NumScans" and data_type != "S1" :
+        return True
+    else:
+        return False
+    #for i in range(len(dtypes)):#type in dtypes:
+    #    if dtypes[i] != "S1" and len (vars[i]) == len(time):
+    #        plotVars.append(vars[i])
+    #return plotVars
+"""
 return an array of the data assosiated with an variable
 """
 def getDataFromVar(path, var):
@@ -136,14 +156,16 @@ def read_netCDF_dimension_for_var(var_name, pathToNetCDF):
         dim_name = var.get_dims()[0].name
     return dim_name
 
+def get_dtype_for_var(path, var):
+    with Dataset(path, "r", format = "NETCDF4_CLASSIC" ) as nc:
+        return nc.variables[var].dtype
+
 
 def header_info_to_plot(path):
     #get date of session
     timePath = findCorrespondingTime(path)
     time = combineYMDHMwithSec(timePath)
     date = time[1].date()
-    date1= time[1].date
-
 
     station = read_var_content_S1("Station", path)
     return ( station + "   " + str(date) )

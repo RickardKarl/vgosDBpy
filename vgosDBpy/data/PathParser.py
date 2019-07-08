@@ -3,6 +3,7 @@ reads in a path and get information from it
 """
 
 "./../../../../Files/10JAN04XU/TimeUTC.nc"
+import os
 class PathParser():
     path = ""
     parts =[]
@@ -38,7 +39,9 @@ class PathParser():
         return False
 
 def findCorrespondingTime(path):
-    parts = path.split("/")
-    parts[-1] = 'TimeUTC.nc'
-    time_path = '/'.join(parts)
+    time_path = ""
+    if os.path.isfile(path):
+        parts = path.split("/")
+        parts[-1] = 'TimeUTC.nc'
+        time_path = '/'.join(parts)
     return time_path
