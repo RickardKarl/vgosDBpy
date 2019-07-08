@@ -76,11 +76,10 @@ def readCableCal(file_path):
         return {'CableCal': CableCal, 'Time': time_index}
 
 
-def mergeSeries(series1, series2, timedelta = pd.Timedelta(seconds = 10), left_index = True):
+def mergeSeries(series1, series2, timedelta = pd.Timedelta(seconds = 5), return_left = True,
+                return_right = True):
     '''
     Merge two series with similar timestamps
-
-    NOT WORKING
     '''
     # Setup of variables
     index1 = series1.index
@@ -90,39 +89,47 @@ def mergeSeries(series1, series2, timedelta = pd.Timedelta(seconds = 10), left_i
     min_len = min(len1,len2)
     max_len = max(len1,len2)
 
-    print('Starting merging')
+    # Start merging
     merged = False
     while not merged:
         bool_arr_min = np.zeros((min_len))
         bool_arr_max = np.zeros((max_len))
 
         for i in range(min_len):
-            for j in range(i+1, max_len):
-                if len1 > len2:
-                    if abs(index1[j] - index2[i]) < timedelta:
-                        bool_arr_min[i] = True
-                        bool_arr_max[j] = True
-                else:
+            for j in range(i, max_len):
+                if len1 < len2:
                     if abs(index1[i] - index2[j]) < timedelta:
                         bool_arr_min[i] = True
                         bool_arr_max[j] = True
+                else:
+                    if abs(index1[j] - index2[i]) < timedelta:
+                        bool_arr_min[i] = True
+                        bool_arr_max[j] = True
 
+        # Condition for succesful merge
         if len(bool_arr_min[bool_arr_min == True]) == len(bool_arr_max[bool_arr_max == True]):
             merged = True
-            print('Merge succesful with largest time difference between series is', timedelta.seconds, 'seconds')
+        # Checks if merge failed, will return zero then
         elif timedelta < pd.Timedelta(milliseconds = 1):
-            print('Merge failed')
-            return 0
+            return None
+        # Make time restriction harder if merge not succesful
         else:
              timedelta = timedelta - pd.Timedelta(seconds = 1)
 
-    print('Returning merge for equal timestamps within ' + str(timedelta))
-
     if len1 < len2:
-        return None
+        series1 = pd.Series(series1[bool_arr_min == True], index = index1[bool_arr_min == True])
+        series2 = pd.Series(series2[bool_arr_max == True], index = index2[bool_arr_max == True])
+    else:
+        series1 = pd.Series(series1[bool_arr_max == True], index = index1[bool_arr_max == True])
+        series2 = pd.Series(series2[bool_arr_min == True], index = index2[bool_arr_min == True])
+    if return_left and return_right:
+        return series1, series2
+    elif return_left:
+        return series1
+    elif return_right:
+        return series2
     else:
         return None
-    return merged_series
 
 def createTimeStamp(date, time_stamp):
 
