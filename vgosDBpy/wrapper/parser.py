@@ -1,20 +1,8 @@
 from os import getcwd
 import sys
-import pprint
 import importlib
 from vgosDBpy.wrapper.tree import Wrapper
 
-pp = pprint.PrettyPrinter()
-'''
-def import_func(file, path):
-    spec = importlib.util.spec_from_file_location(file, path)
-    pack = importlib.util.module_from_spec(spec)
-    spec.loader.exec_module(pack)
-    return pack
-
-Wrapper = import_func('tree', '/Users/rickardkarlsson/Documents/NVI/vgosDBpy-git/vgosDBpy/wrapper/tree.py').Wrapper
-#wrapper_path = getcwd() + '/' + sys.argv[1]
-'''
 class Parser:
     '''
     Class for parsing wrapper files (*.wrp) in vgosDB format
