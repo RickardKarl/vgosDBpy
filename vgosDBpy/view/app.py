@@ -1,8 +1,9 @@
 from PySide2.QtWidgets import QApplication, QTreeView, QAbstractItemView, QWidget, QTextEdit, QPushButton, QVBoxLayout, QGridLayout
 from PySide2 import QtCore
 
-from vgosDBpy.view.widgets import QWrapper, VariableTable, PlotFigure, DataTable
+from vgosDBpy.view.widgets import QWrapper, VariableTable, DataTable
 from vgosDBpy.data.readNetCDF import read_netCDF_variables, read_netCDF_vars_info, read_netCDF_dimension_for_var
+from vgosDBpy.view.plot_widget import PlotFigure, PlotToolBox, AxesToolBox
 
 
 class App(QWidget):
@@ -37,34 +38,33 @@ class App(QWidget):
         # Buttons
         # Plot and display table
         self.button_plot = QPushButton('& Plot',self)
-        self.button_table = QPushButton('& Table',self)
+        #self.button_table = QPushButton('& Table',self)
 
         # Button event
         self.button_plot.clicked.connect(self._plotbutton)
-        self.button_table.clicked.connect(self._tablebutton)
 
-        # Matplotlib widget
+        # Matplotlib widget and toolbox
         self.plot_widget = PlotFigure(parent = self)
+        self.plot_toolbox = AxesToolBox(self, self.plot_widget)
 
 
         # Layout
         layout = QGridLayout()
         layout.addWidget(self.treeview, 0, 0)
         layout.addWidget(self.plot_widget, 0, 1)
-        layout.addWidget(self.text, 0, 2)
+        layout.addWidget(self.data_table, 0, 2)
 
-        layout.addWidget(self.table, 2, 0)
-        layout.addWidget(self.data_table, 2, 1)
+        layout.addWidget(self.table, 1, 0)
+        layout.addWidget(self.plot_toolbox, 1, 1)
+        layout.addWidget(self.text, 1, 2)
 
         layout.addWidget(self.button_plot, 3, 0)
-        layout.addWidget(self.button_table, 4, 0)
-
-
 
         self.setLayout(layout)
 
         # Listeners
         self.treeview.selectionModel().selectionChanged.connect(self._showItemInfo)
+        self.plot_toolbox.check_line.stateChanged.connect(self.plot_toolbox.showLine)
 
     def _getSelected(self, widget):
         '''
@@ -99,6 +99,7 @@ class App(QWidget):
 
             self.plot_widget.updateFigure(items)
 
+        self._tablebutton()
 
     def _tablebutton(self):
         '''

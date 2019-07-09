@@ -1,18 +1,11 @@
 
-from PySide2.QtWidgets import QTreeView, QTableView, QAbstractItemView, QTextEdit, QPushButton, QDialog, QVBoxLayout
+from PySide2.QtWidgets import QTreeView, QTableView, QAbstractItemView
 
 from vgosDBpy.model.standardtree import TreeModel
 from vgosDBpy.model.table import TableModel
-from vgosDBpy.data.plotFunction import plotVariable, plotVariable2yAxis
-from vgosDBpy.editing.select_data import getData
-from vgosDBpy.data.PathParser import findCorrespondingTime
-from vgosDBpy.data.combineYMDHMS import combineYMDHMwithSec
-from vgosDBpy.data.readNetCDF import getDataFromVar
 from vgosDBpy.data.plotTable import tableFunction, tableFunction2data
 
-from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
-from matplotlib.figure import Figure
-from matplotlib.widgets import RectangleSelector
+
 
 '''
 Will soon enough be moved to view folder
@@ -95,6 +88,11 @@ class VariableTable(QTableView):
 
 
 class DataTable(QTableView):
+    '''
+    Displays data from TableModel which has values from a variable together with timestamp
+
+    parent [QWidget] is the parent widget
+    '''
 
     def __init__(self, parent = None):
         super(DataTable, self).__init__(parent)
@@ -103,8 +101,15 @@ class DataTable(QTableView):
         self.model = TableModel(['Index', 'Value'], parent)
         self.setModel(self.model)
 
-
     def updateData(self, items):
+        '''
+        Updates the data in the table
+
+        items [list of QNodeItems] contains the nodes which points to the netCDF variables
+        that should be displayed
+        '''
+
+        # Retrieve values for variables
         if len(items) == 1:
             path = items[0].getPath()
             var = items[0].labels
@@ -120,67 +125,9 @@ class DataTable(QTableView):
         else:
             raise ValueError('Argument items contains wrong number of items, should be one or two.')
 
-
+        # Updates model
         self.model.updateData(data, items)
 
         # Updates size of column when content is changed
         for i in range(self.model.columnCount()):
             self.resizeColumnToContents(i)
-
-
-class PlotFigure(FigureCanvas):
-
-    def __init__(self, figure = Figure(tight_layout = True), parent = None):
-        self.figure = figure
-
-        super(PlotFigure, self).__init__(self.figure)
-
-
-        #self.figure.canvas.mpl_connect('pick_event', self.selector)
-        # To be initiated
-        self.ax = None
-        self.selector = None
-        self.data = None
-
-        self.figure.canvas.mpl_connect('button_release_event', self.selection_event)
-
-        self.draw()
-
-    def selection_event(self, event):
-        print(self.selector, 'printed by selection_event')
-
-    def selector_callback(self, eclick, erelease):
-        #'eclick and erelease are the press and release events'
-        x1, y1 = eclick.xdata, eclick.ydata
-        x2, y2 = erelease.xdata, erelease.ydata
-
-        getData(x1, x2, y1, y2, self.data)
-
-    def updatePlot(self):
-        # Set picker tolerance
-        if type(self.ax) == 'tuple':
-            for a in self.ax:
-                a.set_picker(5)
-        else:
-            self.ax.set_picker(5)
-
-        # Set selector
-        self.selector = RectangleSelector(self.ax, self.selector_callback, drawtype='box')
-
-    def updateFigure(self, items):
-        # Discards the old graph
-        self.figure.clear()
-
-        # Add new axis
-        if len(items) == 1:
-            self.ax, self.data = plotVariable(items[0].getPath(), items[0].labels, self.figure)
-
-        elif len(items) == 2:
-            self.ax = plotVariable2yAxis(items[0].getPath(), items[0].labels, items[1].getPath(), items[1].labels, self.figure)
-
-        else:
-            raise ValueError('Argument items contains wrong number of items, should be one or two.')
-
-        # refresh canvas
-        self.updatePlot()
-        self.draw()

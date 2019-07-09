@@ -185,7 +185,7 @@ class DataValue(QNodeItem):
             return self.value
 
         elif role == QtCore.Qt.EditRole:
-            return self.node
+            return self.value
 
         else:
             return None
