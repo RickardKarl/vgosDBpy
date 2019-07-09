@@ -43,6 +43,8 @@ class TableModel(QStandardItemModel):
 
     def updateVariables(self, item):
         '''
+        USED BY VariableTable
+
         Resets content and then replaces it with items in the given list
 
         item [QStandardItems] contains the item which replaces previous content
@@ -59,16 +61,17 @@ class TableModel(QStandardItemModel):
 
 
     def updateData(self, data, items):
+        '''
+        USED BY DataTable
+
+        Resets content and then replaces it with data
+
+        data [dict] which contains data to fill the table with. E.g. {'time': time, "var_data": var_data}
+        item [QStandardItems] contains the item which contains the variable with the data
+        '''
+
         names = list(data)
 
-        '''
-        self.setRowCount(len(data['Time']))
-        self.setColumnCount(len(names))
-        self.setColumnWidth(0, 180) # extra long to fit timeStamp
-
-        for i in range(1,len(names)):
-            self.setColumnWidth(i, 80)
-        '''
         self.reset()
 
         for i in range(0,len(data[names[0]])):

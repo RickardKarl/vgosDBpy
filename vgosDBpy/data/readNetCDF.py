@@ -1,17 +1,11 @@
-#import prettytable
-from prettytable import PrettyTable as PT
 from netCDF4 import Dataset
 import pandas as pd
 from numpy.random import uniform
+import os
 
 from vgosDBpy.data.combineYMDHMS import combineYMDHMwithSec
 from vgosDBpy.data.PathParser import findCorrespondingTime
 
-
-
-from combineYMDHMS import combineYMDHMwithSec
-from PathParser import findCorrespondingTime
-import os
 
 
 """
