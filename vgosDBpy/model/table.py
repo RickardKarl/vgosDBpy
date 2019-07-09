@@ -1,6 +1,6 @@
 from PySide2.QtGui import QStandardItemModel
 from PySide2 import QtCore
-from vgosDBpy.model.standardtree import Variable
+from vgosDBpy.model.standardtree import Variable, DataValue
 from vgosDBpy.data.readNetCDF import read_netCDF_variables, read_netCDF_dimension_for_var, is_possible_to_plot
 
 class TableModel(QStandardItemModel):
@@ -56,3 +56,21 @@ class TableModel(QStandardItemModel):
                 self.setItem(i,0, Variable(vars,item))
                 #self.setItem(i,1,Variable(read_netCDF_dimension_for_var(vars, item.getPath()),item))
                 i += 1
+
+
+    def updateData(self, data, items):
+        names = list(data)
+
+        '''
+        self.setRowCount(len(data['Time']))
+        self.setColumnCount(len(names))
+        self.setColumnWidth(0, 180) # extra long to fit timeStamp
+
+        for i in range(1,len(names)):
+            self.setColumnWidth(i, 80)
+        '''
+        self.reset()
+
+        for i in range(0,len(data[names[0]])):
+            for j in range (0,len(names)):
+                self.setItem(i, j, DataValue(str(data[names[j]][i]), items[j%(len(names)-1)]))

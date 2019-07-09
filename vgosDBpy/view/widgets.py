@@ -1,9 +1,14 @@
 
 from PySide2.QtWidgets import QTreeView, QTableView, QAbstractItemView, QTextEdit, QPushButton, QDialog, QVBoxLayout
+
 from vgosDBpy.model.standardtree import TreeModel
 from vgosDBpy.model.table import TableModel
 from vgosDBpy.data.plotFunction import plotVariable, plotVariable2yAxis
 from vgosDBpy.editing.select_data import getData
+from vgosDBpy.data.PathParser import findCorrespondingTime
+from vgosDBpy.data.combineYMDHMS import combineYMDHMwithSec
+from vgosDBpy.data.readNetCDF import getDataFromVar
+from vgosDBpy.data.plotTable import tableFunction, tableFunction2data
 
 from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
 from matplotlib.figure import Figure
@@ -75,6 +80,7 @@ class VariableTable(QTableView):
         self.setColumnWidth(0, 6/10*max_width)
         self.setColumnWidth(1, 4/10*max_width)
         '''
+
     def updateVariables(self, var_list):
         '''
         Updates content of table model
@@ -87,6 +93,39 @@ class VariableTable(QTableView):
         for i in range(self.model.columnCount()):
             self.resizeColumnToContents(i)
 
+
+class DataTable(QTableView):
+
+    def __init__(self, parent = None):
+        super(DataTable, self).__init__(parent)
+
+        # Setup model
+        self.model = TableModel(['Index', 'Value'], parent)
+        self.setModel(self.model)
+
+
+    def updateData(self, items):
+        if len(items) == 1:
+            path = items[0].getPath()
+            var = items[0].labels
+            data = tableFunction(path, var)
+
+        elif len(items) == 2:
+            path1 = items[0].getPath()
+            path2 = items[1].getPath()
+            var1 = items[0].labels
+            var2 = items[1].labels
+            data = tableFunction2data(path1, var1, path2, var2)
+
+        else:
+            raise ValueError('Argument items contains wrong number of items, should be one or two.')
+
+
+        self.model.updateData(data, items)
+
+        # Updates size of column when content is changed
+        for i in range(self.model.columnCount()):
+            self.resizeColumnToContents(i)
 
 
 class PlotFigure(FigureCanvas):
@@ -116,9 +155,6 @@ class PlotFigure(FigureCanvas):
         x2, y2 = erelease.xdata, erelease.ydata
 
         getData(x1, x2, y1, y2, self.data)
-
-
-
 
     def updatePlot(self):
         # Set picker tolerance

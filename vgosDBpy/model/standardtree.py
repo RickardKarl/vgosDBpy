@@ -153,7 +153,7 @@ class Variable(QNodeItem):
     This should be used to differ variables that are stored in this format which points to netCDF files
     '''
 
-    _type = 1111
+    _type = 1112
 
     def __init__(self, variable_name, node):
         super(Variable, self).__init__(node)
@@ -161,3 +161,37 @@ class Variable(QNodeItem):
 
     def type(self):
         NetCDFItem._type
+
+
+class DataValue(QNodeItem):
+
+    '''
+    Inherited from QNodeItem
+
+    This should be used to store single data values from the node
+    '''
+
+    _type = 1113
+
+    def __init__(self, value, node):
+        super(DataValue, self).__init__(node)
+        self.value = value
+
+    def type(self):
+        NetCDFItem._type
+
+    def data(self, role = QtCore.Qt.DisplayRole):
+        if role == QtCore.Qt.DisplayRole:
+            return self.value
+
+        elif role == QtCore.Qt.EditRole:
+            return self.node
+
+        else:
+            return None
+
+    def __str__(self):
+        return self.value
+
+    def __repr__(self):
+        return self.value
