@@ -4,6 +4,7 @@ from PySide2.QtWidgets import QApplication
 from vgosDBpy.view.app import App
 from vgosDBpy.read_log.parser import readMetData, readCableCal, printFile, mergeSeries
 from vgosDBpy.read_log.plotter import plotSeries
+from vgosDBpy.data.readNetCDF import print_name_dtype_dim_length
 
 if __name__ == '__main__':
 
@@ -29,6 +30,10 @@ if __name__ == '__main__':
             data = mergeSeries(data['CableCal'], metData['Temp'], return_right = False)
             plotSeries(data)
 
+        elif sys.argv[1] == 'Hanna':
 
+            path = "./../../Files/10JAN04XU/ObsEdit/NumGroupAmbig_iGSFC_bX.nc"
+            #path = "./../../Files/10JAN04XU/Head.nc"
+            print_name_dtype_dim_length(path)
     else:
         pass

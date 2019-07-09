@@ -7,10 +7,6 @@ from numpy.random import uniform
 from vgosDBpy.data.combineYMDHMS import combineYMDHMwithSec
 from vgosDBpy.data.PathParser import findCorrespondingTime
 
-
-
-from combineYMDHMS import combineYMDHMwithSec
-from PathParser import findCorrespondingTime
 import os
 
 
@@ -36,7 +32,7 @@ def read_var_content_S1(seekedData,pathToNetCDF):
     with Dataset(pathToNetCDF, "r", format= "NETCDF4_CLASSIC") as nc:
         data= nc.variables[seekedData][:]
         head = " "
-        if len(data[:][1]) != 1:
+        if len(data[:][0]) != 1:
             for i in range(len(data)):
                 data_row = data[i]
                 for column in data_row:
@@ -109,6 +105,26 @@ def find_dtype(pathToNetCDF):
                 dtype.append(nc.variables[var].dtype)
         return dtype
 
+def find_dimensions(pathToNetCDF):
+    with Dataset(pathToNetCDF, "r", format="NETCDF4_CLASSIC") as nc:
+        vars= nc.variables
+        dims= []
+        for var in vars:
+            #for ncattr in var.ncattrs():
+                #print(var.getncattr(ncattr))
+            dims.append(nc.variables[var].get_dims()[0].name)
+    return dims
+
+def find_length(pathToNetCDF):
+    with Dataset(pathToNetCDF, "r", format="NETCDF4_CLASSIC") as nc:
+        vars= nc.variables
+        lengths= []
+        for var in vars:
+            #for ncattr in var.ncattrs():
+                #print(var.getncattr(ncattr))
+            lengths.append(len(nc.variables[var][:]))
+    return lengths
+
 """
 returns all variables in a netCDF file that can be plotted versus time, mening they have same Dimensions
 and data type is not S1
@@ -116,19 +132,79 @@ and data type is not S1
 
 def possible_to_plot(pathToNetCDF):
     #pathh = "./../../../../Files/10JAN04XU/KOKEE/Met.nc"
+
     dtypes = find_dtype(pathToNetCDF)
     vars = read_netCDF_vars(pathToNetCDF)
     timePath = findCorrespondingTime(pathToNetCDF)
     plotVars = []
     i=0;
     for i in range(len(dtypes)):#type in dtypes:
-        if dtypes[i] != "S1" and len (vars[i]) == len(time):
+        if dtypes[i] != "S1" and len(vars[i]) == len(time):
             plotVars.append(vars[i])
     return plotVars
 
 """
 currently only returning true if dimension is numscan
 """
+
+"""
+return an array of the data assosiated with an variable
+"""
+
+def header_info_to_plot(path):
+    #get date of session
+    timePath = findCorrespondingTime(path)
+    time = combineYMDHMwithSec(timePath)
+    date = time[1].date()
+
+    station = read_var_content_S1("Station", path)
+    return ( station + "   " + str(date) )
+
+
+def print_name_dtype_dim_length(pathToNetCDF):
+    vars = read_netCDF_variables(pathToNetCDF)
+    dtypes = find_dtype(pathToNetCDF)
+    dims = find_dimensions(pathToNetCDF)
+    lengths = find_length(pathToNetCDF)
+    s=""
+    for i in range(0, len(vars)):
+        print(vars[i])
+        print(dtypes[i])
+        print(dims[i])
+        print(lengths[i])
+        print("#####################")
+    print(s)
+#det get_info_from_var()
+
+#path = "./../../Files/10JAN04XU/Apriori/Antenna.nc"
+#print(read_netCDF_vars_info(path))
+
+#path= "./../../../../Files/10JAN04XU/KOKEE/Met.nc"
+#pathTime = "./../../../../Files/10JAN04XU/KOKEE/TimeUTC.nc"
+#YMDHMS= combineYMDHMwithSec(pathTime)
+#vars_in_file  = read_netCDF_variables(path)
+#dtypes = find_dtype(path)
+#print(vars_in_file)
+#print(dtypes)
+
+
+"""
+#####################Methods assosiatedwith specifik var##############################
+"""
+def getDataFromVar(path, var):
+    with Dataset(path, "r", format="NETCDF4_CLASSIC") as nc:
+        return(nc.variables[var][:])
+
+def read_netCDF_dimension_for_var(var_name, pathToNetCDF):
+    with Dataset(pathToNetCDF, "r", format="NETCDF4_CLASSIC") as nc:
+        var = nc.variables[var_name]
+        dim_name = var.get_dims()[0].name
+    return dim_name
+
+def get_dtype_for_var(path, var):
+    with Dataset(path, "r", format = "NETCDF4_CLASSIC" ) as nc:
+        return nc.variables[var].dtype
+
 def is_possible_to_plot(path, var):
     #dtypes = find_dtype(pathToNetCDF)
     #vars = read_netCDF_vars(pathToNetCDF)
@@ -145,45 +221,7 @@ def is_possible_to_plot(path, var):
     #    if dtypes[i] != "S1" and len (vars[i]) == len(time):
     #        plotVars.append(vars[i])
     #return plotVars
-"""
-return an array of the data assosiated with an variable
-"""
-def getDataFromVar(path, var):
-    with Dataset(path, "r", format="NETCDF4_CLASSIC") as nc:
-        return(nc.variables[var][:])
 
-def read_netCDF_dimension_for_var(var_name, pathToNetCDF):
-    with Dataset(pathToNetCDF, "r", format="NETCDF4_CLASSIC") as nc:
-        var = nc.variables[var_name]
-        dim_name = var.get_dims()[0].name
-    return dim_name
-
-def get_dtype_for_var(path, var):
-    with Dataset(path, "r", format = "NETCDF4_CLASSIC" ) as nc:
-        return nc.variables[var].dtype
-
-
-def header_info_to_plot(path):
-    #get date of session
-    timePath = findCorrespondingTime(path)
-    time = combineYMDHMwithSec(timePath)
-    date = time[1].date()
-
-    station = read_var_content_S1("Station", path)
-    return ( station + "   " + str(date) )
-
-#det get_info_from_var()
-
-#path = "./../../../../Files/10JAN04XU/KOKEE/Met.nc"
-#print(read_netCDF_vars_info(path))
-
-#path= "./../../../../Files/10JAN04XU/KOKEE/Met.nc"
-#pathTime = "./../../../../Files/10JAN04XU/KOKEE/TimeUTC.nc"
-#YMDHMS= combineYMDHMwithSec(pathTime)
-#vars_in_file  = read_netCDF_vars(path)
-#dtypes = find_dtype(path)
-#print(vars_in_file)
-#print(dtypes)
 #print(vars_in_file)
 #print(read_netCDF_vars_info(path))
 
