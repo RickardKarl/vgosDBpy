@@ -87,6 +87,4 @@ def tableFunction2data(path1, var1, path2, var2):
     plt.show()
 
 """
-path= './../../../../Files/10JAN04XK/WETTZELL/Met.nc'
-var = 'AtmPres'
 #tableFunction(path,var)

@@ -29,7 +29,7 @@ class Wrapper:
         path.pop() #removes last which is the name of the wrapper file
         self.root_path = '/'.join(path)
         self.root = Node(self.session_name, None, self.root_path)
-        self.pointer_map = {} # Keep track of pointers with a hash-map
+        self.pointer_map = {} # Keep track of pointers with a hash-map # inte unika
 
         for s in Wrapper.scopes:
             self.addNode(s, type = 'folder')

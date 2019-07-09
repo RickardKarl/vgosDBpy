@@ -30,6 +30,7 @@ class App(QWidget):
 
         # Tableview
         self.table = VariableTable(self)
+        self.table_data = QTable()
 
         # Text
         self.text = QTextEdit(self)

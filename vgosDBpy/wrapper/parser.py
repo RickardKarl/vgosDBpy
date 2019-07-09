@@ -1,7 +1,7 @@
 from os import getcwd
 import sys
 import importlib
-from vgosDBpy.wrapper.tree import Wrapper
+from vgosDBpy.wrapper. tree import Wrapper
 
 class Parser:
     '''
