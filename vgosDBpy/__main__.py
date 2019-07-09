@@ -32,7 +32,7 @@ if __name__ == '__main__':
 
         elif sys.argv[1] == 'Hanna':
 
-            path = "./../../Files/10JAN04XU/ObsEdit/NumGroupAmbig_iGSFC_bX.nc"
+            path = "./../../Files/10JAN04XU/Apriori/Antenna.nc"
             #path = "./../../Files/10JAN04XU/Head.nc"
             print_name_dtype_dim_length(path)
     else:

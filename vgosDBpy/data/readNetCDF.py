@@ -124,6 +124,15 @@ def find_length(pathToNetCDF):
                 #print(var.getncattr(ncattr))
             lengths.append(len(nc.variables[var][:]))
     return lengths
+def find_content(pathToNetCDF):
+    with Dataset(pathToNetCDF, "r", format="NETCDF4_CLASSIC") as nc:
+        vars= nc.variables
+        content= []
+        for var in vars:
+            #for ncattr in var.ncattrs():
+                #print(var.getncattr(ncattr))
+            content.append(getDataFromVar(pathToNetCDF,var))
+    return content
 
 """
 returns all variables in a netCDF file that can be plotted versus time, mening they have same Dimensions
@@ -166,12 +175,14 @@ def print_name_dtype_dim_length(pathToNetCDF):
     dtypes = find_dtype(pathToNetCDF)
     dims = find_dimensions(pathToNetCDF)
     lengths = find_length(pathToNetCDF)
+    content = find_content(pathToNetCDF)
     s=""
     for i in range(0, len(vars)):
         print(vars[i])
         print(dtypes[i])
         print(dims[i])
         print(lengths[i])
+        print(content[i])
         print("#####################")
     print(s)
 #det get_info_from_var()
