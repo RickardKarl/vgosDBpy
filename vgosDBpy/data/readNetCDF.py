@@ -26,13 +26,18 @@ def read_var_content_float64(seekedData, pathToNetCDF):
 Retuns the header of a net cdfFile
 """
 def read_var_content_S1(seekedData,pathToNetCDF):
+    print(seekedData)
     with Dataset(pathToNetCDF, "r", format= "NETCDF4_CLASSIC") as nc:
         data= nc.variables[seekedData][:]
         head = " "
         if len(data[:][0]) != 1:
             for i in range(len(data)):
-                data_row = data[i]
+                #print("Enter")
+                data_row = data[:][i]
+                #print(data_row)
+                #print('EEEE')
                 for column in data_row:
+                    print(column.decode('ASCII'))
                     letter = column.decode('ASCII')
                     head += letter
         else:

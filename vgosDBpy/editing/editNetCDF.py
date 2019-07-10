@@ -32,6 +32,10 @@ def get_netCDF_variable(file_name_path, variable_name):
 
     return variable
 
+ def create_new_nc_file(pathToNetCDF, variables):
+     new_name = NewVersionName(pathToNetCDF)
+    update_netCDF_variable(pathToNetCDF, newname, vairables)
+
 def update_netCDF_variable(file_name_path, new_file_name_path, variables):
     '''
     Updates a existing variable data in a netCDF file and creates
