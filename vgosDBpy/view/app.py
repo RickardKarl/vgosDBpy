@@ -64,7 +64,7 @@ class App(QWidget):
 
         # Listeners
         self.treeview.selectionModel().selectionChanged.connect(self._showItemInfo)
-        self.plot_toolbox.check_line.stateChanged.connect(self.plot_toolbox.showLine)
+
 
     def _getSelected(self, widget):
         '''
@@ -99,6 +99,7 @@ class App(QWidget):
 
             self.plot_widget.updateFigure(items)
 
+        self.plot_toolbox.updateToolBox(self.plot_widget.getAxis())
         self._tablebutton()
 
     def _tablebutton(self):

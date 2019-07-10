@@ -28,10 +28,9 @@ if __name__ == '__main__':
 
             data = readCableCal(sys.argv[1])
             metData = readMetData(sys.argv[1])
-            print(data['CableCal'])
-            print(metData['Temp'])
             data = mergeSeries(data['CableCal'], metData['Temp'], return_right = False)
-            plotSeries(data)
+            if len(sys.argv) > 2:
+                plotSeries(metData[sys.argv[2]])
 
         elif sys.argv[1] == 'Hanna':
 
