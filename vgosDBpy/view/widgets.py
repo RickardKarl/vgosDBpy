@@ -3,7 +3,7 @@ from PySide2.QtWidgets import QTreeView, QTableView, QAbstractItemView
 
 from vgosDBpy.model.standardtree import TreeModel
 from vgosDBpy.model.table import TableModel
-from vgosDBpy.data.plotTable import tableFunction, tableFunction2data
+from vgosDBpy.data.plotTable import tableFunction, tableFunction2data, tableFunctionGeneral, return_header_names
 
 
 
@@ -98,7 +98,7 @@ class DataTable(QTableView):
         super(DataTable, self).__init__(parent)
 
         # Setup model
-        self.model = TableModel(['Index', 'Value'], parent)
+        self.model = TableModel(['Index', 'Value'], parent) # just use the two functions get_name_to_print and get_unit_to_print istead of 'Value'
         self.setModel(self.model)
 
     def updateData(self, items):
@@ -108,20 +108,38 @@ class DataTable(QTableView):
         items [list of QNodeItems] contains the nodes which points to the netCDF variables
         that should be displayed
         '''
+        if len(items) > 0 :
+            path = []
+            var = []
+            for itm in items:
+                path.append(itm.getPath())
+                var.append(itm.labels)
+            data= tableFunctionGeneral(path, var)
+            self.model.update_header(return_header_names(var))
+            """
+            # Retrieve values for variables
+            if len(items) == 1:
+                path = []
+                var = []
+                path.append( items[0].getPath() )
+                var.append( items[0].labels )
+                #data = tableFunction(path, var)
+                data = tableFunctionGeneral(path,var)
 
-        # Retrieve values for variables
-        if len(items) == 1:
-            path = items[0].getPath()
-            var = items[0].labels
-            data = tableFunction(path, var)
 
-        elif len(items) == 2:
-            path1 = items[0].getPath()
-            path2 = items[1].getPath()
-            var1 = items[0].labels
-            var2 = items[1].labels
-            data = tableFunction2data(path1, var1, path2, var2)
-
+            elif len(items) == 2:
+                #path = []
+                #var= []
+                #for itm in items:
+                #    path.append(itm.getPath())
+                #    var.append(itm.labels)
+                path1 = items[0].getPath()
+                path2 = items[1].getPath()
+                var1 = items[0].labels
+                var2 = items[1].labels
+                data = tableFunction2data(path1, var1, path2, var2)
+                #data =  tableFunctionGeneral(path,var)
+            """
         else:
             raise ValueError('Argument items contains wrong number of items, should be one or two.')
 

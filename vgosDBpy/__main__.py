@@ -34,7 +34,7 @@ if __name__ == '__main__':
 
         elif sys.argv[1] == 'Hanna':
 
-            path = "./../../Files/10JAN04XK/Apriori/num"
+            path = "./../../Files/10JAN04XK/Apriori/Antenna.nc"
             #path = "./../../Files/10JAN04XU/Session/GroupBLWeights.nc"
             #path = "../../Files/10JAN04XK/10JAN04XK_V005_iGSFC_kall.wrp"
             #path = "./../../Files/10JAN04XU/Head.nc"
