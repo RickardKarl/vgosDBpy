@@ -7,7 +7,7 @@ import pandas as pd
 from vgosDBpy.data.PathParser import findCorrespondingTime
 from vgosDBpy.data.combineYMDHMS import combineYMDHMwithSec
 from vgosDBpy.data.readNetCDF import getDataFromVar
-from vgosDBpy.data.getRealName import get_name_to_print as name
+from vgosDBpy.data.getRealName import get_name_to_print as name, get_unit_to_print as unit
 
 """
 Default: shows path´s var against time using a QT tableWidget
@@ -42,18 +42,19 @@ def tableFunctionGeneral(paths, vars): # USE THISONE
     data['Time'] = time
     c=0
     for path in paths:
-        print("####ENTER####")
         y = getDataFromVar( path, vars[c] )
         data [ name ( path, vars[c] ) ] = y
         c = c + 1
         #data.update( { name( paths[i],vars[i] ) : y } )
     return data
 
-def return_header_names(vars):
-    header = ['Time']
-    for var in vars :
-        header.append(var)
-    return header 
+def return_header_names(paths, vars):
+    header = ['Time [Y-M-D H:M:S]']
+    for i in range(0,len(paths)) :
+        n = name(paths[i],vars[i])
+        u = unit(paths[i],vars[i])
+        header.append(n + u)
+    return header
 
 
 

@@ -98,7 +98,7 @@ class DataTable(QTableView):
         super(DataTable, self).__init__(parent)
 
         # Setup model
-        self.model = TableModel(['Index', 'Value'], parent) # just use the two functions get_name_to_print and get_unit_to_print istead of 'Value'
+        self.model = TableModel(' ', parent) # just use the two functions get_name_to_print and get_unit_to_print istead of 'Value'
         self.setModel(self.model)
 
     def updateData(self, items):
@@ -115,7 +115,7 @@ class DataTable(QTableView):
                 path.append(itm.getPath())
                 var.append(itm.labels)
             data= tableFunctionGeneral(path, var)
-            self.model.update_header(return_header_names(var))
+            self.model.update_header(return_header_names(path,var))
             """
             # Retrieve values for variables
             if len(items) == 1:

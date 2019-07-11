@@ -14,10 +14,10 @@ class TableModel(QStandardItemModel):
     parent [QWidget]
     '''
 
-    def __init__(self, header = " ", parent=None):
+    def __init__(self, header, parent=None):
         super(TableModel,self).__init__(parent)
         self.header = header
-        self.setHorizontalHeaderLabels(header)
+        self.setHorizontalHeaderLabels(self.header)
 
     def update_header(self,names):
         self.header = names
