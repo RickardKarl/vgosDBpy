@@ -16,19 +16,21 @@ from readNetCDF import getDataFromVar
 from getRealName import get_name_to_print as name
 """
 import os
+from datetime import datetime
 
 # default plot mot tiden
 def plotVariable(path, var, figure):
     ax = figure.add_subplot(1,1,1)
     timePath = findCorrespondingTime(path)
     time_plot= []
+
     y = getDataFromVar(path, var)
     if timePath != "":
         time = combineYMDHMwithSec(timePath)
         #time_plot=[]
         for t in time:
             time_plot.append( t.time() )
-            ax.set_title(header_info_to_plot(path)+ "\n " + "Plot " + name(path,var) + " versus Time " )
+        ax.set_title(header_info_to_plot(path)+ "\n " + "Plot " + name(path,var) + " versus Time " )
     else:
         time_plot = range(0,len(y))
         ax.set_title(header_info_to_plot(path)+ "\n " + "Plot " + name(path,var) )

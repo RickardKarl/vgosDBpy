@@ -5,7 +5,6 @@ from vgosDBpy.view.widgets import QWrapper, VariableTable, DataTable
 from vgosDBpy.data.readNetCDF import read_netCDF_variables, read_netCDF_vars_info, read_netCDF_dimension_for_var
 from vgosDBpy.view.plot_widget import PlotFigure, PlotToolBox, AxesToolBox
 
-
 class App(QWidget):
     '''
     Frame for testing stuff
