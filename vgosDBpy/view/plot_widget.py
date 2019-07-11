@@ -23,7 +23,6 @@ class PlotFigure(FigureCanvas):
 
         # To be initiated
         self.ax = None
-        self.selector = None
         self.data = None
 
         self.figure.canvas.mpl_connect('button_release_event', self.selection_event)
@@ -41,7 +40,6 @@ class PlotFigure(FigureCanvas):
     '''
     def updatePlot(self):
         # Set selector
-        #self.selector = RectangleSelector(self.ax, self.selector_callback, drawtype='box')
         self.draw()
 
     def getAxis(self):

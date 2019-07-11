@@ -31,6 +31,8 @@ if __name__ == '__main__':
             data = mergeSeries(data['CableCal'], metData['Temp'], return_right = False)
             if len(sys.argv) > 2:
                 plotSeries(metData[sys.argv[2]])
+            else:
+                plotSeries(data)
 
         elif sys.argv[1] == 'Hanna':
 

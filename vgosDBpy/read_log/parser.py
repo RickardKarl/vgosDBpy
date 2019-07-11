@@ -73,6 +73,8 @@ def readCableCal(file_path):
         time_index = pd.DatetimeIndex(Time)
         CableCal = pd.Series(CableCal, index = time_index, name = 'CableCal')
 
+        CableCal = CableCal/240000
+        CableCal = CableCal - CableCal.mean()
         return {'CableCal': CableCal, 'Time': time_index}
 
 
