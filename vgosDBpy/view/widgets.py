@@ -3,7 +3,7 @@ from PySide2.QtWidgets import QTreeView, QTableView, QAbstractItemView
 
 from vgosDBpy.model.standardtree import TreeModel
 from vgosDBpy.model.table import TableModel
-from vgosDBpy.data.plotTable import tableFunction, tableFunction2data, tableFunctionGeneral, return_header_names
+from vgosDBpy.data.plotTable import tableFunctionGeneral, return_header_names #tableFunction, tableFunction2data
 
 
 

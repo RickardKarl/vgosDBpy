@@ -35,11 +35,14 @@ class App(QWidget):
 
         # Buttons
         # Plot and display table
+        self.button_plot_table = QPushButton('& Plot + Table ')
         self.button_plot = QPushButton('& Plot',self)
-        #self.button_table = QPushButton('& Table',self)
+        self.button_table = QPushButton('& Table',self)
 
         # Button event
+        self.button_plot_table.clicked.connect(self._plot_table_button)
         self.button_plot.clicked.connect(self._plotbutton)
+        self.button_table.clicked.connect(self._tablebutton)
 
         # Matplotlib widget and toolbox
         self.plot_widget = PlotFigure(parent = self)
@@ -56,7 +59,9 @@ class App(QWidget):
         layout.addWidget(self.plot_toolbox, 1, 1)
         layout.addWidget(self.text, 1, 2)
 
-        layout.addWidget(self.button_plot, 3, 0)
+        layout.addWidget(self.button_plot_table,3,0)
+        layout.addWidget(self.button_plot, 4, 0)
+        layout.addWidget(self.button_table, 5, 0)
 
         self.setLayout(layout)
 
@@ -84,7 +89,9 @@ class App(QWidget):
                 text = read_netCDF_vars_info(item.getPath())
                 self.text.setPlainText(str(text))
                 self.table.updateVariables(item)
-
+    def _plot_table_button(self):
+        self._plotbutton()
+        self._tablebutton()
     def _plotbutton(self):
         '''
         Method for plotting variables
@@ -100,7 +107,7 @@ class App(QWidget):
         for data_axis in self.plot_widget.getAxis():
             self.plot_toolbox.updateAxis(data_axis)
 
-        self._tablebutton()
+        #self._tablebutton()
 
     def _tablebutton(self):
         '''

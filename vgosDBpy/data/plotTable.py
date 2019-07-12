@@ -13,7 +13,7 @@ from vgosDBpy.data.getRealName import get_name_to_print as name, get_unit_to_pri
 Default: shows path´s var against time using a QT tableWidget
 returns a tableWidget to be handled somwhere else..
 """
-
+""""
 def tableFunction(path, var): # NOT USED ANYMORE USE GENERAL
     timePath = findCorrespondingTime(path)
     time = combineYMDHMwithSec(timePath)
@@ -31,6 +31,7 @@ def tableFunction2data (path1, var1, path2, var2): # NOT USED ANYMORE USE GENERA
     y2 = getDataFromVar(path2, var2)
     data = {'Time': time , name(path1,var1) : y1, name(path2, var2) : y2 }
     return data
+"""
 
 """
 Takes in two arrays[], one containing paths and one names of variable, order so that the indexes agree
