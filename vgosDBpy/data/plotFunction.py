@@ -18,6 +18,66 @@ from getRealName import get_name_to_print as name
 import os
 from datetime import datetime
 
+
+"""
+ALWYAS CALL THIS METHOD FROM OUTSIDE THIS FILE
+"""
+def plot_generall (paths, vars, fig, state): # generall function tahta is always called from other function then calls the other functions.
+    if len(paths) != len(vars): # controll
+        return
+
+    if default_time(state) is False:
+            plot_no_time(paths, vars, fig)
+    else:
+        plot_time(paths, vars, fig)
+
+def plot_no_time(paths, vars, fig):
+    if len(paths) == 2:
+        plot_two_vars(paths, vars, fig)
+    elif: len(paths) == 3:
+        plot_three_vars(paths, vars, fig)
+
+def plot_two_vars(paths, vars, fig):
+
+    # retrive data to plot
+    x = getDataFromVar(paths[0], vars[0])
+    y = getDataFromVar(paths[1], vars[1])
+
+    #create figure
+    ax = fig.add.subplot(1,1,1)
+    ax.set_title(header_info_to_plot(paths[0]) + '\n' + 'Plot' + name(paths[0], vars[0]) + 'versus ' + name(paths[1], vars[1] )
+    ax.plot(x,y)
+    ax.set_xlabel(name(paths[0],vars[0])+unit(paths[0],vars[0]))
+    ax.set_ylabel(name(paths[1],vars[1])+unit(paths[1],vars[1]))
+
+    return ax, pd.Series(y, index = x)
+
+def plot_three_vars(paths, vars, fig):
+
+    #retrive data
+    x = getDataFromVar(paths[0], vars[0])
+    y1 = getDataFromVar(paths[1], vars[1])
+    y2 = getDataFromVar(paths[2], vars[2])
+
+    ax1 = fig.add_subplot(1,1,1)
+    color = 'tab:red'
+    ax1.set_xlabel(name(paths[0],vars[0])+unit(paths[0],vars[0]))
+    ax1.set_ylabel(name(paths[1],vars[1])+unit(paths[1],vars[1]))
+    ax1.plot(x, y1, color=color)
+    #plt.xticks( rotation= 80 )
+    ax1.tick_params(axis=vars[1], labelcolor=color)
+    ax2 = ax1.twinx()  # instantiate a second axes that shares the same x-axis
+    color = 'tab:blue'
+    #ax2.set_ylabel('sin', color=color)  # we already handled the x-label with ax1
+    ax2.plot(x, y2, color=color)
+    ax2.set_ylabel(name(paths[2],vars[2])+unit(paths[2],vars[2]))
+    ax2.tick_params(axis=vars[2], labelcolor=color)
+        #plt.plot(xAxis,yAxis)
+    plt.title(header_info_to_plot(path1)+ "\nPlot " +name(paths[1],vars[1]) + "and " + name(paths[2], vars[2]) + " against " +name(paths[0], vars[0]))
+
+    return ax1, ax2
+
+
 # default plot mot tiden
 def plotVariable(path, var, figure):
     ax = figure.add_subplot(1,1,1)
@@ -89,6 +149,7 @@ def plotVariable2yAxis(path1, var1, path2, var2, fig):
     else:
         print("Dimensions do not agree")
 
+def default_time(state):
 
 """
     def swapAxis(xAxis, yAxis, isTime):
