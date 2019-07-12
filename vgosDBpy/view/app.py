@@ -3,7 +3,7 @@ from PySide2 import QtCore
 
 from vgosDBpy.view.widgets import QWrapper, VariableTable, DataTable
 from vgosDBpy.data.readNetCDF import read_netCDF_variables, read_netCDF_vars_info, read_netCDF_dimension_for_var
-from vgosDBpy.view.plot_widget import PlotFigure, PlotToolBox, AxesToolBox
+from vgosDBpy.view.plot_widget_new import PlotFigure, PlotToolBox, AxesToolBox
 
 class App(QWidget):
     '''
@@ -15,11 +15,10 @@ class App(QWidget):
         Constructor
 
         wrapper_path [string] is the path to the wrapper file which is to be displayed
-        parent [QWidet]
+        parent [QWidget]
         '''
 
         super(App,self).__init__(parent)
-
 
         ########### Creating widgets
 
@@ -110,7 +109,9 @@ class App(QWidget):
 
             self.plot_widget.updateFigure(items)
 
-        self.plot_toolbox.updateToolBox(self.plot_widget.getAxis())
+        for data_axis in self.plot_widget.getAxis():
+            self.plot_toolbox.updateAxis(data_axis)
+
         #self._tablebutton()
 
     def _tablebutton(self):

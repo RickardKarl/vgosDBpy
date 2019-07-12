@@ -17,7 +17,6 @@ if __name__ == '__main__':
             app = QApplication(sys.argv)
 
             # Create and show
-
             window = App(sys.argv[1])
 
             window.show()

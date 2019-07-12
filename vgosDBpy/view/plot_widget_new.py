@@ -8,13 +8,15 @@ from matplotlib.lines import Line2D
 
 from vgosDBpy.data.plotFunction import plotVariable, plotVariable2yAxis
 from vgosDBpy.editing.select_data import getData
+from vgosDBpy.model.data_axis import DataAxis
 
 import pandas as pd
 from scipy.signal import savgol_filter
 
 class PlotFigure(FigureCanvas):
     '''
-    CAN NOT HANDLE SEVERAL AXES AT THE SAME TIME CURRENTLY
+    View of matplotlib plots
+    Can display several axes
     '''
     def __init__(self, figure = Figure(tight_layout = True), parent = None):
 
@@ -23,23 +25,26 @@ class PlotFigure(FigureCanvas):
         super(PlotFigure, self).__init__(self.figure)
 
         # To be initiated
-        self.ax = None
-        self.data = None
+        self.ax = []
         self.draw()
 
     def updatePlot(self):
-        # Set selector
         self.draw()
+
+    def addAxis(self, data_axis):
+        axis = self.figure.add_axes(data_axis.getAxis())
+        self.ax.append(axis)
+
+    def removeAxis(self, data_axis):
+        axis = data_axis.getAxis()
+        self.ax.remove(axis)
+        self.figure.delaxes(axis)
 
     def getAxis(self):
         return self.ax
 
-    def getArtist(self):
-        return self.ax.get_lines()
-
-    def redrawData(self):
-        self.ax.cla()
-        self.ax.plot(self.data)
+    def getFigure(self):
+        return self.figure
 
     def updateFigure(self, items):
         # Discards the old graph
@@ -47,25 +52,34 @@ class PlotFigure(FigureCanvas):
 
         # Add new axis
         if len(items) == 1:
-            self.ax, self.data = plotVariable(items[0].getPath(), items[0].labels, self.figure)
+            axis, data = plotVariable(items[0].getPath(), items[0].labels, self.figure)
 
         elif len(items) == 2:
-            self.ax = plotVariable2yAxis(items[0].getPath(), items[0].labels, items[1].getPath(), items[1].labels, self.figure)
+            axis = plotVariable2yAxis(items[0].getPath(), items[0].labels, items[1].getPath(), items[1].labels, self.figure)
 
         else:
             raise ValueError('Argument items contains wrong number of items, should be one or two.')
 
+
+        self.ax.append(DataAxis(axis, data))
         # Refresh canvas
         self.updatePlot()
 
 
 class AxesToolBox(QWidget):
-    def __init__(self, parent, canvas):
+    def __init__(self, parent, canvas, data_axis = None):
+
         super(AxesToolBox, self).__init__(parent)
+
         # Instance variables
         self.canvas = canvas
-        self.ax = None
-        self.lines = None
+        self.selector = None
+        self.data_axis = data_axis
+        if data_axis == None:
+            self.original_lines = None
+        else:
+            self.original_lines = self.data_axis.getAxis().get_lines()
+
 
         self.smooth_curve = None # Saves the smooth curve
 
@@ -77,7 +91,6 @@ class AxesToolBox(QWidget):
         self.check_marker = QCheckBox('Show markers')
         self.check_smooth_curve = QCheckBox('Show smooth curve')
 
-        #self.marked_data_buttons = QButtonGroup(self)
         self.highlight_marked = QRadioButton("Highlight marked data", self)
         self.hide_marked = QRadioButton("Hide marked data", self)
 
@@ -105,18 +118,20 @@ class AxesToolBox(QWidget):
         self.highlight_marked.toggled.connect(self.highlightMarkedData)
         self.hide_marked.toggled.connect(self.highlightMarkedData)
 
+    def updateAxis(self, data_axis):
+        self.data_axis = data_axis
+        self.original_lines = data_axis.getAxis().get_lines()
+        self.updateSelector(self.data_axis)
 
-    def updateToolBox(self, ax):
-        self.selector = RectangleSelector(ax, self.selector_callback, drawtype='box')
-        self.ax = ax
-        self.lines = ax.get_lines()
+    def updateSelector(self, data_axis):
+        self.selector = RectangleSelector(data_axis.getAxis(), self.selector_callback, drawtype='box')
 
     def selector_callback(self, eclick, erelease):
         #'eclick and erelease are the press and release events'
         x1, y1 = eclick.xdata, eclick.ydata
         x2, y2 = erelease.xdata, erelease.ydata
 
-        self.updateMarkedData(getData(x1, x2, y1, y2, self.canvas.data))
+        self.updateMarkedData(getData(x1, x2, y1, y2, self.data_axis.getData()))
 
     def updateMarkedData(self, data):
         for point in data.iteritems():
@@ -128,15 +143,16 @@ class AxesToolBox(QWidget):
         self.highlightMarkedData()
 
     def _showLine(self):
-        for plot in self.lines:
+        for plot in self.original_lines:
             if self.check_line.isChecked():
                 plot.set_linestyle('-')
             else:
                 plot.set_linestyle('None')
+
         self.canvas.updatePlot()
 
     def _showMarkers(self):
-        for plot in self.lines:
+        for plot in self.original_lines:
             if self.check_marker.isChecked():
                 plot.set_marker('o')
             else:
@@ -147,9 +163,9 @@ class AxesToolBox(QWidget):
     def _showSmoothCurve(self):
 
         if self.check_smooth_curve.isChecked():
-
-            line = createLine2D(createSmoothCurve(self.canvas.data, window_size = int(len(self.canvas.data)/4)))
-            self.smooth_curve = self.ax.add_line(line)
+            data = self.data_axis.getData()
+            line = createLine2D(createSmoothCurve(data, window_size = int(len(data)/4)))
+            self.smooth_curve = self.data_axis.addLine(line)
 
         else:
             self.smooth_curve.remove()
@@ -167,35 +183,40 @@ class AxesToolBox(QWidget):
 
         if self.marked_data_curve != None:
             self.marked_data_curve.remove()
+
         line = createLine2D(pd.Series(value, index = index))
         line.set_marker('s')
         line.set_linestyle('None')
-        self.marked_data_curve = self.ax.add_line(line)
+        self.marked_data_curve = self.data_axis.addLine(line)
         line.set_visible(self.highlight_marked.isChecked())
 
         self.canvas.updatePlot()
 
 
-
-
-
 class PlotToolBox(QTabWidget):
-
-    def __init__(self, parent, canvas):
+    pass
+'''
+    def __init__(self, parent = None, canvas = PlotFigure()):
         super(PlotToolBox, self).__init__(parent)
-
+        self.parent = parent
+        self.canvas = canvas
+        self.current_plots = []
         ## Appearance widget
-        appearance_widget = AxesToolBox(self, canvas)
+
+    def addAxisTools(self, data_axis):
+        appearance_widget = AxesToolBox(self.parent, self.canvas, data_axis)
         self.addTab(appearance_widget, 'Appearance')
+
+        self.current_plots.append(data_axis)
 
 
         ## Editing widget
-        button2 = QPushButton('Test')
-        self.addTab(button2, 'Editing')
+        #button2 = QPushButton('Test')
+        #self.addTab(button2, 'Editing')
 
-        self.show()
+        #self.show()
 
-
+'''
 def createLine2D(series, marker = None):
     '''
     Returns an artist object [Line2D] which represents the series,
