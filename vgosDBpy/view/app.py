@@ -92,6 +92,7 @@ class App(QWidget):
     def _plot_table_button(self):
         self._plotbutton()
         self._tablebutton()
+
     def _plotbutton(self):
         '''
         Method for plotting variables
@@ -106,8 +107,6 @@ class App(QWidget):
 
         for data_axis in self.plot_widget.getAxis():
             self.plot_toolbox.updateAxis(data_axis)
-
-        #self._tablebutton()
 
     def _tablebutton(self):
         '''

@@ -26,7 +26,7 @@ def read_var_content_float64(seekedData, pathToNetCDF):
 Retuns the header of a net cdfFile
 """
 def read_var_content_S1(seekedData,pathToNetCDF):
-    print(seekedData)
+    #print(seekedData)
     with Dataset(pathToNetCDF, "r", format= "NETCDF4_CLASSIC") as nc:
         data= nc.variables[seekedData][:]
         head = " "

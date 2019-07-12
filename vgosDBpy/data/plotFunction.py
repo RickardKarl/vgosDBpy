@@ -29,7 +29,7 @@ def plotVariable(path, var, figure):
         time = combineYMDHMwithSec(timePath)
         #time_plot=[]
         for t in time:
-            time_plot.append( t.time() )
+            time_plot.append(t)
         ax.set_title(header_info_to_plot(path)+ "\n " + "Plot " + name(path,var) + " versus Time " )
     else:
         time_plot = range(0,len(y))

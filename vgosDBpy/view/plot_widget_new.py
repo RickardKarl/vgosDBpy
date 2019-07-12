@@ -55,7 +55,7 @@ class PlotFigure(FigureCanvas):
             axis, data = plotVariable(items[0].getPath(), items[0].labels, self.figure)
 
         elif len(items) == 2:
-            axis = plotVariable2yAxis(items[0].getPath(), items[0].labels, items[1].getPath(), items[1].labels, self.figure)
+            axis, data = plotVariable2yAxis(items[0].getPath(), items[0].labels, items[1].getPath(), items[1].labels, self.figure)
 
         else:
             raise ValueError('Argument items contains wrong number of items, should be one or two.')
@@ -82,9 +82,7 @@ class AxesToolBox(QWidget):
 
 
         self.smooth_curve = None # Saves the smooth curve
-
-        self.marked_data = [] # Used to save the marked data
-        self.marked_data_curve = None
+        self.marked_data_curve = None # Saves marked data points in pot
 
         appearance_widget = QWidget(self)
         self.check_line = QCheckBox('Show line')
@@ -107,7 +105,6 @@ class AxesToolBox(QWidget):
         self.check_line.setCheckState(QtCore.Qt.Checked)
         self.check_line.stateChanged.connect(self._showLine)
 
-
         self.check_marker.setCheckState(QtCore.Qt.Unchecked)
         self.check_marker.stateChanged.connect(self._showMarkers)
 
@@ -122,6 +119,9 @@ class AxesToolBox(QWidget):
         self.data_axis = data_axis
         self.original_lines = data_axis.getAxis().get_lines()
         self.updateSelector(self.data_axis)
+        self._showLine()
+        self._showMarkers()
+
 
     def updateSelector(self, data_axis):
         self.selector = RectangleSelector(data_axis.getAxis(), self.selector_callback, drawtype='box')
@@ -131,16 +131,10 @@ class AxesToolBox(QWidget):
         x1, y1 = eclick.xdata, eclick.ydata
         x2, y2 = erelease.xdata, erelease.ydata
 
-        self.updateMarkedData(getData(x1, x2, y1, y2, self.data_axis.getData()))
-
-    def updateMarkedData(self, data):
-        for point in data.iteritems():
-            if point in self.marked_data:
-                self.marked_data.remove(point)
-            else:
-                self.marked_data.append(point)
+        self.data_axis.updateMarkedData(getData(x1, x2, y1, y2, self.data_axis.getData()))
 
         self.highlightMarkedData()
+
 
     def _showLine(self):
         for plot in self.original_lines:
@@ -177,7 +171,7 @@ class AxesToolBox(QWidget):
 
         index = []
         value = []
-        for data in self.marked_data:
+        for data in self.data_axis.getMarkedData():
             index.append(data[0])
             value.append(data[1])
 
@@ -191,6 +185,8 @@ class AxesToolBox(QWidget):
         line.set_visible(self.highlight_marked.isChecked())
 
         self.canvas.updatePlot()
+
+        self.data_axis.removeMarkedData()
 
 
 class PlotToolBox(QTabWidget):
