@@ -38,11 +38,13 @@ class App(QWidget):
         self.button_plot_table = QPushButton('& Plot + Table ')
         self.button_plot = QPushButton('& Plot',self)
         self.button_table = QPushButton('& Table',self)
+        self.button_append_table = QPushButton('& Add to table' )
 
         # Button event
         self.button_plot_table.clicked.connect(self._plot_table_button)
         self.button_plot.clicked.connect(self._plotbutton)
         self.button_table.clicked.connect(self._tablebutton)
+        self.button_append_table.clicked.connect(self._addbutton)
 
         # Matplotlib widget and toolbox
         self.plot_widget = PlotFigure(parent = self)
@@ -62,6 +64,7 @@ class App(QWidget):
         layout.addWidget(self.button_plot_table,3,0)
         layout.addWidget(self.button_plot, 4, 0)
         layout.addWidget(self.button_table, 5, 0)
+        layout.addWidget(self.button_append_table, 5,1)
 
         self.setLayout(layout)
 
@@ -89,6 +92,7 @@ class App(QWidget):
                 text = read_netCDF_vars_info(item.getPath())
                 self.text.setPlainText(str(text))
                 self.table.updateVariables(item)
+
     def _plot_table_button(self):
         self._plotbutton()
         self._tablebutton()
@@ -119,3 +123,10 @@ class App(QWidget):
                 items.append(self.table.model.itemFromIndex(index[i]))
 
             self.data_table.updateData(items)
+    def _addbutton(self):
+        index= self._getSelected(self.table)
+        if not index  == [] :
+            items.append(self.table.model.itemFromIndex(index[0]))
+            for i in range (len(index)):
+                items.append(self.table.model.itemFromIndex(index[i]))
+        self.data_table.updateData(items)

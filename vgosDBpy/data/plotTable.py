@@ -57,8 +57,6 @@ def return_header_names(paths, vars):
         header.append(n + u)
     return header
 
-
-
 def append_table(old_data,path_new, var_new):
     y = getDataFromVar(path_new, var_new)
     data.update( { name(path_new,var_new) : y } )
