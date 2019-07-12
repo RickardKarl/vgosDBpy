@@ -6,7 +6,7 @@ from matplotlib.figure import Figure
 from matplotlib.widgets import RectangleSelector
 from matplotlib.lines import Line2D
 
-from vgosDBpy.data.plotFunction import plotVariable, plotVariable2yAxis
+from vgosDBpy.data.plotFunction import plot_generall #plotVariable, plotVariable2yAxis
 from vgosDBpy.editing.select_data import getData
 from vgosDBpy.model.data_axis import DataAxis
 
@@ -50,18 +50,25 @@ class PlotFigure(FigureCanvas):
         # Discards the old graph
         self.figure.clear()
 
+        paths =[]
+        vars = []
+        for itm in items:
+            paths.append(itm.getPath())
+            vars.append(itm.labels)
+        axis, data = plot_generall(paths, vars, self.figure, 1)
         # Add new axis
+        """
         if len(items) == 1:
-            axis, data = plotVariable(items[0].getPath(), items[0].labels, self.figure)
-
+            #axis, data = plotVariable(items[0].getPath(), items[0].labels, self.figure)
+            axis, data = plot_generall(paths, vars, self.figure, 1)
         elif len(items) == 2:
             axis = plotVariable2yAxis(items[0].getPath(), items[0].labels, items[1].getPath(), items[1].labels, self.figure)
-
+            ax1, ax2, d1, d2 = plot_generall(paths, vars, self.figure, 1)
         else:
             raise ValueError('Argument items contains wrong number of items, should be one or two.')
-
-
-        self.ax.append(DataAxis(axis, data))
+        """
+        for i in range(0,len(axis) ) :
+            self.ax.append( DataAxis( axis[i], data[i] ) )
         # Refresh canvas
         self.updatePlot()
 

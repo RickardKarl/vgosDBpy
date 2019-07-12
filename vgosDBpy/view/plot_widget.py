@@ -6,7 +6,7 @@ from matplotlib.figure import Figure
 from matplotlib.widgets import RectangleSelector
 from matplotlib.lines import Line2D
 
-from vgosDBpy.data.plotFunction import plotVariable, plotVariable2yAxis
+from vgosDBpy.data.plotFunction import plotVariable, plotVariable2yAxis, plot_generall
 from vgosDBpy.editing.select_data import getData
 
 import pandas as pd
@@ -45,6 +45,14 @@ class PlotFigure(FigureCanvas):
         # Discards the old graph
         self.figure.clear()
 
+        paths = []
+        vars = []
+        state = get_time_default()
+        for itm in items:
+            paths.append(itm.getPath())
+            vars.append(itm.labels)
+        self.ax, self.data = plot_generall(paths, vars,self.figure , 0)
+        """
         # Add new axis
         if len(items) == 1:
             self.ax, self.data = plotVariable(items[0].getPath(), items[0].labels, self.figure)
@@ -54,7 +62,7 @@ class PlotFigure(FigureCanvas):
 
         else:
             raise ValueError('Argument items contains wrong number of items, should be one or two.')
-
+        """
         # Refresh canvas
         self.updatePlot()
 
