@@ -1,7 +1,8 @@
-from PySide2.QtWidgets import QTabWidget, QGridLayout, QWidget, QCheckBox, QButtonGroup, QRadioButton
+from PySide2.QtWidgets import QTabWidget, QGridLayout, QWidget, QCheckBox, QButtonGroup, QRadioButton, QVBoxLayout
 from PySide2 import QtCore
 
 from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
+from matplotlib.backends.backend_qt5agg import NavigationToolbar2QT as NavigationToolbar
 from matplotlib.backends.backend_pdf import PdfPages
 from matplotlib.figure import Figure
 from matplotlib.widgets import RectangleSelector
@@ -13,6 +14,9 @@ from vgosDBpy.model.data_axis import DataAxis
 
 import pandas as pd
 from scipy.signal import savgol_filter
+
+
+
 
 class PlotFigure(FigureCanvas):
     '''
@@ -70,6 +74,10 @@ class PlotFigure(FigureCanvas):
 
 
 class AxesToolBox(QWidget):
+    # Class variables
+    marker_size = 1.8 # Controls size of markers in plots
+
+
     def __init__(self, parent, canvas, data_axis = None):
 
         super(AxesToolBox, self).__init__(parent)
@@ -126,6 +134,8 @@ class AxesToolBox(QWidget):
         self.updateSelector(self.data_axis)
         self._showLine()
         self._showMarkers()
+        for line in self.data_axis.getAxis().get_lines():
+            line.set_markersize(AxesToolBox.marker_size)
 
     def updateSelector(self, data_axis):
         self.selector = RectangleSelector(data_axis.getAxis(), self.selector_callback, drawtype='box')
@@ -140,20 +150,20 @@ class AxesToolBox(QWidget):
         self.highlightMarkedData()
 
     def _showLine(self, show_line = True):
-        for plot in self.original_lines:
+        for line in self.original_lines:
             if self.check_line.isChecked() and show_line:
-                plot.set_linestyle('-')
+                line.set_linestyle('-')
             else:
-                plot.set_linestyle('None')
+                line.set_linestyle('None')
 
         self.canvas.updatePlot()
 
     def _showMarkers(self):
-        for plot in self.original_lines:
+        for line in self.original_lines:
             if self.check_marker.isChecked():
-                plot.set_marker('o')
+                line.set_marker('o')
             else:
-                plot.set_marker('None')
+                line.set_marker('None')
 
         self.canvas.updatePlot()
 
@@ -227,8 +237,17 @@ class AxesToolBox(QWidget):
         line.set_color('r')
         self.edited_curve = self.data_axis.addLine(line)
 
+class PlotWidget(QWidget):
 
+    def __init__(self, parent = None):
+        super(PlotWidget, self).__init__(parent)
+        self.plot_canvas = PlotFigure(parent = self)
+        self.nav_toolbar = NavigationToolbar(self.plot_canvas, self)
 
+        layout = QVBoxLayout()
+        layout.addWidget(self.nav_toolbar)
+        layout.addWidget(self.plot_canvas)
+        self.setLayout(layout)
 
 class PlotToolBox(QTabWidget):
     pass
@@ -253,6 +272,7 @@ class PlotToolBox(QTabWidget):
 
         #self.show()
 '''
+
 def createLine2D(series, marker = None):
     '''
     Returns an artist object [Line2D] which represents the series,
