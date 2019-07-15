@@ -2,6 +2,7 @@ from PySide2.QtWidgets import QTabWidget, QGridLayout, QWidget, QCheckBox, QButt
 from PySide2 import QtCore
 
 from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
+from matplotlib.backends.backend_pdf import PdfPages
 from matplotlib.figure import Figure
 from matplotlib.widgets import RectangleSelector
 from matplotlib.lines import Line2D
@@ -50,6 +51,7 @@ class PlotFigure(FigureCanvas):
         # Discards the old graph
         self.figure.clear()
 
+        # Retrieves new graph from items
         paths =[]
         vars = []
         for itm in items:
@@ -60,6 +62,11 @@ class PlotFigure(FigureCanvas):
             self.addAxis(DataAxis(axis[i], data[i]))
         # Refresh canvas
         self.updatePlot()
+
+
+    def saveCanvas(self, file_name):
+        with PdfPages(file_name) as pdf:
+            pdf.savefig(self.figure)
 
 
 class AxesToolBox(QWidget):
@@ -149,6 +156,7 @@ class AxesToolBox(QWidget):
                 plot.set_marker('None')
 
         self.canvas.updatePlot()
+
 
     def _showSmoothCurve(self):
 
