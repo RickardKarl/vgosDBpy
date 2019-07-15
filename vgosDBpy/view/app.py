@@ -7,7 +7,7 @@ from vgosDBpy.view.plot_widget_new import PlotFigure, PlotToolBox, AxesToolBox
 
 class App(QWidget):
     '''
-    Frame for testing stuff
+    Application that is the entire interface for the utilities
     '''
 
     def __init__(self, wrapper_path, parent = None):

@@ -33,7 +33,7 @@ class PlotFigure(FigureCanvas):
 
     def addAxis(self, data_axis):
         axis = self.figure.add_axes(data_axis.getAxis())
-        self.ax.append(axis)
+        self.ax.append(data_axis)
 
     def removeAxis(self, data_axis):
         axis = data_axis.getAxis()
@@ -56,10 +56,8 @@ class PlotFigure(FigureCanvas):
             paths.append(itm.getPath())
             vars.append(itm.labels)
         axis, data = plot_generall(paths, vars, self.figure, 1)
-        
-        for i in range(0,len(axis) ) :
-            self.ax.addAxis(DataAxis(axis[i], data[i]))
-
+        for i in range(len(axis)):
+            self.addAxis(DataAxis(axis[i], data[i]))
         # Refresh canvas
         self.updatePlot()
 
@@ -75,10 +73,12 @@ class AxesToolBox(QWidget):
         self.data_axis = data_axis
         if data_axis == None:
             self.original_lines = None
+
         else:
             self.original_lines = self.data_axis.getAxis().get_lines()
 
 
+        self.edited_curve = None # Saves the curve for edited data (where marked data is hidden)
         self.smooth_curve = None # Saves the smooth curve
         self.marked_data_curve = None # Saves marked data points in pot
 
@@ -120,7 +120,6 @@ class AxesToolBox(QWidget):
         self._showLine()
         self._showMarkers()
 
-
     def updateSelector(self, data_axis):
         self.selector = RectangleSelector(data_axis.getAxis(), self.selector_callback, drawtype='box')
 
@@ -128,15 +127,14 @@ class AxesToolBox(QWidget):
         #'eclick and erelease are the press and release events'
         x1, y1 = eclick.xdata, eclick.ydata
         x2, y2 = erelease.xdata, erelease.ydata
-
+        print(getData(x1, x2, y1, y2, self.data_axis.getData()))
         self.data_axis.updateMarkedData(getData(x1, x2, y1, y2, self.data_axis.getData()))
 
         self.highlightMarkedData()
 
-
-    def _showLine(self):
+    def _showLine(self, show_line = True):
         for plot in self.original_lines:
-            if self.check_line.isChecked():
+            if self.check_line.isChecked() and show_line:
                 plot.set_linestyle('-')
             else:
                 plot.set_linestyle('None')
@@ -164,8 +162,8 @@ class AxesToolBox(QWidget):
 
 
         self.canvas.updatePlot()
-
-    def highlightMarkedData(self):
+    '''
+    def highlightMarkedData_old(self):
 
         index = []
         value = []
@@ -183,8 +181,45 @@ class AxesToolBox(QWidget):
         line.set_visible(self.highlight_marked.isChecked())
 
         self.canvas.updatePlot()
+    '''
+    def highlightMarkedData(self):
+        if self.marked_data_curve != None:
+            if self.marked_data_curve.axes != None:
+                self.marked_data_curve.remove()
+        if self.edited_curve != None:
+            if self.edited_curve.axes != None:
+                self.edited_curve.remove()
+        for line in self.original_lines:
+            if line.axes == None:
+                print(1)
+                self.data_axis.addLine(line)
 
+        index = []
+        value = []
+        if self.highlight_marked.isChecked():
+            self._showLine()
+            for data in self.data_axis.getMarkedData():
+                index.append(data[0])
+                value.append(data[1])
+
+            line = createLine2D(pd.Series(value, index = index))
+            line.set_marker('s')
+            line.set_linestyle('None')
+            self.marked_data_curve = self.data_axis.addLine(line)
+        else:
+            self.plotEditedData()
+
+        self.canvas.updatePlot()
+
+    def plotEditedData(self):
+        self._showLine(show_line = False)
+        self.data_axis.resetEditedData()
         self.data_axis.removeMarkedData()
+        line = createLine2D(self.data_axis.getEditedData())
+        line.set_color('r')
+        self.edited_curve = self.data_axis.addLine(line)
+
+
 
 
 class PlotToolBox(QTabWidget):
@@ -209,7 +244,6 @@ class PlotToolBox(QTabWidget):
         #self.addTab(button2, 'Editing')
 
         #self.show()
-
 '''
 def createLine2D(series, marker = None):
     '''
@@ -220,7 +254,7 @@ def createLine2D(series, marker = None):
     '''
     return Line2D(series.index, series[:], marker = marker)
 
-def createSmoothCurve(series, window_size = 10, pol_order = 3):
+def createSmoothCurve(series, window_size = 10, pol_order = 8):
     '''
     Return a time series [pd.Datafram] that is more smooth
 
@@ -231,5 +265,11 @@ def createSmoothCurve(series, window_size = 10, pol_order = 3):
     '''
     if window_size%2 == 0:
         window_size += 1
+
+    while pol_order > window_size:
+        pol_order -= 1
+        if pol_order == 1:
+            raise ValueError('Polynome order is too small, adjust window size')
+
     data = savgol_filter(series, window_size, pol_order)
     return pd.Series(data, index = series.index)
