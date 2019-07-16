@@ -3,8 +3,8 @@ from PySide2.QtWidgets import QTreeView, QTableView, QAbstractItemView
 
 from vgosDBpy.model.standardtree import TreeModel
 from vgosDBpy.model.table import TableModel
-from vgosDBpy.data.plotTable import tableFunctionGeneral, return_header_names #tableFunction, tableFunction2data
-
+from vgosDBpy.data.plotTable import Tablefunction as TF#tableFunctionGeneral, return_header_names #tableFunction, tableFunction2data
+#from vgodDBpy.data.plotTable import Table
 
 
 '''
@@ -59,7 +59,7 @@ class VariableTable(QTableView):
         super(VariableTable, self).__init__(parent)
 
         # Setup model
-        self.model = TableModel(['Variables', 'Dimensions'], parent)
+        self.model = TableModel(['Data', 'Variables'], parent)
         self.setModel(self.model)
 
         # Selection of items
@@ -96,10 +96,14 @@ class DataTable(QTableView):
 
     def __init__(self, parent = None):
         super(DataTable, self).__init__(parent)
-
+        #self.table = Table()
         # Setup model
         self.model = TableModel(' ', parent) # just use the two functions get_name_to_print and get_unit_to_print istead of 'Value'
         self.setModel(self.model)
+        self.tabfunc = TF()
+        # Selection of items
+        self.setSelectionMode(QAbstractItemView.ExtendedSelection)
+        self.selection = self.selectionModel()
 
     def updateData(self, items):
         '''
@@ -108,43 +112,47 @@ class DataTable(QTableView):
         items [list of QNodeItems] contains the nodes which points to the netCDF variables
         that should be displayed
         '''
+        path = []
+        var = []
+        print(items)
         if len(items) > 0 :
-            path = []
-            var = []
-            for itm in items:
+            for itm in items:  #tm in items:
                 path.append(itm.getPath())
                 var.append(itm.labels)
-            data= tableFunctionGeneral(path, var)
-            self.model.update_header(return_header_names(path,var))
-            """
-            # Retrieve values for variables
-            if len(items) == 1:
-                path = []
-                var = []
-                path.append( items[0].getPath() )
-                var.append( items[0].labels )
-                #data = tableFunction(path, var)
-                data = tableFunctionGeneral(path,var)
-
-
-            elif len(items) == 2:
-                #path = []
-                #var= []
-                #for itm in items:
-                #    path.append(itm.getPath())
-                #    var.append(itm.labels)
-                path1 = items[0].getPath()
-                path2 = items[1].getPath()
-                var1 = items[0].labels
-                var2 = items[1].labels
-                data = tableFunction2data(path1, var1, path2, var2)
-                #data =  tableFunctionGeneral(path,var)
-            """
+            data = self.tabfunc.tableFunctionGeneral(path, var)
+            self.model.update_header(self.tabfunc.return_header_names(path,var))
         else:
             raise ValueError('Argument items contains wrong number of items, should be one or two.')
 
         # Updates model
-        self.model.updateData(data, items)
+        self.model.updateData(data,items)
+
+        # Updates size of column when content is changed
+        for i in range(self.model.columnCount()):
+            self.resizeColumnToContents(i)
+
+
+    def appendData(self,items):
+        '''
+        Updates the data in the table
+
+        items [list of QNodeItems] contains the nodes which points to the netCDF variables
+        that should be displayed
+        '''
+        path = []
+        var = []
+        print(items)
+        if len(items) > 0:
+            for itm in items:  #tm in items:
+                path.append(itm.getPath())
+                var.append(itm.labels)
+            data = self.tabfunc.append_table(path, var)
+            self.model.update_header(self.tabfunc.append_header(path,var))
+        else:
+            raise ValueError('Argument items contains wrong number of items, should be one or two.')
+
+        # Updates model
+        self.model.appendData(data,items)
 
         # Updates size of column when content is changed
         for i in range(self.model.columnCount()):

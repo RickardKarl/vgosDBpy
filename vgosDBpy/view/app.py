@@ -17,7 +17,6 @@ class App(QWidget):
         wrapper_path [string] is the path to the wrapper file which is to be displayed
         parent [QWidget]
         '''
-
         super(App,self).__init__(parent)
 
         ########### Creating widgets
@@ -92,6 +91,7 @@ class App(QWidget):
                 text = read_netCDF_vars_info(item.getPath())
                 self.text.setPlainText(str(text))
                 self.table.updateVariables(item)
+                #self.data_table.updateData(item)
 
     def _plot_table_button(self):
         self._plotbutton()
@@ -123,12 +123,13 @@ class App(QWidget):
             items = []
             for i in range (len(index)):
                 items.append(self.table.model.itemFromIndex(index[i]))
-
             self.data_table.updateData(items)
+
+
     def _addbutton(self):
         index= self._getSelected(self.table)
         if not index  == [] :
-            items.append(self.table.model.itemFromIndex(index[0]))
+            items = []
             for i in range (len(index)):
                 items.append(self.table.model.itemFromIndex(index[i]))
-        self.data_table.updateData(items)
+        self.data_table.appendData(items)

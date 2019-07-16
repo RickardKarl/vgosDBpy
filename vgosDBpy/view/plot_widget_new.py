@@ -24,9 +24,13 @@ class PlotFigure(FigureCanvas):
         self.figure = figure
         super(PlotFigure, self).__init__(self.figure)
 
+        self.timeInt = 0
         # To be initiated
         self.ax = []
         self.draw()
+
+        self.paths = []
+        self.vars = []
 
     def updatePlot(self):
         self.draw()
@@ -49,14 +53,13 @@ class PlotFigure(FigureCanvas):
     def updateFigure(self, items):
         # Discards the old graph
         self.figure.clear()
-
-        paths =[]
-        vars = []
+        self.paths = []
+        self.vars = []
         for itm in items:
-            paths.append(itm.getPath())
-            vars.append(itm.labels)
-        axis, data = plot_generall(paths, vars, self.figure, 1)
-        # Add new axis
+            self.paths.append(itm.getPath())
+            self.vars.append(itm.labels)
+        axis, data = plot_generall(self.paths,self.vars, self.figure, self.timeInt)
+
         """
         if len(items) == 1:
             #axis, data = plotVariable(items[0].getPath(), items[0].labels, self.figure)
@@ -71,6 +74,20 @@ class PlotFigure(FigureCanvas):
             self.ax.append( DataAxis( axis[i], data[i] ) )
         # Refresh canvas
         self.updatePlot()
+        #save_paths = paths
+        #save_vars = vars
+
+    def updateTime(self):
+        self.figure.clear()
+        axis, data = plot_generall(self.paths, self.vars, self.figure, self.timeInt)
+        # Add new axis
+        for i in range(0,len(axis) ) :
+            self.ax.append( DataAxis( axis[i], data[i] ) )
+        # Refresh canvas
+        self.updatePlot()
+
+
+
 
 
 class AxesToolBox(QWidget):
@@ -97,6 +114,7 @@ class AxesToolBox(QWidget):
         self.check_line = QCheckBox('Show line')
         self.check_marker = QCheckBox('Show markers')
         self.check_smooth_curve = QCheckBox('Show smooth curve')
+        self.timeDefault = QCheckBox('Plot against time')
 
         self.highlight_marked = QRadioButton("Highlight marked data", self)
         self.hide_marked = QRadioButton("Hide marked data", self)
@@ -105,6 +123,7 @@ class AxesToolBox(QWidget):
         appearance_layout.addWidget(self.check_line, 0, 0)
         appearance_layout.addWidget(self.check_marker, 1, 0)
         appearance_layout.addWidget(self.check_smooth_curve, 2, 0)
+        appearance_layout.addWidget(self.timeDefault, 3, 0)
 
         appearance_layout.addWidget(self.highlight_marked, 0, 1)
         appearance_layout.addWidget(self.hide_marked, 1, 1)
@@ -114,12 +133,14 @@ class AxesToolBox(QWidget):
         self.check_line.setCheckState(QtCore.Qt.Checked)
         self.check_line.stateChanged.connect(self._showLine)
 
-
         self.check_marker.setCheckState(QtCore.Qt.Unchecked)
         self.check_marker.stateChanged.connect(self._showMarkers)
 
         self.check_smooth_curve.setCheckState(QtCore.Qt.Unchecked)
         self.check_smooth_curve.stateChanged.connect(self._showSmoothCurve)
+
+        self.timeDefault.setCheckState(QtCore.Qt.Checked)
+        self.timeDefault.stateChanged.connect(self._Deafult_on_time)
 
         self.highlight_marked.setChecked(True)
         self.highlight_marked.toggled.connect(self.highlightMarkedData)
@@ -179,6 +200,15 @@ class AxesToolBox(QWidget):
 
 
         self.canvas.updatePlot()
+
+    def _Deafult_on_time(self):
+        if self.timeDefault.isChecked():
+            self.canvas.timeInt =1
+        else:
+            self.canvas.timeInt = 0
+        # if there exist a plot update it    
+        if len(self.canvas.paths) > 0 :
+            self.canvas.updateTime()
 
     def highlightMarkedData(self):
 

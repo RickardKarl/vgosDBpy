@@ -6,7 +6,7 @@ from vgosDBpy.read_log.parser import readMetData, readCableCal, printFile, merge
 from vgosDBpy.read_log.plotter import plotSeries
 
 #Hanna
-from vgosDBpy.data.readNetCDF import print_name_dtype_dim_length
+from vgosDBpy.data.readNetCDF import print_name_dtype_dim_length, get_constants
 #from vgosDBpy.data.createNewWrp import create_new_wrapper
 
 if __name__ == '__main__':
@@ -35,11 +35,13 @@ if __name__ == '__main__':
 
         elif sys.argv[1] == 'Hanna':
 
-            path = "./../../Files/10JAN04XK/Apriori/Antenna.nc"
+            #path = "./../../Files/10JAN04XK/Apriori/Antenna.nc"
             #path = "./../../Files/10JAN04XU/Session/GroupBLWeights.nc"
             #path = "../../Files/10JAN04XK/10JAN04XK_V005_iGSFC_kall.wrp"
             #path = "./../../Files/10JAN04XU/Head.nc"
+            path = "./../../Files/10JAN04XK/WETTZELL/Met.nc"
             print_name_dtype_dim_length(path)
+            print(get_constants(path))
             #create_new_wrapper(path)
     else:
         pass

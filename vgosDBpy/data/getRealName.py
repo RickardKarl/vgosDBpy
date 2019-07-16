@@ -8,7 +8,7 @@ def get_name_to_print(path, var):
             return "Pressure "
         elif var == 'TempC':
             return "Temperature " #" [" +unit+ "]"
-        elif var == 'RealHum':
+        elif var == 'RelHum':
             return "Humidity "#"[" +unit+ "]"
         elif var == 'Cal-Cabel':
             return "Cal-Cabel  "#"[" +unit+ "]"
@@ -18,4 +18,4 @@ def get_name_to_print(path, var):
 def get_unit_to_print(path,var):
     with Dataset(path, "r", format="NETCDF4") as nc:
         unit=nc.variables[var].Units
-        return "  ["+unit+"]" 
+        return "  ["+unit+"]"

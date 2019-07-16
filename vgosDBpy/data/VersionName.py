@@ -33,4 +33,4 @@ def NewVersionName(path):
     return NewName
 
 path= "./Files/10JAN04XK/WETTZELL/Met.nc"
-print(NewVersionName(path))
+#print(NewVersionName(path))
