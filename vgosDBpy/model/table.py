@@ -87,17 +87,24 @@ class TableModel(QStandardItemModel):
         '''
         USED BY DataTable
 
-        Appends table with ONE extra row
+        Resets content and then replaces it with data
 
         data [dict] which contains data to fill the table with. E.g. {'time': time, "var_data": var_data}
         item [QStandardItems] contains the item which contains the variable with the data
         '''
         names = list(data)
         name = names[-1]
+        d = data[name]
+        #self.reset()
         j= len(names)-1
+        print(item)
+        print(data[name][1])
         for i in range(0,len(data[name])):
             self.setItem(i,j,DataValue(str(data[name][i]), item))
 
+        #for i in range(0,len(data[names[0]])):
+        #    for j in range (0,len(names)):
+        #        self.setItem(i, j, DataValue(str(data[names[j]][i]), items[j%(len(names)-1)]))
 """
 class DataTableModel(QStandardItemModel):
 

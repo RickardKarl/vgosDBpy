@@ -126,12 +126,16 @@ class Tablefunction():
         return self.header
 
     def return_header_names(self,paths, vars):
+        self.header_reset()
         self.header.append('Time [Y-M-D H:M:S]')
         for i in range(0,len(paths)) :
             n = name(paths[i],vars[i])
             u = unit(paths[i],vars[i])
             self.header.append(n + u)
         return self.header
+
+    def header_reset(self):
+        self.header=[]
 
 #def append_table(old_data,path_new, var_new):
 #    y = getDataFromVar(path_new, var_new)
