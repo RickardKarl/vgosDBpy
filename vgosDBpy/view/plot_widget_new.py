@@ -1,4 +1,4 @@
-from PySide2.QtWidgets import QTabWidget, QGridLayout, QWidget, QCheckBox, QButtonGroup, QRadioButton, QVBoxLayout
+from PySide2.QtWidgets import QTabWidget, QGridLayout, QWidget, QCheckBox, QButtonGroup, QRadioButton, QVBoxLayout, QPushButton
 from PySide2 import QtCore
 
 from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
@@ -35,9 +35,14 @@ class PlotFigure(FigureCanvas):
         self.figure = figure
         super(PlotFigure, self).__init__(self.figure)
 
+        self.timeInt = 0
         # To be initiated
         self.ax = []
         self.draw()
+
+        self.paths = []
+        self.vars = []
+        self.items = []
 
     def updatePlot(self):
         self.draw()
@@ -58,7 +63,7 @@ class PlotFigure(FigureCanvas):
         data_axis [DataAxis]
         '''
         axis = data_axis.getAxis()
-        self.ax.remove(axis)
+        self.ax.remove(data_axis)
         self.figure.delaxes(axis)
 
     def getAxis(self):
@@ -73,25 +78,39 @@ class PlotFigure(FigureCanvas):
         '''
         return self.figure
 
-    def updateFigure(self, items):
+    def updateFigure(self, items, timeUpdated = False):
         '''
         Updates figure with the given items
 
         items [list of QStandardItem]
         '''
         # Discards the old graph
-        self.figure.clear()
-
-        # Retrieves new graph from items
-        paths =[]
-        vars = []
+        self.resetFigure()
+        self.paths = []
+        self.vars = []
+        self.items = []
         for itm in items:
-            paths.append(itm.getPath())
-            vars.append(itm.labels)
-        axis, data = plot_generall(paths, vars, self.figure, 1)
+            self.items.append(itm)
+            self.paths.append(itm.getPath())
+            self.vars.append(itm.labels)
+        axis, data = plot_generall(self.paths, self.vars, self.figure, self.timeInt)
         for i in range(len(axis)):
-            self.addAxis(DataAxis(axis[i], data[i]))
+            self.addAxis(DataAxis(axis[i], data[i], items[i]))
         # Refresh canvas
+        self.updatePlot()
+
+    def resetFigure(self):
+        self.figure.clear()
+        for ax in self.ax:
+            self.removeAxis(ax)
+
+    def updateTime(self):
+        self.resetFigure()
+        axis, data = plot_generall(self.paths, self.vars, self.figure, self.timeInt)
+
+        # Add new axis
+        for i in range(len(axis)) :
+            self.addAxis(DataAxis(axis[i], data[i], self.items[i]))
         self.updatePlot()
 
 
@@ -114,7 +133,7 @@ class AxesToolBox(QWidget):
     Contains one DataAxis which represents the data set that is plotted
     '''
     # Class variables
-    marker_size = 1.8 # Controls size of markers in plots
+    marker_size = 2.3 # Controls size of markers in plots
 
 
     def __init__(self, parent, canvas, data_axis = None):
@@ -143,25 +162,36 @@ class AxesToolBox(QWidget):
         self.smooth_curve = None # Saves the smooth curve
         self.marked_data_curve = None # Saves marked data points in pot
 
-        # Buttons and their respective functions
+        # Buttons and their respective functions ##################################################
         appearance_widget = QWidget(self)
         self.check_line = QCheckBox('Show line')
         self.check_marker = QCheckBox('Show markers')
         self.check_smooth_curve = QCheckBox('Show smooth curve')
+        self.timeDefault = QCheckBox('Plot against time')
 
         self.highlight_marked = QRadioButton("Highlight marked data", self)
         self.hide_marked = QRadioButton("Hide marked data", self)
+        self.clear_marked = QPushButton("Clear marked data", self)
 
+        self.trackEdit = QPushButton('Track edit', self)
+        self.saveEdit = QPushButton('Save all changes', self)
+
+        # Layout ##################################################
         appearance_layout = QGridLayout()
         appearance_layout.addWidget(self.check_line, 0, 0)
         appearance_layout.addWidget(self.check_marker, 1, 0)
         appearance_layout.addWidget(self.check_smooth_curve, 2, 0)
+        appearance_layout.addWidget(self.timeDefault, 3, 0)
 
         appearance_layout.addWidget(self.highlight_marked, 0, 1)
         appearance_layout.addWidget(self.hide_marked, 1, 1)
+        appearance_layout.addWidget(self.clear_marked, 2, 1)
+
+        appearance_layout.addWidget(self.trackEdit, 0, 3)
+        appearance_layout.addWidget(self.saveEdit, 1, 3)
         appearance_widget.setLayout(appearance_layout)
 
-        # Listeners
+        # Listeners ##################################################
         self.check_line.setCheckState(QtCore.Qt.Checked)
         self.check_line.stateChanged.connect(self._showLine)
 
@@ -171,9 +201,17 @@ class AxesToolBox(QWidget):
         self.check_smooth_curve.setCheckState(QtCore.Qt.Unchecked)
         self.check_smooth_curve.stateChanged.connect(self._showSmoothCurve)
 
+        self.timeDefault.setCheckState(QtCore.Qt.Checked)
+        self.timeDefault.stateChanged.connect(self._timeDefault)
+
         self.highlight_marked.setChecked(True)
         self.highlight_marked.toggled.connect(self.highlightMarkedData)
         self.hide_marked.toggled.connect(self.highlightMarkedData)
+
+        self.clear_marked.clicked.connect(self._clearMarkedData)
+
+        self.trackEdit.clicked.connect(self._trackEdit)
+        self.saveEdit.clicked.connect(self._saveEdit)
 
     def updateAxis(self, data_axis):
         '''
@@ -204,7 +242,6 @@ class AxesToolBox(QWidget):
         #eclick and erelease are the press and release events'
         x1, y1 = eclick.xdata, eclick.ydata
         x2, y2 = erelease.xdata, erelease.ydata
-        print(getData(x1, x2, y1, y2, self.data_axis.getData()))
         self.data_axis.updateMarkedData(getData(x1, x2, y1, y2, self.data_axis.getData()))
 
         self.highlightMarkedData()
@@ -247,8 +284,30 @@ class AxesToolBox(QWidget):
         else:
             self.smooth_curve.remove()
 
-
         self.canvas.updatePlot()
+
+    def _clearMarkedData(self):
+        if self.data_axis == None:
+            pass
+        else:
+            self.data_axis.clearMarkedData()
+            self.highlightMarkedData()
+
+    def _trackEdit(self):
+        edited_data = self.data_axis.getNewEdit()
+        self.parentWidget().track_edits.addEdit(self.data_axis.getNode(), edited_data.values)
+
+    def _saveEdit(self):
+        self.parentWidget().track_edits.saveEdit()
+
+    def _timeDefault(self):
+        if self.timeDefault.isChecked():
+            self.canvas.timeInt =1
+        else:
+            self.canvas.timeInt = 0
+        # if there exist a plot update it
+        if len(self.canvas.paths) > 0:
+            self.canvas.updateTime()
 
     def highlightMarkedData(self):
         '''
@@ -291,13 +350,10 @@ class AxesToolBox(QWidget):
 
     def plotEditedData(self):
         '''
-        Temporarily removes marked data and plots only the  non-selected data
-
+        Temporarily removes marked data and plots only the non-selected data
         '''
         self._showLine(show_line = False)
-        self.data_axis.resetEditedData()
-        self.data_axis.removeMarkedData()
-        line = createLine2D(self.data_axis.getEditedData())
+        line = createLine2D(self.data_axis.getNewEdit())
         line.set_color('r')
         self.edited_curve = self.data_axis.addLine(line)
 
@@ -315,7 +371,7 @@ class PlotWidget(QWidget):
         layout.addWidget(self.nav_toolbar)
         layout.addWidget(self.plot_canvas)
         self.setLayout(layout)
-        
+
 '''
 class PlotToolBox(QTabWidget):
 

@@ -1,8 +1,9 @@
 from PySide2.QtGui import QStandardItemModel
 from PySide2 import QtCore
 from vgosDBpy.model.standardtree import Variable, DataValue
-from vgosDBpy.data.readNetCDF import read_netCDF_variables, read_netCDF_dimension_for_var, is_possible_to_plot
-
+from vgosDBpy.data.readNetCDF import read_netCDF_variables, read_netCDF_dimension_for_var, is_possible_to_plot, is_var_constant
+from vgosDBpy.data.PathParser import findCorrespondingTime
+from vgosDBpy.data.combineYMDHMS import combineYMDHMwithSec
 class TableModel(QStandardItemModel):
     '''
     Internal representation of items in a table
@@ -59,9 +60,13 @@ class TableModel(QStandardItemModel):
         for vars in var_list:
             if is_possible_to_plot(item.getPath(), vars):
                 self.setItem(i,0, Variable(vars,item))
-                #self.setItem(i,1,Variable(read_netCDF_dimension_for_var(vars, item.getPath()),item))
                 i += 1
-
+            elif is_var_constant(item.getPath(), vars):
+                self.setItem(i,1,Variable(vars,item))
+                i += 1
+                #self.setItem(i,1,Variable(read_netCDF_dimension_for_var(vars, item.getPath()),item))
+            #    j=2
+            #i += 1
 
     def updateData(self, data, items):
         '''
@@ -72,11 +77,91 @@ class TableModel(QStandardItemModel):
         data [dict] which contains data to fill the table with. E.g. {'time': time, "var_data": var_data}
         item [QStandardItems] contains the item which contains the variable with the data
         '''
-
         names = list(data)
+        self.reset()
+        for i in range(0,len(data[names[0]])):
+            for j in range (0,len(names)):
+                self.setItem(i, j, DataValue(str(data[names[j]][i]), items[j%(len(names)-1)]))
 
+    def appendData(self, data, item):
+        '''
+        USED BY DataTable
+
+        Appends table with ONE extra row
+
+        data [dict] which contains data to fill the table with. E.g. {'time': time, "var_data": var_data}
+        item [QStandardItems] contains the item which contains the variable with the data
+        '''
+        names = list(data)
+        name = names[-1]
+        j= len(names)-1
+        for i in range(0,len(data[name])):
+            self.setItem(i,j,DataValue(str(data[name][i]), item))
+
+"""
+class DataTableModel(QStandardItemModel):
+
+    '''
+    Internal representation of items in a table
+
+    Imports QStandardItemModel
+
+    Constructor needs:
+    header [list of strings] is the header on the top of the table
+    parent [QWidget]
+    '''
+
+    def __init__(self, header, parent=None):
+        super(DataTableModel,self).__init__(parent)
+        self.header = header
+        self.setHorizontalHeaderLabels(self.header)
+
+    def update_header(self,names):
+        self.header = names
+        self.setHorizontalHeaderLabels(self.header)
+
+    def flags(self, index):
+        '''
+        Let us choose if the selected items should be enabled, editable, etc
+
+        index [QModelIndex]
+        '''
+
+        if not index.isValid():
+            return 0
+
+        return QtCore.Qt.ItemIsEnabled | QtCore.Qt.ItemIsSelectable #| QtCore.Qt.ItemIsEditable # Uncomment if you want to be able to edit it
+
+
+    def reset(self):
+        '''
+        Resets content of the table without removing the header
+        (Has to be done since clear otherwise would remove the header)
+        '''
+        self.clear()
+        self.setHorizontalHeaderLabels(self.header)
+
+    def updateData(self, data, items):
+        '''
+        USED BY DataTable
+
+        Resets content and then replaces it with data
+
+        data [dict] which contains data to fill the table with. E.g. {'time': time, "var_data": var_data}
+        item [QStandardItems] contains the item which contains the variable with the data
+        '''
+        names = list(data)
         self.reset()
 
         for i in range(0,len(data[names[0]])):
             for j in range (0,len(names)):
                 self.setItem(i, j, DataValue(str(data[names[j]][i]), items[j%(len(names)-1)]))
+
+
+    def append_data(self, data, items):
+        names = list(data)
+
+        for i in range(0,len(data[names[0]])):
+            for j in range (0,len(names)):
+                self.setItem(i, j, DataValue(str(data[names[j]][i]), items[j%(len(names)-1)]))
+"""

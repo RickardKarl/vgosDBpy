@@ -37,7 +37,7 @@ def read_var_content_S1(seekedData,pathToNetCDF):
                 #print(data_row)
                 #print('EEEE')
                 for column in data_row:
-                    print(column.decode('ASCII'))
+                    #print(column.decode('ASCII'))
                     letter = column.decode('ASCII')
                     head += letter
         else:
@@ -126,6 +126,7 @@ def find_length(pathToNetCDF):
                 #print(var.getncattr(ncattr))
             lengths.append(len(nc.variables[var][:]))
     return lengths
+
 def find_content(pathToNetCDF):
     with Dataset(pathToNetCDF, "r", format="NETCDF4_CLASSIC") as nc:
         vars= nc.variables
@@ -187,6 +188,28 @@ def print_name_dtype_dim_length(pathToNetCDF):
         print(content[i])
         print("#####################")
     print(s)
+
+def get_constants(path):
+    dtype = find_dtype(path)
+    dimensions = find_dimensions(path)
+    vars = read_netCDF_variables(path)
+
+    c = 0
+    constants = []
+    for var in vars :
+        if dtype[c] != 'S1' and dimensions[c] != 'NumScans':
+            constants.append(var)
+        c += 1
+    return constants
+
+
+def get_constants_content(path):
+    constants = get_constants(path)
+    content= []
+    for cont in constants:
+        content.append(getDataFromVar(path, cont))
+    return content
+
 #det get_info_from_var()
 
 #path = "./../../Files/10JAN04XU/Apriori/Antenna.nc"
@@ -230,6 +253,20 @@ def is_possible_to_plot(path, var):
         return True
     else:
         return False
+
+def is_var_constant(path, var):
+    dtype = get_dtype_for_var(path, var)
+    dimensions = read_netCDF_dimension_for_var(var,path)
+    #vars = read_netCDF_variables(path)
+
+    if dtype != 'S1' and dimensions != 'NumScans':
+        return True
+    else:
+        return False
+"""
+def get_data_constant(path, var):
+
+
     #for i in range(len(dtypes)):#type in dtypes:
     #    if dtypes[i] != "S1" and len (vars[i]) == len(time):
     #        plotVars.append(vars[i])
@@ -250,4 +287,5 @@ def is_possible_to_plot(path, var):
 #print(vars_in_file[StationList])
     #print(nc.variables["StationList"][:])
         #if vars_in_file[i]!= "StationList":
-#        print((read_var_content(vars_in_file[i], path, YMDHMS, dtypes[i])))
+       print((read_var_content(vars_in_file[i], path, YMDHMS, dtypes[i])))
+"""

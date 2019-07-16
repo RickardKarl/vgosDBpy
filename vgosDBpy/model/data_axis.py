@@ -1,11 +1,13 @@
 import pandas as pd
+import numpy as np
 
 class DataAxis:
 
-    def __init__(self, axis, data):
+    def __init__(self, axis, data, node = None):
 
         self._axis = axis
         self._data = data
+        self._node = node
         self._edited_data = data.copy(deep = True)
         self._marked_data  = []
 
@@ -14,6 +16,9 @@ class DataAxis:
 
     def getData(self):
         return self._data
+
+    def getNode(self):
+        return self._node
 
     def getEditedData(self):
         return self._edited_data
@@ -28,9 +33,9 @@ class DataAxis:
         return self._axis.add_line(line)
 
 
-    def updateMarkedData(self, data):
+    def updateMarkedData(self, data, remove_existing = False):
         for point in data.iteritems():
-            if point in self._marked_data:
+            if point in self._marked_data and remove_existing:
                 self._marked_data.remove(point)
             else:
                 self._marked_data.append(point)
@@ -45,10 +50,13 @@ class DataAxis:
 
     def removeMarkedData(self):
         '''
-        Delete all marked data from current data
+        Replaces all marked data from current data with a NaN
         '''
-        time_stamp = []
         for data in self._marked_data:
-            time_stamp.append(data[0])
+            self._edited_data[data[0]] = np.nan
 
-        self._edited_data.drop(labels = time_stamp, inplace = True, errors = 'ignore')
+
+    def getNewEdit(self):
+        self.resetEditedData()
+        self.removeMarkedData
+        return self._edited_data
