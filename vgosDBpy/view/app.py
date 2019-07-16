@@ -3,11 +3,11 @@ from PySide2 import QtCore
 
 from vgosDBpy.view.widgets import QWrapper, VariableTable, DataTable
 from vgosDBpy.data.readNetCDF import read_netCDF_variables, read_netCDF_vars_info, read_netCDF_dimension_for_var
-from vgosDBpy.view.plot_widget_new import PlotFigure, PlotToolBox, AxesToolBox
+from vgosDBpy.view.plot_widget_new import AxesToolBox, PlotWidget
 
 class App(QWidget):
     '''
-    Frame for testing stuff
+    Application that is the entire interface for the utilities
     '''
 
     def __init__(self, wrapper_path, parent = None):
@@ -46,8 +46,8 @@ class App(QWidget):
         self.button_append_table.clicked.connect(self._addbutton)
 
         # Matplotlib widget and toolbox
-        self.plot_widget = PlotFigure(parent = self)
-        self.plot_toolbox = AxesToolBox(self, self.plot_widget)
+        self.plot_widget = PlotWidget(self)
+        self.plot_toolbox = AxesToolBox(self, self.plot_widget.plot_canvas)
 
 
         # Layout
@@ -99,7 +99,7 @@ class App(QWidget):
 
     def _plotbutton(self):
         '''
-        Method for plotting variables
+        Method for plotting data from variables
         '''
         index = self._getSelected(self.table)
         if not index == []:
@@ -107,12 +107,10 @@ class App(QWidget):
             for i in range(len(index)):
                 items.append(self.table.model.itemFromIndex(index[i]))
 
-            self.plot_widget.updateFigure(items)
+            self.plot_widget.plot_canvas.updateFigure(items)
 
-        for data_axis in self.plot_widget.getAxis():
+        for data_axis in self.plot_widget.plot_canvas.getAxis():
             self.plot_toolbox.updateAxis(data_axis)
-
-        #self._tablebutton()
 
     def _tablebutton(self):
         '''

@@ -40,7 +40,6 @@ def plot_no_time(paths, vars, fig):
 
 def plot_time(paths, vars, fig):
     if len(paths) == 1:
-        print('Time one vartiable')
         return ( plot_var_time(paths[0], vars[0], fig) )
     elif  len(paths) == 2:
         return ( plot_two_var_time(paths, vars, fig) )
@@ -118,12 +117,14 @@ def plot_var_time(path, var, fig):
     #Create plot
     axis.append( fig.add_subplot(1,1,1) )
     axis[0].set_title(header_info_to_plot(path)+ "\n " + "Plot " + name(path,var) + " versus Time " )
-    if len(time_data) is len(y):
+    if len(time_data) == len(y):
         #plt.xticks( rotation= 80 )
         axis[0].plot(time_data, y)
         axis[0].set_xlabel('Time')
         axis[0].set_ylabel(name(path,var)+unit(path,var))
         data.append(pd.Series(y, index = time_data ))
+    else:
+        raise ValueError('Time and data do not have same length')
     return axis, data
 
 def plot_two_var_time (paths, vars, fig):
@@ -182,7 +183,7 @@ def plotVariable(path, var, figure):
         time = combineYMDHMwithSec(timePath)
         #time_plot=[]
         for t in time:
-            time_plot.append( t.time() )
+            time_plot.append(t)
         ax.set_title(header_info_to_plot(path)+ "\n " + "Plot " + name(path,var) + " versus Time " )
     else:
         time_plot = range(0,len(y))
