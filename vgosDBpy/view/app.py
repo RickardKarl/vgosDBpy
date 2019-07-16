@@ -3,7 +3,7 @@ from PySide2 import QtCore
 
 from vgosDBpy.view.widgets import QWrapper, VariableTable, DataTable
 from vgosDBpy.data.readNetCDF import read_netCDF_variables, read_netCDF_vars_info, read_netCDF_dimension_for_var
-from vgosDBpy.view.plot_widget_new import PlotToolBox, AxesToolBox, PlotWidget
+from vgosDBpy.view.plot_widget_new import AxesToolBox, PlotWidget
 
 class App(QWidget):
     '''
@@ -99,7 +99,7 @@ class App(QWidget):
 
     def _plotbutton(self):
         '''
-        Method for plotting variables
+        Method for plotting data from variables
         '''
         index = self._getSelected(self.table)
         if not index == []:
@@ -123,6 +123,7 @@ class App(QWidget):
                 items.append(self.table.model.itemFromIndex(index[i]))
 
             self.data_table.updateData(items)
+
     def _addbutton(self):
         index= self._getSelected(self.table)
         if not index  == [] :

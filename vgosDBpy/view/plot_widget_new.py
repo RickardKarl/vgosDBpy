@@ -24,6 +24,12 @@ class PlotFigure(FigureCanvas):
     Can display several axes
     '''
     def __init__(self, figure = Figure(tight_layout = True), parent = None):
+        '''
+        Constructor
+
+        figure [matplotlib.Figure]
+        parent [QWidget]
+        '''
 
         # Save figure and create Qt instance that displays plots from matplotlib
         self.figure = figure
@@ -37,21 +43,42 @@ class PlotFigure(FigureCanvas):
         self.draw()
 
     def addAxis(self, data_axis):
+        '''
+        Adds axis to the figure
+
+        data_axis [DataAxis]
+        '''
         axis = self.figure.add_axes(data_axis.getAxis())
         self.ax.append(data_axis)
 
     def removeAxis(self, data_axis):
+        '''
+        Removes axis from the figure
+
+        data_axis [DataAxis]
+        '''
         axis = data_axis.getAxis()
         self.ax.remove(axis)
         self.figure.delaxes(axis)
 
     def getAxis(self):
+        '''
+        Returns list of axes that belongs to the figure [list of matplotlib.Axis]
+        '''
         return self.ax
 
     def getFigure(self):
+        '''
+        Returns figure [matplotlib.Figure]
+        '''
         return self.figure
 
     def updateFigure(self, items):
+        '''
+        Updates figure with the given items
+
+        items [list of QStandardItem]
+        '''
         # Discards the old graph
         self.figure.clear()
 
@@ -69,16 +96,36 @@ class PlotFigure(FigureCanvas):
 
 
     def saveCanvas(self, file_name):
+        '''
+        Saves current figure as a pdf
+
+        file_name [str]
+        '''
         with PdfPages(file_name) as pdf:
             pdf.savefig(self.figure)
 
 
 class AxesToolBox(QWidget):
+    '''
+    A class that controls the appearance of the PlotFigure
+    Also includes the interface which controls it
+    (view/control)
+
+    Contains one DataAxis which represents the data set that is plotted
+    '''
     # Class variables
     marker_size = 1.8 # Controls size of markers in plots
 
 
     def __init__(self, parent, canvas, data_axis = None):
+
+        '''
+        Constructor
+
+        parent [QWidget]
+        canvas [PlotFigure]
+        data_axis [DataAxis]
+        '''
 
         super(AxesToolBox, self).__init__(parent)
 
@@ -88,7 +135,6 @@ class AxesToolBox(QWidget):
         self.data_axis = data_axis
         if data_axis == None:
             self.original_lines = None
-
         else:
             self.original_lines = self.data_axis.getAxis().get_lines()
 
@@ -97,6 +143,7 @@ class AxesToolBox(QWidget):
         self.smooth_curve = None # Saves the smooth curve
         self.marked_data_curve = None # Saves marked data points in pot
 
+        # Buttons and their respective functions
         appearance_widget = QWidget(self)
         self.check_line = QCheckBox('Show line')
         self.check_marker = QCheckBox('Show markers')
@@ -129,6 +176,11 @@ class AxesToolBox(QWidget):
         self.hide_marked.toggled.connect(self.highlightMarkedData)
 
     def updateAxis(self, data_axis):
+        '''
+        Updates the instance with a new axis
+
+        data_axis [DataAxis]
+        '''
         self.data_axis = data_axis
         self.original_lines = data_axis.getAxis().get_lines()
         self.updateSelector(self.data_axis)
@@ -138,10 +190,18 @@ class AxesToolBox(QWidget):
             line.set_markersize(AxesToolBox.marker_size)
 
     def updateSelector(self, data_axis):
-        self.selector = RectangleSelector(data_axis.getAxis(), self.selector_callback, drawtype='box')
+        '''
+        Updates the selector of the axes with a new selector
 
-    def selector_callback(self, eclick, erelease):
-        #'eclick and erelease are the press and release events'
+        data_axis [DataAxis]
+        '''
+        self.selector = RectangleSelector(data_axis.getAxis(), self._selector_callback, drawtype='box')
+
+    def _selector_callback(self, eclick, erelease):
+        '''
+        Called by RectangleSelector
+        '''
+        #eclick and erelease are the press and release events'
         x1, y1 = eclick.xdata, eclick.ydata
         x2, y2 = erelease.xdata, erelease.ydata
         print(getData(x1, x2, y1, y2, self.data_axis.getData()))
@@ -150,6 +210,9 @@ class AxesToolBox(QWidget):
         self.highlightMarkedData()
 
     def _showLine(self, show_line = True):
+        '''
+        Method that displays/hide the line in the plot
+        '''
         for line in self.original_lines:
             if self.check_line.isChecked() and show_line:
                 line.set_linestyle('-')
@@ -159,6 +222,9 @@ class AxesToolBox(QWidget):
         self.canvas.updatePlot()
 
     def _showMarkers(self):
+        '''
+        Method that displays/hide the markers in the data
+        '''
         for line in self.original_lines:
             if self.check_marker.isChecked():
                 line.set_marker('o')
@@ -169,6 +235,9 @@ class AxesToolBox(QWidget):
 
 
     def _showSmoothCurve(self):
+        '''
+        Method that displays/hide the a smooth curve fit in the data
+        '''
 
         if self.check_smooth_curve.isChecked():
             data = self.data_axis.getData()
@@ -180,42 +249,32 @@ class AxesToolBox(QWidget):
 
 
         self.canvas.updatePlot()
-    '''
-    def highlightMarkedData_old(self):
 
-        index = []
-        value = []
-        for data in self.data_axis.getMarkedData():
-            index.append(data[0])
-            value.append(data[1])
-
-        if self.marked_data_curve != None:
-            self.marked_data_curve.remove()
-
-        line = createLine2D(pd.Series(value, index = index))
-        line.set_marker('s')
-        line.set_linestyle('None')
-        self.marked_data_curve = self.data_axis.addLine(line)
-        line.set_visible(self.highlight_marked.isChecked())
-
-        self.canvas.updatePlot()
-    '''
     def highlightMarkedData(self):
+        '''
+        Method that highlight the marked data or temporarily removes it from the plot
+        '''
+
+        # Removes previous curves if needed
         if self.marked_data_curve != None:
             if self.marked_data_curve.axes != None:
                 self.marked_data_curve.remove()
         if self.edited_curve != None:
             if self.edited_curve.axes != None:
                 self.edited_curve.remove()
+
+        # Adds the ordinary lines if needed
         for line in self.original_lines:
             if line.axes == None:
-                print(1)
                 self.data_axis.addLine(line)
 
-        index = []
-        value = []
+        # Button press
         if self.highlight_marked.isChecked():
+
+            # Retrieve marked data
             self._showLine()
+            index = []
+            value = []
             for data in self.data_axis.getMarkedData():
                 index.append(data[0])
                 value.append(data[1])
@@ -224,12 +283,17 @@ class AxesToolBox(QWidget):
             line.set_marker('s')
             line.set_linestyle('None')
             self.marked_data_curve = self.data_axis.addLine(line)
+
         else:
             self.plotEditedData()
 
         self.canvas.updatePlot()
 
     def plotEditedData(self):
+        '''
+        Temporarily removes marked data and plots only the  non-selected data
+
+        '''
         self._showLine(show_line = False)
         self.data_axis.resetEditedData()
         self.data_axis.removeMarkedData()
@@ -238,7 +302,10 @@ class AxesToolBox(QWidget):
         self.edited_curve = self.data_axis.addLine(line)
 
 class PlotWidget(QWidget):
-
+    '''
+    Widget that brings the PlotFigure together with a navigation toolbar that allows different
+    matplotlib features such as zoom and move in plot.
+    '''
     def __init__(self, parent = None):
         super(PlotWidget, self).__init__(parent)
         self.plot_canvas = PlotFigure(parent = self)
@@ -248,10 +315,10 @@ class PlotWidget(QWidget):
         layout.addWidget(self.nav_toolbar)
         layout.addWidget(self.plot_canvas)
         self.setLayout(layout)
-
-class PlotToolBox(QTabWidget):
-    pass
+        
 '''
+class PlotToolBox(QTabWidget):
+
     def __init__(self, parent = None, canvas = PlotFigure()):
         super(PlotToolBox, self).__init__(parent)
         self.parent = parent
