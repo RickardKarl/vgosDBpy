@@ -106,8 +106,6 @@ class PlotFigure(FigureCanvas):
             self.ax.append( DataAxis( axis[i], data[i] ) )
         # Refresh canvas
         self.updatePlot()
-        #save_paths = paths
-        #save_vars = vars
 
     def updateTime(self):
         self.figure.clear()
@@ -117,9 +115,6 @@ class PlotFigure(FigureCanvas):
             self.ax.append( DataAxis( axis[i], data[i] ) )
         # Refresh canvas
         self.updatePlot()
-
-
-
 
 
     def saveCanvas(self, file_name):

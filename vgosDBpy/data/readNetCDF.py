@@ -7,11 +7,192 @@ from vgosDBpy.data.combineYMDHMS import combineYMDHMwithSec
 from vgosDBpy.data.PathParser import findCorrespondingTime
 
 
+#Actuallt used functions:
+
+#used from outside this program
 """
-wierd name, Takes in a path to netCDf file and a name to a variable in it
-returns an table containing the index, time and data for the given variable.
+Takes is a path to a netCDF file and a name of a variable and returns the varibales content.
 """
-def read_var_content_float64(seekedData, pathToNetCDF):
+def getDataFromVar(path, var):
+    with Dataset(path, "r", format="NETCDF4_CLASSIC") as nc:
+        return(nc.variables[var][:])
+
+"""
+NOT USED FOR NOW BUT WELL
+"""
+def get_variable(pathToNetCDF, var):
+    with Dataset(pathToNetCDF, 'r', format= 'NETCDF4_CLASSIC') as nc:
+        return nc.variables[var]
+
+"""
+Takes in a path to a NetCDF file
+Returns a header to a plot on the format: Station_name + Date
+internal calls:
+                read_var_content_S1(seekedData, path)
+"""
+def header_info_to_plot(path):
+    #get date of session
+    timePath = findCorrespondingTime(path)
+    time = combineYMDHMwithSec(timePath)
+    date = time[1].date()
+
+    station = read_var_content_S1("Station", path) # Station is name of data that one seeks.
+    return ( station + "   " + str(date) )
+
+"""
+Takes in: Path to NetCDF file
+returns: an array containing all the variabls names for an netCDF file
+"""
+def read_netCDF_variables(pathToNetCDF):
+    with Dataset(pathToNetCDF, "r", format="NETCDF4_CLASSIC") as nc:
+        vars= nc.variables
+        variables= []
+        for var in vars:
+            variables.append(var)
+    return variables
+
+"""
+Takes in: path to netCDF file and name of variable in file
+Returns: True of variabele has dismension "NumScans" and d_type != S1
+internal calls:
+                read_netCDF_dimension_for_var(var, path)
+                get_dtype_for_var(path, var)
+"""
+def is_possible_to_plot(path, var):
+    dimension = read_netCDF_dimension_for_var(path, var)
+    data_type = get_dtype_for_var(path,var)
+    if dimension == "NumScans" and data_type != "S1" :
+        return True
+    else:
+        return False
+
+"""
+Takes in: path to netCDF file amd name of var in file
+Returns: True is varibale has dtype != S1 but is not plottable
+Internal calls:
+                get_dtype_for_var(path, var)
+                read_netCDF_dimension_for_var(path,var)
+"""
+def is_var_constant(path, var):
+    dtype = get_dtype_for_var(path, var)
+    dimensions = read_netCDF_dimension_for_var(path, var)
+    #vars = read_netCDF_variables(path)
+    if dtype != 'S1' and dimensions != 'NumScans':
+        return True
+    else:
+        return False
+
+"""
+Takes in: path to netCDF file
+Returns: a long string containing all the information stored in "S1" datatype vairbales in a netCDF file
+internal Calls:
+            read_netCDF_variables(path)
+            find_dtype(path)
+            read_var_content_S1(var, path)
+"""
+def read_netCDF_vars_info(pathToNetCDF):
+    info = ""
+    vars = read_netCDF_variables(pathToNetCDF)
+    dtypes = find_dtype(pathToNetCDF)
+    for i in range(len(dtypes)):
+        if dtypes[i] == "S1":
+            info += read_var_content_S1(vars[i], pathToNetCDF) + "\n"
+    return info
+
+#only used inside this file
+
+"""
+Takes in: path to netCDF file and the name of the variable that one is looking for.
+Retuns the header of a netCDF file, meaning all the S1 vars as a long string.
+Internal Calls:
+                non
+"""
+def read_var_content_S1(seekedData,pathToNetCDF):
+    with Dataset(pathToNetCDF, "r", format= "NETCDF4_CLASSIC") as nc:
+        data= nc.variables[seekedData][:]
+        head = " "
+        if len(data[:][0]) != 1:
+            for i in range(len(data)):
+                data_row = data[:][i]
+
+                for column in data_row:
+                    letter = column.decode('ASCII')
+                    head += letter
+        else:
+            for column in data:
+                letter = column.decode('ASCII')
+                head += letter
+        return head
+
+"""
+Takes in: path to netCDF file and name of specifik variable in netCDF file
+returns: that vairbales dimemsions name
+"""
+def read_netCDF_dimension_for_var(pathToNetCDF, var):
+    with Dataset(pathToNetCDF, "r", format="NETCDF4_CLASSIC") as nc:
+        dim = nc.variables[var].get_dims()[0].name
+    return dim_name
+
+"""
+Takes in: path to netCDF file and the name of a specific varibale in file
+Returns: thr data type of that variable
+"""
+def get_dtype_for_var(path, var):
+    with Dataset(path, "r", format = "NETCDF4_CLASSIC" ) as nc:
+        return nc.variables[var].dtype
+
+
+
+#########NOT USED############## 15/7 2019"##############
+#########NOT USED############## 15/7 2019"##############
+#########NOT USED############## 15/7 2019"##############
+#########NOT USED############## 15/7 2019"##############
+#########NOT USED############## 15/7 2019"##############
+#########NOT USED############## 15/7 2019"##############
+#########NOT USED############## 15/7 2019"##############
+#########NOT USED############## 15/7 2019"##############
+########NOT USED############## 15/7 2019"##############
+#########NOT USED############## 15/7 2019"##############
+#########NOT USED############## 15/7 2019"##############
+#########NOT USED############## 15/7 2019"##############
+#########NOT USED############## 15/7 2019"##############
+#########NOT USED############## 15/7 2019"##############
+#########NOT USED############## 15/7 2019"##############
+#########NOT USED############## 15/7 2019"##############
+
+########NOT USED############## 15/7 2019"##############
+#########NOT USED############## 15/7 2019"##############
+#########NOT USED############## 15/7 2019"##############
+#########NOT USED############## 15/7 2019"##############
+#########NOT USED############## 15/7 2019"##############
+#########NOT USED############## 15/7 2019"##############
+#########NOT USED############## 15/7 2019"##############
+#########NOT USED############## 15/7 2019"##############
+
+"""
+
+#Takes in: a path to a NetCDF file
+#Returns: all variables in a netCDF file that can be plotted versus time, mening they have same Dimension "Numscans" and data type !=  S1
+#Internal calls:
+#                find_dtype(path)
+#                read_netCDF_vars(path)
+
+def possible_to_plot(pathToNetCDF):
+    dtypes = find_dtype(pathToNetCDF)
+    vars = read_netCDF_vars(pathToNetCDF)
+    timePath = findCorrespondingTime(pathToNetCDF)
+    plotVars = []
+    i=0;
+    for i in range(len(dtypes)):#type in dtypes:
+        if dtypes[i] != "S1" and len(vars[i]) == len(time):
+            plotVars.append(vars[i])
+    return plotVars
+
+
+#wierd name, Takes in a path to netCDf file and a name to a variable in it
+#returns an table containing the index, time and data for the given variable.
+
+def read_var_content_float64(seekedData, pathToNetCDF): #NEVER USED, BORDE EJ FUNKA
     timePath = findCorrespondingTime(pathToNetCDF)
     Time= combineYMDHMwithSec(timePath)
     with Dataset(pathToNetCDF,"r", format="NETCDF4_CLASSIC") as nc:
@@ -22,29 +203,7 @@ def read_var_content_float64(seekedData, pathToNetCDF):
             table.add_row([" ", i, Time[i], data[i]])
         table.get_string(title= seekedData)
         return table
-"""
-Retuns the header of a net cdfFile
-"""
-def read_var_content_S1(seekedData,pathToNetCDF):
-    #print(seekedData)
-    with Dataset(pathToNetCDF, "r", format= "NETCDF4_CLASSIC") as nc:
-        data= nc.variables[seekedData][:]
-        head = " "
-        if len(data[:][0]) != 1:
-            for i in range(len(data)):
-                #print("Enter")
-                data_row = data[:][i]
-                #print(data_row)
-                #print('EEEE')
-                for column in data_row:
-                    #print(column.decode('ASCII'))
-                    letter = column.decode('ASCII')
-                    head += letter
-        else:
-            for column in data:
-                letter = column.decode('ASCII')
-                head += letter
-        return head
+
 
 def read_var_content_S1_header(seekedData, pathToNetCDF):
     header = ""
@@ -57,10 +216,11 @@ def read_var_content_S1_header(seekedData, pathToNetCDF):
     if seekedData == 'Stub':
         header.append("File name: " + read_var_content_S1(seekedData, pathToNetCDF))
 
+"""
 
 """
-Not really relevant for now I think
-"""
+#Not really relevant for now I think
+
 def read_var_content(seekedData,pathToNetCDF,Time,dtype):
     #if dtype == "float64":
     #    return read_var_content_float64(seekedData,pathToNetCDF,Time)
@@ -71,89 +231,13 @@ def read_var_content(seekedData,pathToNetCDF,Time,dtype):
 
 
 """
-return an array containing all the variabls name for an netCDf file
-"""
-def read_netCDF_variables(pathToNetCDF):
-    with Dataset(pathToNetCDF, "r", format="NETCDF4_CLASSIC") as nc:
-        vars= nc.variables
-        variables= []
-        for var in vars:
-            variables.append(var)
-    return variables
 
 
-"""
-Returns a long string containing all the information stored in "S1" datatype vairbales in a netCDF file
-"""
-def read_netCDF_vars_info(pathToNetCDF):
-    info = ""
-    vars = read_netCDF_variables(pathToNetCDF)
-    dtypes = find_dtype(pathToNetCDF)
-    for i in range(len(dtypes)):
-        if dtypes[i] == "S1":
-            info += read_var_content_S1(vars[i], pathToNetCDF) + "\n"
-    return info
 
 """
 Reads in the data type for alla variables in a netCDF file and returns as an vector
 """
-def find_dtype(pathToNetCDF):
-        with Dataset(pathToNetCDF, "r", format="NETCDF4_CLASSIC") as nc:
-            vars= nc.variables
-            dtype= []
-            for var in vars:
-                #for ncattr in var.ncattrs():
-                    #print(var.getncattr(ncattr))
-                dtype.append(nc.variables[var].dtype)
-        return dtype
 
-def find_dimensions(pathToNetCDF):
-    with Dataset(pathToNetCDF, "r", format="NETCDF4_CLASSIC") as nc:
-        vars= nc.variables
-        dims= []
-        for var in vars:
-            #for ncattr in var.ncattrs():
-                #print(var.getncattr(ncattr))
-            dims.append(nc.variables[var].get_dims()[0].name)
-    return dims
-
-def find_length(pathToNetCDF):
-    with Dataset(pathToNetCDF, "r", format="NETCDF4_CLASSIC") as nc:
-        vars= nc.variables
-        lengths= []
-        for var in vars:
-            #for ncattr in var.ncattrs():
-                #print(var.getncattr(ncattr))
-            lengths.append(len(nc.variables[var][:]))
-    return lengths
-
-def find_content(pathToNetCDF):
-    with Dataset(pathToNetCDF, "r", format="NETCDF4_CLASSIC") as nc:
-        vars= nc.variables
-        content= []
-        for var in vars:
-            #for ncattr in var.ncattrs():
-                #print(var.getncattr(ncattr))
-            content.append(getDataFromVar(pathToNetCDF,var))
-    return content
-
-"""
-returns all variables in a netCDF file that can be plotted versus time, mening they have same Dimensions
-and data type is not S1
-"""
-
-def possible_to_plot(pathToNetCDF):
-    #pathh = "./../../../../Files/10JAN04XU/KOKEE/Met.nc"
-
-    dtypes = find_dtype(pathToNetCDF)
-    vars = read_netCDF_vars(pathToNetCDF)
-    timePath = findCorrespondingTime(pathToNetCDF)
-    plotVars = []
-    i=0;
-    for i in range(len(dtypes)):#type in dtypes:
-        if dtypes[i] != "S1" and len(vars[i]) == len(time):
-            plotVars.append(vars[i])
-    return plotVars
 
 """
 currently only returning true if dimension is numscan
@@ -163,32 +247,8 @@ currently only returning true if dimension is numscan
 return an array of the data assosiated with an variable
 """
 
-def header_info_to_plot(path):
-    #get date of session
-    timePath = findCorrespondingTime(path)
-    time = combineYMDHMwithSec(timePath)
-    date = time[1].date()
 
-    station = read_var_content_S1("Station", path)
-    return ( station + "   " + str(date) )
-
-
-def print_name_dtype_dim_length(pathToNetCDF):
-    vars = read_netCDF_variables(pathToNetCDF)
-    dtypes = find_dtype(pathToNetCDF)
-    dims = find_dimensions(pathToNetCDF)
-    lengths = find_length(pathToNetCDF)
-    content = find_content(pathToNetCDF)
-    s=""
-    for i in range(0, len(vars)):
-        print(vars[i])
-        print(dtypes[i])
-        print(dims[i])
-        print(lengths[i])
-        print(content[i])
-        print("#####################")
-    print(s)
-
+"""
 def get_constants(path):
     dtype = find_dtype(path)
     dimensions = find_dimensions(path)
@@ -209,7 +269,7 @@ def get_constants_content(path):
     for cont in constants:
         content.append(getDataFromVar(path, cont))
     return content
-
+"""
 #det get_info_from_var()
 
 #path = "./../../Files/10JAN04XU/Apriori/Antenna.nc"
@@ -227,42 +287,6 @@ def get_constants_content(path):
 """
 #####################Methods assosiatedwith specifik var##############################
 """
-def getDataFromVar(path, var):
-    with Dataset(path, "r", format="NETCDF4_CLASSIC") as nc:
-        return(nc.variables[var][:])
-
-def read_netCDF_dimension_for_var(var_name, pathToNetCDF):
-    with Dataset(pathToNetCDF, "r", format="NETCDF4_CLASSIC") as nc:
-        var = nc.variables[var_name]
-        dim_name = var.get_dims()[0].name
-    return dim_name
-
-def get_dtype_for_var(path, var):
-    with Dataset(path, "r", format = "NETCDF4_CLASSIC" ) as nc:
-        return nc.variables[var].dtype
-
-def is_possible_to_plot(path, var):
-    #dtypes = find_dtype(pathToNetCDF)
-    #vars = read_netCDF_vars(pathToNetCDF)
-    #timePath = findCorrespondingTime(pathToNetCDF)
-    #plotVars = []
-    #with Dataset(path, "r", format="NETCDF4_CLASSIC") as nc:
-    dimension = read_netCDF_dimension_for_var(var, path)
-    data_type = get_dtype_for_var(path,var)
-    if dimension == "NumScans" and data_type != "S1" :
-        return True
-    else:
-        return False
-
-def is_var_constant(path, var):
-    dtype = get_dtype_for_var(path, var)
-    dimensions = read_netCDF_dimension_for_var(var,path)
-    #vars = read_netCDF_variables(path)
-
-    if dtype != 'S1' and dimensions != 'NumScans':
-        return True
-    else:
-        return False
 """
 def get_data_constant(path, var):
 

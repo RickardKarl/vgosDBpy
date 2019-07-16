@@ -1,7 +1,7 @@
 from PySide2.QtGui import QStandardItemModel
 from PySide2 import QtCore
 from vgosDBpy.model.standardtree import Variable, DataValue
-from vgosDBpy.data.readNetCDF import read_netCDF_variables, read_netCDF_dimension_for_var, is_possible_to_plot, is_var_constant
+from vgosDBpy.data.readNetCDF import read_netCDF_variables, is_possible_to_plot, is_var_constant #read_netCDF_dimension_for_var,
 from vgosDBpy.data.PathParser import findCorrespondingTime
 from vgosDBpy.data.combineYMDHMS import combineYMDHMwithSec
 class TableModel(QStandardItemModel):
