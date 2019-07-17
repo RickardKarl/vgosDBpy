@@ -35,7 +35,7 @@ class PlotFigure(FigureCanvas):
         self.figure = figure
         super(PlotFigure, self).__init__(self.figure)
 
-        self.timeInt = 0
+        self.timeInt = 1
         # To be initiated
         self.ax = []
         self.draw()
@@ -105,9 +105,12 @@ class PlotFigure(FigureCanvas):
             self.removeAxis(ax)
 
     def updateTime(self):
+        print('UpdateTiem')
+        print (self.items)
+        print(self.paths)
+        print(self.vars)
         self.resetFigure()
         axis, data = plot_generall(self.paths, self.vars, self.figure, self.timeInt)
-
         # Add new axis
         for i in range(len(axis)) :
             self.addAxis(DataAxis(axis[i], data[i], self.items[i]))
@@ -302,12 +305,13 @@ class AxesToolBox(QWidget):
 
     def _timeDefault(self):
         if self.timeDefault.isChecked():
-            self.canvas.timeInt =1
+            self.canvas.timeInt = 1
         else:
             self.canvas.timeInt = 0
         # if there exist a plot update it
-        if len(self.canvas.paths) > 0:
-            self.canvas.updateTime()
+        #if len(self.canvas.paths) > 0:
+
+        self.canvas.updateTime()
 
     def highlightMarkedData(self):
         '''

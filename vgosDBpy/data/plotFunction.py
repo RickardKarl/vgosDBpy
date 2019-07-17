@@ -122,10 +122,11 @@ def plot_var_time(path, var, fig):
     axis.append( fig.add_subplot(1,1,1) )
     axis[0].set_title(header_info_to_plot(path)+ "\n " + "Plot " + name(path,var) + " versus Time " )
     if len(time_data) == len(y):
-        #plt.xticks( rotation= 80 )
+        #axis[0].xticks(rotation= 80)
         axis[0].plot(time_data, y)
         axis[0].set_xlabel('Time')
         axis[0].set_ylabel(name(path,var)+unit(path,var))
+        #axis[0].set_xticklabels(axis[0].get_xticklabels(), rotation=80)
         data.append(pd.Series(y, index = time_data ))
     else:
         raise ValueError('Time and data do not have same length')

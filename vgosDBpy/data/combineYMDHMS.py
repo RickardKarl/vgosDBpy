@@ -1,7 +1,6 @@
 from netCDF4 import Dataset
 import pandas as pd
 
-
 """
 Takes in a path to a TimeUTC.nc file and combines the YMDHM data
 with the second to create a YMDHMS format.
