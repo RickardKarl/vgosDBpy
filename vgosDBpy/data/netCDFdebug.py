@@ -1,15 +1,7 @@
-from vgosDBpy.data.readNetCDF import read_netCDF_variables
+from vgosDBpy.data.readNetCDF import read_netCDF_variables, find_dtype
 
-""
-def find_dtype(pathToNetCDF):
-        with Dataset(pathToNetCDF, "r", format="NETCDF4_CLASSIC") as nc:
-            vars= nc.variables
-            dtype= []
-            for var in vars:
-                #for ncattr in var.ncattrs():
-                    #print(var.getncattr(ncattr))
-                dtype.append(nc.variables[var].dtype)
-        return dtype
+
+
 
 def find_dimensions(pathToNetCDF):
     with Dataset(pathToNetCDF, "r", format="NETCDF4_CLASSIC") as nc:

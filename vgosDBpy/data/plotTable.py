@@ -103,17 +103,15 @@ class Tablefunction():
         self.header = []
 
     def tableFunctionGeneral(self,paths,vars): # USE THISONE
-        self.data = {}
-        #reset_data()
+        self.data_reset()
         timePath = findCorrespondingTime(paths[0])
         time =  combineYMDHMwithSec(timePath)
         self.data['Time'] = time
         c=0
         for path in paths:
             y = getDataFromVar( path, vars[c] )
-            self.data [ name ( path, vars[c] ) ] = y
+            self.data[ name ( path, vars[c] ) ] = y
             c = c + 1
-            #data.update( { name( paths[i],vars[i] ) : y } )
         return self.data
 
     def append_table(self, paths, vars):
@@ -136,6 +134,9 @@ class Tablefunction():
 
     def header_reset(self):
         self.header=[]
+
+    def data_reset(self):
+        self.data = {}
 
 #def append_table(old_data,path_new, var_new):
 #    y = getDataFromVar(path_new, var_new)

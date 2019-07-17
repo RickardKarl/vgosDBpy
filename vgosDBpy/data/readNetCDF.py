@@ -6,7 +6,6 @@ import os
 from vgosDBpy.data.combineYMDHMS import combineYMDHMwithSec
 from vgosDBpy.data.PathParser import findCorrespondingTime
 
-
 #Actuallt used functions:
 
 #used from outside this program
@@ -99,6 +98,14 @@ def read_netCDF_vars_info(pathToNetCDF):
             info += read_var_content_S1(vars[i], pathToNetCDF) + "\n"
     return info
 
+def find_dtype(pathToNetCDF):
+    with Dataset(pathToNetCDF, "r", format="NETCDF4_CLASSIC") as nc:
+        vars= nc.variables
+        dtype= []
+        for var in vars:
+            dtype.append(nc.variables[var].dtype)
+    return dtype
+
 #only used inside this file
 
 """
@@ -130,8 +137,8 @@ returns: that vairbales dimemsions name
 """
 def read_netCDF_dimension_for_var(pathToNetCDF, var):
     with Dataset(pathToNetCDF, "r", format="NETCDF4_CLASSIC") as nc:
-        dim = nc.variables[var].get_dims()[0].name
-    return dim_name
+        dimension = nc.variables[var].get_dims()[0].name
+    return dimension
 
 """
 Takes in: path to netCDF file and the name of a specific varibale in file
