@@ -6,12 +6,6 @@ from vgosDBpy.model.table import TableModel
 from vgosDBpy.data.plotTable import Tablefunction as TF#tableFunctionGeneral, return_header_names #tableFunction, tableFunction2data
 #from vgodDBpy.data.plotTable import Table
 
-
-'''
-Will soon enough be moved to view folder
-
-'''
-
 class QWrapper(QTreeView):
     '''
     Widget that inherits from QTreeView
@@ -20,18 +14,16 @@ class QWrapper(QTreeView):
     Imports TreeModel which is the model representation of the wrapper
 
     Constructor needs:
-    root_path [string]
-    wrapper_file [string]
+    root_path [string] is the path to the root folder of the vgosDB data base
     parent [QWidget]
-
     '''
 
     def __init__(self, root_path, parent=None):
         super(QWrapper, self).__init__(parent)
 
         # Setup model
-        self.model = TreeModel(['Name'], root_path)
-        self.setModel(self.model)
+        self._model = TreeModel(['Name'], root_path)
+        self.setModel(self._model)
 
         # Selection of items
         self.setSelectionMode(QAbstractItemView.ExtendedSelection)
@@ -43,6 +35,9 @@ class QWrapper(QTreeView):
 
         # Size-related
         self.resizeColumnToContents(0)
+
+    def getModel(self):
+        return self._model
 
 class VariableTable(QTableView):
     '''

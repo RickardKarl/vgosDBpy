@@ -24,6 +24,7 @@ class TreeModel(QStandardItemModel):
         self.setupModel(root_path)
         self.setHorizontalHeaderLabels(header)
 
+
     def flags(self, index):
         '''
         Let us choose if the selected items should be enabled, editable, etc
@@ -87,6 +88,9 @@ class QNodeItem(QStandardItem):
         '''
         return self.node.getPath()
 
+    def getNode(self):
+        return self.node
+
     def isNetCDF(self):
         '''
         Checks if the node points to a netCDF
@@ -125,6 +129,9 @@ class QNodeItem(QStandardItem):
     def __repr__(self):
         return self.labels
 
+    def __hash__(self):
+        return hash(self.labels)*33 + hash(self.labels)*22 + hash(str(self.node.parent))*11
+
 
 
 class NetCDFItem(QNodeItem):
@@ -150,6 +157,7 @@ class Variable(QNodeItem):
     '''
     Inherited from QNodeItem
 
+    self.node becomes the NetCDFItem that the variable belongs to
     This should be used to differ variables that are stored in this format which points to netCDF files
     '''
 

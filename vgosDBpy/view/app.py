@@ -5,6 +5,8 @@ from vgosDBpy.view.widgets import QWrapper, VariableTable, DataTable
 from vgosDBpy.data.readNetCDF import read_netCDF_vars_info #, read_netCDF_dimension_for_var, read_netCDF_variables, 
 from vgosDBpy.view.plot_widget_new import AxesToolBox, PlotWidget
 
+from vgosDBpy.editing.track_edits import EditTracking
+
 class App(QWidget):
     '''
     Application that is the entire interface for the utilities
@@ -18,6 +20,10 @@ class App(QWidget):
         parent [QWidget]
         '''
         super(App,self).__init__(parent)
+
+        ######### Keep track of changes
+        self.track_edits = EditTracking()
+
 
         ########### Creating widgets
 
@@ -70,6 +76,9 @@ class App(QWidget):
         # Listeners
         self.treeview.selectionModel().selectionChanged.connect(self._showItemInfo)
 
+    ### Getters ###
+    def getWrapperModel():
+        return self.treeview.getModel()
 
     def _getSelected(self, widget):
         '''
@@ -80,13 +89,15 @@ class App(QWidget):
         '''
         return widget.selection.selectedIndexes()
 
+    ### Methods connected the interface ###
+
     def _showItemInfo(self):
         '''
         Updates information in the app, selected items are read from the wrapper directory
         '''
         index = self._getSelected(self.treeview)
         if not index == []:
-            item = self.treeview.model.itemFromIndex(index[0])
+            item = self.treeview.getModel().itemFromIndex(index[0])
             if item.isNetCDF():
                 text = read_netCDF_vars_info(item.getPath())
                 self.text.setPlainText(str(text))
@@ -106,7 +117,7 @@ class App(QWidget):
             items = []
             for i in range(len(index)):
                 items.append(self.table.model.itemFromIndex(index[i]))
-
+            print(items)
             self.plot_widget.plot_canvas.updateFigure(items)
 
         for data_axis in self.plot_widget.plot_canvas.getAxis():
