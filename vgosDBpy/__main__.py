@@ -6,7 +6,7 @@ from vgosDBpy.read_log.parser import readMetData, readCableCal, printFile, merge
 from vgosDBpy.read_log.plotter import plotSeries
 
 #Hanna
-from vgosDBpy.data.readNetCDF import print_name_dtype_dim_length, get_constants
+#from vgosDBpy.data.readNetCDF import print_name_dtype_dim_length, get_constants
 #from vgosDBpy.data.createNewWrp import create_new_wrapper
 
 if __name__ == '__main__':
