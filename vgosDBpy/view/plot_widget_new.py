@@ -64,7 +64,8 @@ class PlotFigure(FigureCanvas):
         '''
         axis = data_axis.getAxis()
         self.ax.remove(data_axis)
-        self.figure.delaxes(axis)
+        self.ax.clear()
+        print('Removed', axis)
 
     def getAxis(self):
         '''
@@ -86,16 +87,22 @@ class PlotFigure(FigureCanvas):
         '''
         # Discards the old graph
         self.resetFigure()
-        self.paths = []
-        self.vars = []
-        self.items = []
-        for itm in items:
-            self.items.append(itm)
-            self.paths.append(itm.getPath())
-            self.vars.append(itm.labels)
+
+        if timeUpdated is False:
+            self.paths = []
+            self.vars = []
+            self.items = []
+
+            for itm in items:
+                self.paths.append(itm.getPath())
+                self.vars.append(itm.labels)
+                self.items.append(itm)
+
         axis, data = plot_generall(self.paths, self.vars, self.figure, self.timeInt)
+        print('Returned axis', axis, self.timeInt)
         for i in range(len(axis)):
             self.addAxis(DataAxis(axis[i], data[i], items[i]))
+
         # Refresh canvas
         self.updatePlot()
 
@@ -103,19 +110,12 @@ class PlotFigure(FigureCanvas):
         self.figure.clear()
         for ax in self.ax:
             self.removeAxis(ax)
+        self.ax = []
 
     def updateTime(self):
-        print('UpdateTiem')
-        print (self.items)
-        print(self.paths)
-        print(self.vars)
-        self.resetFigure()
-        axis, data = plot_generall(self.paths, self.vars, self.figure, self.timeInt)
-        # Add new axis
-        for i in range(len(axis)) :
-            self.addAxis(DataAxis(axis[i], data[i], self.items[i]))
-        self.updatePlot()
-
+        self.updateFigure(self.items, timeUpdated = True)
+        for ax in self.ax:
+            self.parentWidget().getPlotToolBar().updateAxis(ax)
 
     def saveCanvas(self, file_name):
         '''
@@ -245,7 +245,7 @@ class AxesToolBox(QWidget):
         #eclick and erelease are the press and release events'
         x1, y1 = eclick.xdata, eclick.ydata
         x2, y2 = erelease.xdata, erelease.ydata
-        self.data_axis.updateMarkedData(getData(x1, x2, y1, y2, self.data_axis.getData()))
+        self.data_axis.updateMarkedData(getData(x1, x2, y1, y2, self.data_axis.getData(), self.canvas.timeInt))
 
         self.highlightMarkedData()
 
@@ -276,7 +276,7 @@ class AxesToolBox(QWidget):
 
     def _showSmoothCurve(self):
         '''
-        Method that displays/hide the a smooth curve fit in the data
+        Method that displays/hide a smooth curve fit in the data
         '''
 
         if self.check_smooth_curve.isChecked():
@@ -375,6 +375,9 @@ class PlotWidget(QWidget):
         layout.addWidget(self.nav_toolbar)
         layout.addWidget(self.plot_canvas)
         self.setLayout(layout)
+
+    def getPlotToolBar(self):
+        return self.parentWidget().plot_toolbox
 
 '''
 class PlotToolBox(QTabWidget):
