@@ -38,6 +38,9 @@ class PathParser():
                 return True
         return False
 
+    def get_parts(self):
+        return self.parts
+
 def findCorrespondingTime(path):
     time_path = ""
     if os.path.isfile(path):
