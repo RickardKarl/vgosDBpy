@@ -13,8 +13,8 @@ def getData(x1, x2, y1, y2, series, time_index = 1):
 
     Something is weird with the date extraction from the selector in plot_widget
     Currently a little hard-coded
-
     '''
+    
     # First we need to convert indices to the correct time format to compare with indices of the series
     if time_index == 1:
         startTime = series.index[0]

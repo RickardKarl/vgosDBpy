@@ -7,17 +7,6 @@ import matplotlib.pyplot as plt
 from vgosDBpy.data.VersionName import NewVersionName
 
 '''
-TODO:
-
-UPDATING DATA:
-Update attributes
-Update dimensions
-Make sure variables exist in in netCDF file
-
-EDITING DATA:
-How to edit data?
-
-
 MUST KEEP THE FORMAT WHEN CREATING A NEW netCDF file
 '''
 

@@ -32,7 +32,6 @@ class DataAxis:
     def addLine(self, line):
         return self._axis.add_line(line)
 
-
     def updateMarkedData(self, data, remove_existing = False):
         for point in data.iteritems():
             if point in self._marked_data and remove_existing:
