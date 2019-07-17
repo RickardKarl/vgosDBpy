@@ -109,7 +109,6 @@ class DataTable(QTableView):
         '''
         path = []
         var = []
-        print(items)
         if len(items) > 0 :
             for itm in items:  #tm in items:
                 path.append(itm.getPath())
@@ -136,7 +135,6 @@ class DataTable(QTableView):
         '''
         path = []
         var = []
-        print(items)
         if len(items) > 0:
             for itm in items:  #tm in items:
                 path.append(itm.getPath())

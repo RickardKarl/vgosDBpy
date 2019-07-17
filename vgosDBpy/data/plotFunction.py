@@ -9,7 +9,6 @@ from vgosDBpy.data.combineYMDHMS import combineYMDHMwithSec
 from vgosDBpy.data.readNetCDF import getDataFromVar, header_info_to_plot
 from vgosDBpy.data.getRealName import get_name_to_print as name, get_unit_to_print as unit
 """
-
 from PathParser import findCorrespondingTime
 from combineYMDHMS import combineYMDHMwithSec
 from readNetCDF import getDataFromVar
@@ -76,11 +75,13 @@ def plot_two_vars(paths, vars, fig):
 
 def plot_three_vars (paths,vars,fig) :
     #retrive data
+    axis = []
+    data= []
     x = getDataFromVar(paths[0], vars[0])
     y1 = getDataFromVar(paths[1], vars[1])
     y2 = getDataFromVar(paths[2], vars[2])
 
-    axis[0] = fig.add_subplot(1,1,1)
+    axis.append(fig.add_subplot(1,1,1))
     color = 'tab:red'
     axis[0].set_xlabel(name(paths[0],vars[0])+unit(paths[0],vars[0]))
     axis[0].set_ylabel(name(paths[1],vars[1])+unit(paths[1],vars[1]))
