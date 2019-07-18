@@ -12,11 +12,14 @@ class Parser:
     def __init__(self, root_path):
         self.wrapper = Wrapper(root_path)
         self._active_scope = []
+        self.path_to_wrp = root_path
 
     ##################################################
     # Methods which keep track of the current scope in the wrapper_path
     # Represented as a queue which keeps the most recent mentioned scope
     # Scopes are defined in wrapper.py
+    def get_wrp_path(self):
+        return self.root_path
 
     def getActiveScope(self):
         if len(self._active_scope) == 0:
@@ -38,6 +41,24 @@ class Parser:
 
     def getWrapperRoot(self):
         return self.wrapper.getRoot()
+
+    """
+    Method is called by 'createNewWrp' to get a list of all directories in old wrp
+    """
+    def find_all_directories(self,path):
+        #print('ENTER FIND_ALL_DIR')
+        #print('path:' +  path)
+        directories = []
+        with open(path,'r') as scr:
+            for line in scr:
+                l = line.lower().strip()
+                if l.startswith('default_dir'):
+                    directories.append( line.split()[1] )
+        #print(directories)
+        #print('EXIT FIND_ALL_DIR')
+        return directories
+
+
 
     def parseWrapper(self,path):
         '''
