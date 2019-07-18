@@ -29,6 +29,10 @@ class EditTracking:
             self._edited_variables.append(variable)
         self._edited_data[variable] = data_array
 
+        print('Current changes:')
+        for var in self._edited_variables:
+            print(var.getPath())
+
 
     def removeEdit(self, variable):
         '''
