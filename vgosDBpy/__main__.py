@@ -7,7 +7,7 @@ from vgosDBpy.read_log.plotter import plotSeries
 
 #Hanna
 from vgosDBpy.data.netCDFdebug import print_name_dtype_dim_length
-from vgosDBpy.data.createNewWrp import print_wrapper_file
+from vgosDBpy.data.createNewWrp import print_wrapper_file, test
 #from vgosDBpy.data.createNewWrp import create_new_wrapper
 
 if __name__ == '__main__':
@@ -44,7 +44,8 @@ if __name__ == '__main__':
             #print_name_dtype_dim_length(path)
             #print(get_constants(path))
             #create_new_wrapper(path)
-            path = '../../Files/10JAN04XK/10JAN04XK_V005_iGSFC_kall.wrp'
-            print_wrapper_file(path)
+            #path = '../../Files/10JAN04XK/10JAN04XK_V005_iGSFC_kall.wrp'
+            #print_wrapper_file(path)
+            test()
     else:
         pass
