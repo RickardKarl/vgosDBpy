@@ -14,19 +14,24 @@ def getData(x1, x2, y1, y2, series, time_index = 1):
     Something is weird with the date extraction from the selector in plot_widget
     Currently a little hard-coded
     '''
-    
+
     # First we need to convert indices to the correct time format to compare with indices of the series
     if time_index == 1:
         startTime = series.index[0]
-        time = []
-        for stamp in series.index:
-            time.append(stamp)
-        correction = startTime.year*365 + 123
-        x1 = x1 - correction
-        x2 = x2 - correction
         startYear = startTime.year
-        x1 = pd.Timedelta(x1, unit = 'D') + pd.Timestamp(year = startYear, month = 1, day = 1, hour = 0)
-        x2 = pd.Timedelta(x2, unit = 'D') + pd.Timestamp(year = startYear, month = 1, day = 1, hour = 0)
+        correction = startYear*365
+        correction_stamp = pd.Timedelta(ceil(x1-correction),'D')
+
+        print(startTime-correction_stamp)
+        print(correction_stamp)
+
+        x1 = x1 - correction + 3
+        x2 = x2 - correction + 3
+        x1 = pd.Timedelta(x1, unit = 'D') + pd.Timestamp(year = startYear, month = 1, day = 1, hour = 0) - correction_stamp
+        x2 = pd.Timedelta(x2, unit = 'D') + pd.Timestamp(year = startYear, month = 1, day = 1, hour = 0) - correction_stamp
+
+        print('Dates x1:', x1)
+        print('Dates x2:', x2)
     else:
         x1 = ceil(x1)
         x2 = floor(x2)

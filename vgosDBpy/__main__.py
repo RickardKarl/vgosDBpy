@@ -2,7 +2,7 @@
 import sys
 from PySide2.QtWidgets import QApplication
 from vgosDBpy.view.app import App
-from vgosDBpy.read_log.parser import readMetData, readCableCal, printFile, mergeSeries
+#from vgosDBpy.read_log.parser import readMetData, readCableCal, printFile, mergeSeries
 from vgosDBpy.read_log.plotter import plotSeries
 from vgosDBpy.script_driven.argparser import CommandLineInterface
 
@@ -14,18 +14,7 @@ from vgosDBpy.data.createNewWrp import print_wrapper_file, test
 if __name__ == '__main__':
 
     if len(sys.argv) > 1:
-
-        if sys.argv[1].endswith('.log'):
-
-            data = readCableCal(sys.argv[1])
-            metData = readMetData(sys.argv[1])
-            data = mergeSeries(data['CableCal'], metData['Temp'], return_right = False)
-            if len(sys.argv) > 2:
-                plotSeries(metData[sys.argv[2]])
-            else:
-                plotSeries(data)
-
-        elif sys.argv[1] == 'Hanna':
+        if sys.argv[1] == 'Hanna':
 
             #path = "./../../Files/10JAN04XK/Apriori/Antenna.nc"
             #path = "./../../Files/10JAN04XU/Session/GroupBLWeights.nc"

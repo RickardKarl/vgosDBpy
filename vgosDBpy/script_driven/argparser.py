@@ -5,7 +5,7 @@ from vgosDBpy.view.app import App
 from vgosDBpy.wrapper.parser import Parser
 
 # Log related
-from vgosDBpy.read_log.parser import readMetData, readCableCal, printFile, mergeSeries
+from vgosDBpy.read_log.parser import LogInfo
 from vgosDBpy.read_log.plotter import plotSeries
 
 
@@ -13,9 +13,14 @@ import argparse
 import sys
 
 class CommandLineInterface(argparse.ArgumentParser):
-    dumpable_variables = ['Temp', 'AtmPres', 'RelHum','CableCal']
-    def __init__(self):
+    # Has to be capitalized
 
+    dumpable_variables = []
+    for var in LogInfo.available_variables:
+        dumpable_variables.append(var.capitalize())
+
+
+    def __init__(self):
         super(CommandLineInterface,self).__init__(prog = 'vgosDBpy')
 
         # Adding arguments
@@ -55,7 +60,12 @@ class CommandLineInterface(argparse.ArgumentParser):
                     print(wrapper)
 
             elif self.args.file.endswith('.log'):
-                print(self.args.log)
+                if self.args.var != None:
+                    variable_exists = self.args.var.lower() in LogInfo.available_variables
+                    assert variable_exists, 'Given variable ' + self.args.var + ' is not recognized'
+
+                    read_log = LogInfo(self.args.file)
+                    read_log.plotVar(self.args.var)
 
             else:
                 raise ValueError('Wrong file given, does not end with .wrp or .log', self.args.file)

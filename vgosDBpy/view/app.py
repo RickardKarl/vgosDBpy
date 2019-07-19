@@ -1,6 +1,8 @@
 from PySide2.QtWidgets import QApplication, QTreeView, QAbstractItemView, QWidget, QTextEdit, QPushButton, QVBoxLayout, QGridLayout
 from PySide2 import QtCore
 
+from pandas.plotting import register_matplotlib_converters
+
 from vgosDBpy.view.widgets import QWrapper, VariableTable, DataTable
 from vgosDBpy.data.readNetCDF import read_netCDF_vars_info #, read_netCDF_dimension_for_var, read_netCDF_variables,
 from vgosDBpy.view.plot_widget_new import AxesToolBox, PlotWidget
@@ -24,6 +26,8 @@ class App(QWidget):
         ######### Keep track of changes
         self.track_edits = EditTracking()
 
+        ######### Matplotlib time format converter registers
+        register_matplotlib_converters()
 
         ########### Creating widgets
 
