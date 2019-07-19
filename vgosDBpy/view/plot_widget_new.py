@@ -80,6 +80,7 @@ class PlotFigure(FigureCanvas):
         return self.figure
 
     def updateFigure(self, items, timeUpdated = False):
+
         '''
         Updates figure with the given items
 
@@ -97,6 +98,9 @@ class PlotFigure(FigureCanvas):
                 self.paths.append(itm.getPath())
                 self.vars.append(itm.labels)
                 self.items.append(itm)
+        for i in range(0,len(self.paths)):
+            print('paths: ' +  self.paths[i])
+            print('vars:' + self.vars[i] )
 
         axis, data = plot_generall(self.paths, self.vars, self.figure, self.timeInt)
         print('Returned axis', axis, self.timeInt)
@@ -117,6 +121,21 @@ class PlotFigure(FigureCanvas):
         for ax in self.ax:
             self.parentWidget().getPlotToolBar().updateAxis(ax)
 
+    def append_plot(self, item):
+        #add new item
+        self.paths.append(item.getPath())
+        self.vars.append(item.labels)
+        self.items.append(item)
+        self.resetFigure()
+        axis, data = plot_generall(self.paths, self.vars, self.figure, self.timeInt)
+        for i in range(len(axis)):
+            self.addAxis(DataAxis(axis[i], data[i], self.items[i]))
+
+        # Refresh canvas
+        self.updatePlot()
+
+
+
     def saveCanvas(self, file_name):
         '''
         Saves current figure as a pdf
@@ -125,7 +144,6 @@ class PlotFigure(FigureCanvas):
         '''
         with PdfPages(file_name) as pdf:
             pdf.savefig(self.figure)
-
 
 class AxesToolBox(QWidget):
     '''

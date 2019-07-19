@@ -81,7 +81,11 @@ class VariableTable(QTableView):
         for i in range(self.model.columnCount()):
             self.resizeColumnToContents(i)
 
-
+class ConstantTable(QTableView):
+    def __init__(self, parent=None):
+        super(DataTable,self).__init__(parent)
+        self.model = TableModel(' ', parent)
+        self.setModel(self.model)
 class DataTable(QTableView):
     '''
     Displays data from TableModel which has values from a variable together with timestamp

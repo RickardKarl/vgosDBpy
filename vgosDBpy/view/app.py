@@ -44,12 +44,14 @@ class App(QWidget):
         self.button_plot = QPushButton('& Plot',self)
         self.button_table = QPushButton('& Table',self)
         self.button_append_table = QPushButton('& Add to table' )
+        self.button_append_plot = QPushButton( '& Add to plot')
 
         # Button event
         self.button_plot_table.clicked.connect(self._plot_table_button)
         self.button_plot.clicked.connect(self._plotbutton)
         self.button_table.clicked.connect(self._tablebutton)
         self.button_append_table.clicked.connect(self._addbutton)
+        self.button_append_plot.clicked.connect(self._append_plotbutton)
 
         # Matplotlib widget and toolbox
         self.plot_widget = PlotWidget(self)
@@ -70,6 +72,7 @@ class App(QWidget):
         layout.addWidget(self.button_plot, 4, 0)
         layout.addWidget(self.button_table, 5, 0)
         layout.addWidget(self.button_append_table, 5,1)
+        layout.addWidget(self.button_append_plot,4,1)
 
         self.setLayout(layout)
 
@@ -118,6 +121,15 @@ class App(QWidget):
             for i in range(len(index)):
                 items.append(self.table.model.itemFromIndex(index[i]))
             self.plot_widget.plot_canvas.updateFigure(items)
+
+        for data_axis in self.plot_widget.plot_canvas.getAxis():
+            self.plot_toolbox.updateAxis(data_axis)
+
+    def _append_plotbutton(self):
+        index = self._getSelected(self.table)
+        if not index == []:
+            item = self.table.model.itemFromIndex(index[-1])
+            self.plot_widget.plot_canvas.append_plot(item)
 
         for data_axis in self.plot_widget.plot_canvas.getAxis():
             self.plot_toolbox.updateAxis(data_axis)

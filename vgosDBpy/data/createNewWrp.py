@@ -63,12 +63,10 @@ def create_new_wrapper(list_changed_files, path_to_old_wrp, new_wrp_name): #actu
                 written = False
                 l = line.lower().strip()
 
-                # checks id the line is entry to new directory
+                # checks if the line is entry to new directory
                 # and if so updates the current_directory
                 if l.startswith('default_dir'):
                     current_directory = l.split()[1]
-                    #if current_directory in map:
-                    #    changes_files_in_current_directory = map[current_directory]
 
                 for itm in changes_files_in_current_directory:
                     names = itm.split('-')
@@ -81,7 +79,7 @@ def create_new_wrapper(list_changed_files, path_to_old_wrp, new_wrp_name): #actu
 
                 if written is False :
                     new_wrapper.write(line)
-                    
+
         new_wrapper.close()
     old_wrapper.close()
 
@@ -134,6 +132,6 @@ def test():
     new_path = '../../Files/10JAN04XK/10JAN04XK_V005_iGSFC_kall_testa.wrp'
     file = ['../../Files/10JAN04XK/10JAN04XK/WETTZELL/Met.nc', '../../Files/10JAN04XK/10JAN04XK/Head.nc']
     create_new_wrapper(file, old, new)
-    #print_wrapper_file(new_path)
+    print_wrapper_file(new_path)
     #print_wrapper_file(old)
     #equal(old, new_path)
