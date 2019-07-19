@@ -68,3 +68,4 @@ def create_netCDF_file(pathToNetCDF, variables):
     new_file_path = NewVersionName(pathToNetCDF)
     update_netCDF_variable(pathToNetCDF, new_file_path, variables)
     print('Creating new netCDF file with the path', new_file_path)
+    return new_file_path

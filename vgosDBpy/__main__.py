@@ -8,8 +8,8 @@ from vgosDBpy.script_driven.argparser import CommandLineInterface
 
 #Hanna
 from vgosDBpy.data.netCDFdebug import print_name_dtype_dim_length
-from vgosDBpy.data.createNewWrp import print_wrapper_file, test
-#from vgosDBpy.data.createNewWrp import create_new_wrapper
+from vgosDBpy.editing.createNewWrp import test
+
 
 if __name__ == '__main__':
 

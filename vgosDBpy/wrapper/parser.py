@@ -46,16 +46,12 @@ class Parser:
     Method is called by 'createNewWrp' to get a list of all directories in old wrp
     """
     def find_all_directories(self,path):
-        #print('ENTER FIND_ALL_DIR')
-        #print('path:' +  path)
         directories = []
         with open(path,'r') as scr:
             for line in scr:
                 l = line.lower().strip()
                 if l.startswith('default_dir'):
                     directories.append( line.split()[1] )
-        #print(directories)
-        #print('EXIT FIND_ALL_DIR')
         return directories
 
 

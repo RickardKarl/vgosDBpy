@@ -24,10 +24,12 @@ class App(QWidget):
         super(App,self).__init__(parent)
 
         ######### Keep track of changes
-        self.track_edits = EditTracking()
+        self.track_edits = EditTracking(wrapper_path)
 
         ######### Matplotlib time format converter registers
         register_matplotlib_converters()
+
+        ######### Save wrapper path
 
         ########### Creating widgets
 
