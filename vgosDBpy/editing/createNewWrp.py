@@ -9,7 +9,7 @@ import os
     # and see if they matches any in the predefined list of directories possible, which is found by
     # looping through the wrapper that one reads in and seraches for the keyword "default_dir"
 
-def create_new_wrapper(list_changed_files,new_file_names, path_to_old_wrp, new_wrp_name):
+def create_new_wrapper(list_changed_files, new_file_names, path_to_old_wrp, new_wrp_name):
 
     path_to_new_wrp = new_wrp_path(path_to_old_wrp, new_wrp_name)
 

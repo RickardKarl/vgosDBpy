@@ -9,12 +9,12 @@ from vgosDBpy.script_driven.argparser import CommandLineInterface
 
 #Hanna
 from vgosDBpy.data.netCDFdebug import print_name_dtype_dim_length, find_dimensions
-from vgosDBpy.data.readNetCDF import getDataFromVar_multDim
+#from vgosDBpy.data.readNetCDF import getDataFromVar_multDim
 from vgosDBpy.editing.createNewWrp import test
 
 
 if __name__ == '__main__':
-    
+
     if len(sys.argv) > 1:
         if sys.argv[1] == 'Hanna':
 
