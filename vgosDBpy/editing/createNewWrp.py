@@ -61,7 +61,6 @@ def create_new_wrapper(list_changed_files, new_file_names, path_to_old_wrp, new_
 
     with open(path_to_old_wrp, 'r') as old_wrapper:
         with open(path_to_new_wrp , 'w+') as new_wrapper:
-
             for line in old_wrapper:
                 l = line.lower().strip()
                 # checks if the line is entry to new directory
@@ -80,7 +79,7 @@ def create_new_wrapper(list_changed_files, new_file_names, path_to_old_wrp, new_
                     old_name = names[0]
                     new_name = names[1]
 
-                    if line.strip() == old_name.strip():
+                    if l == old_name.lower().strip():
                         new_wrapper.write(new_name+'\n')
                         written = True
 
