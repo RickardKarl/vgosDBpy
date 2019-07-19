@@ -57,5 +57,5 @@ class DataAxis:
 
     def getNewEdit(self):
         self.resetEditedData()
-        self.removeMarkedData
+        self.removeMarkedData()
         return self._edited_data

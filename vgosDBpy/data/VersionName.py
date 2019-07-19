@@ -29,7 +29,7 @@ def NewVersionName(path):
 
     # If no digit exists
     if file_digit == "":
-        new_file_name = lhs+"_V001."+rhs
+        new_file_name = lhs[0].upper() + lhs[1:] +"_V001."+rhs
 
     # Else if digit exists
     else:

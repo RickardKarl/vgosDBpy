@@ -5,7 +5,7 @@ from vgosDBpy.view.app import App
 from vgosDBpy.wrapper.parser import Parser
 
 # Log related
-from vgosDBpy.read_log.parser import readMetData, readCableCal, printFile, mergeSeries
+from vgosDBpy.read_log.parser import LogInfo
 from vgosDBpy.read_log.plotter import plotSeries
 
 
@@ -13,9 +13,14 @@ import argparse
 import sys
 
 class CommandLineInterface(argparse.ArgumentParser):
-    dumpable_variables = ['Temp', 'AtmPres', 'RelHum','CableCal']
-    def __init__(self):
+    # Has to be capitalized
 
+    dumpable_variables = []
+    for var in LogInfo.available_variables:
+        dumpable_variables.append(var.capitalize())
+
+
+    def __init__(self):
         super(CommandLineInterface,self).__init__(prog = 'vgosDBpy')
 
         # Adding arguments
@@ -32,36 +37,38 @@ class CommandLineInterface(argparse.ArgumentParser):
         # Decisions based on input ###################
 
         # Wrapper file input
-        if self.args.file != None:
-            # Checking if file looks correctly
-            if self.args.file.endswith('.wrp'):
 
-                # GUI
-                if self.args.graphic == True:
-                    # Create the Qt Application
-                    app = QApplication(sys.argv)
+        # Checking if file looks correctly
+        if self.args.file.endswith('.wrp'):
 
-                    # Create and show
-                    window = App(self.args.file)
+            # GUI
+            if self.args.graphic == True:
+                # Create the Qt Application
+                app = QApplication(sys.argv)
 
-                    window.show()
-                    # Run the main Qt loop
-                    sys.exit(app.exec_())
+                # Create and show
+                window = App(self.args.file)
 
-                # Non-GUI
-                else:
-                    parser = Parser(self.args.file)
-                    wrapper = parser.parseWrapper(self.args.file)
-                    print(wrapper)
+                window.show()
+                # Run the main Qt loop
+                sys.exit(app.exec_())
 
-            elif self.args.file.endswith('.log'):
-                print(self.args.log)
-
+            # Non-GUI
             else:
-                raise ValueError('Wrong file given, does not end with .wrp or .log', self.args.file)
+                parser = Parser(self.args.file)
+                wrapper = parser.parseWrapper(self.args.file)
+                print(wrapper)
+
+        elif self.args.file.endswith('.log'):
+            if self.args.var != None:
+                variable_exists = self.args.var.lower() in LogInfo.available_variables
+                assert variable_exists, 'Given variable ' + self.args.var + ' is not recognized'
+
+                read_log = LogInfo(self.args.file)
+                read_log.plotVar(self.args.var)
 
         else:
-            pass
+            raise ValueError('Wrong file given, does not end with .wrp or .log', self.args.file)
 
 
     def loop():

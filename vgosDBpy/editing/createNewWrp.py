@@ -3,12 +3,13 @@ from vgosDBpy.wrapper.parser import Parser
 from vgosDBpy.data.PathParser import PathParser
 from vgosDBpy.data.VersionName import NewVersionName
 from vgosDBpy.wrapper.equalWrapper import equal
+import os
 
     # from split find directory by going trough all words
     # and see if they matches any in the predefined list of directories possible, which is found by
     # looping through the wrapper that one reads in and seraches for the keyword "default_dir"
 
-def create_new_wrapper(list_changed_files, path_to_old_wrp, new_wrp_name): #actuall path in computer mening wrpPath style
+def create_new_wrapper(list_changed_files, path_to_old_wrp, new_wrp_name):
 
     path_to_new_wrp = new_wrp_path(path_to_old_wrp, new_wrp_name)
 
@@ -52,6 +53,9 @@ def create_new_wrapper(list_changed_files, path_to_old_wrp, new_wrp_name): #actu
 
     #if current_directory in map:
     #    changes_files_in_current_directory = map[current_directory]
+
+    if os.path.isfile(path_to_new_wrp):
+        raise ValueError('Path to new wrapper already exists, can not overwrite.')
 
     with open(path_to_old_wrp, 'r') as old_wrapper:
         with open(path_to_new_wrp , 'w+') as new_wrapper:
@@ -117,6 +121,10 @@ def create_new_wrapper(list_changed_files, path_to_old_wrp, new_wrp_name): #actu
 """
 def new_wrp_path(old_wrp_path, new_wrp_name):
     splits = old_wrp_path.split('/')
+
+    if not new_wrp_name.endswith('.wrp'):
+        new_wrp_name = new_wrp_name + '.wrp'
+
     splits[-1] = new_wrp_name
     return '/'.join(splits)
 
@@ -127,10 +135,10 @@ def print_wrapper_file(pathToWrp):
             print(line)
 
 def test():
-    old= '../../Files/10JAN04XK/10JAN04XK_V005_iGSFC_kall.wrp'
-    new= '10JAN04XK_V005_iGSFC_kall_testa.wrp'
-    new_path = '../../Files/10JAN04XK/10JAN04XK_V005_iGSFC_kall_testa.wrp'
-    file = ['../../Files/10JAN04XK/10JAN04XK/WETTZELL/Met.nc', '../../Files/10JAN04XK/10JAN04XK/Head.nc']
+    old= '../Data/17JAN03XA/17JAN03XA_V004_iIVS_kngs.wrp'
+    new= 'new_wrp'
+    #new_path = '../../Files/10JAN04XK/10JAN04XK_V005_iGSFC_kall_testa.wrp'
+    file = ['../Data/17JAN03XA/matera/met.nc']
     create_new_wrapper(file, old, new)
     print_wrapper_file(new_path)
     #print_wrapper_file(old)

@@ -1,4 +1,5 @@
 from vgosDBpy.editing.editNetCDF import create_netCDF_file
+from vgosDBpy.editing.createNewWrp import create_new_wrapper
 
 class EditTracking:
 
@@ -7,10 +8,11 @@ class EditTracking:
     Allows us to display them and save them in new files
     '''
 
-    def __init__(self):
+    def __init__(self, wrapper_path):
 
         self._edited_variables = []
         self._edited_data = {}
+        self._wrapper_path = wrapper_path
 
     def getEditedData(self):
         return self._edited_data
@@ -78,3 +80,8 @@ class EditTracking:
             netCDF_path = parent_key.getPath()
 
             create_netCDF_file(netCDF_path, edited_variables)
+            path_to_var_list = []
+            for var in var_list:
+                path_to_var_list.append(var.getPath())
+            print(path_to_var_list)
+            create_new_wrapper(path_to_var_list, self._wrapper_path, 'new_wrapper_1')
