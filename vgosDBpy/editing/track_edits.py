@@ -66,6 +66,8 @@ class EditTracking:
             else:
                 raise ValueError('Can not find netCDF that variable belongs to', variable)
 
+        path_to_file_list = [] # Saves path to the file that is replaced
+        new_file_name_list = [] # Saves name of all newly created files
         for parent_key in sort_by_parent:
             # Get variables that belongs to the same parent
             var_list = sort_by_parent.get(parent_key)
@@ -79,9 +81,11 @@ class EditTracking:
             # Get netCDF path of the parent (which is a netCDF file, it has been checked)
             netCDF_path = parent_key.getPath()
 
-            create_netCDF_file(netCDF_path, edited_variables)
-            path_to_var_list = []
-            for var in var_list:
-                path_to_var_list.append(var.getPath())
-            print(path_to_var_list)
-            create_new_wrapper(path_to_var_list, self._wrapper_path, 'new_wrapper_1')
+            new_file_path = create_netCDF_file(netCDF_path, edited_variables)
+            new_file_name = new_file_path.split('/')[-1]
+
+            path_to_file_list.append(parent_key.getPath())
+            new_file_name_list.append(new_file_name)
+        print(path_to_file_list)
+        print(new_file_name)
+        create_new_wrapper(path_to_file_list, new_file_name_list, self._wrapper_path, 'new_wrapper_1')

@@ -1,5 +1,6 @@
 import pandas as pd
 from math import ceil, floor
+from datetime import datetime, timedelta
 
 def getData(x1, x2, y1, y2, series, time_index = 1):
     '''
@@ -17,25 +18,20 @@ def getData(x1, x2, y1, y2, series, time_index = 1):
 
     # First we need to convert indices to the correct time format to compare with indices of the series
     if time_index == 1:
-        startTime = series.index[0]
-        startYear = startTime.year
-        correction = startYear*365
-        correction_stamp = pd.Timedelta(ceil(x1-correction),'D')
+        # x1, x2 are days since 01-01-0001 corresponding to the proleptic Gregorian ordinal
+        date_x1 = datetime.fromordinal(int(floor(x1))) + timedelta(days= x1-floor(x1))
+        date_x2 = datetime.fromordinal(int(floor(x2))) + timedelta(days= x2-floor(x2))
 
-        print(startTime-correction_stamp)
-        print(correction_stamp)
-
-        x1 = x1 - correction + 3
-        x2 = x2 - correction + 3
-        x1 = pd.Timedelta(x1, unit = 'D') + pd.Timestamp(year = startYear, month = 1, day = 1, hour = 0) - correction_stamp
-        x2 = pd.Timedelta(x2, unit = 'D') + pd.Timestamp(year = startYear, month = 1, day = 1, hour = 0) - correction_stamp
-
-        print('Dates x1:', x1)
-        print('Dates x2:', x2)
+        x1 = pd.Timestamp(date_x1)
+        x2 = pd.Timestamp(date_x2)
     else:
         x1 = ceil(x1)
         x2 = floor(x2)
     # Retrieve the correct data
+    if y1 > y2:
+        temp = y1
+        y1 = y2
+        y2 = temp
     out = series[x1:x2]
     out = out[y1 < out]
     out = out[out < y2]

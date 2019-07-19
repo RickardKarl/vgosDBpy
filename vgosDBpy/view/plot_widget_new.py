@@ -15,9 +15,6 @@ from vgosDBpy.model.data_axis import DataAxis
 import pandas as pd
 from scipy.signal import savgol_filter
 
-
-
-
 class PlotFigure(FigureCanvas):
     '''
     View of matplotlib plots
@@ -25,7 +22,7 @@ class PlotFigure(FigureCanvas):
     '''
     def __init__(self, figure = Figure(tight_layout = True), parent = None):
         '''
-        Constructor
+        Constructor:
 
         figure [matplotlib.Figure]
         parent [QWidget]
@@ -86,6 +83,7 @@ class PlotFigure(FigureCanvas):
 
         items [list of QStandardItem]
         '''
+
         # Discards the old graph
         self.resetFigure()
 
@@ -103,7 +101,6 @@ class PlotFigure(FigureCanvas):
             print('vars:' + self.vars[i] )
 
         axis, data = plot_generall(self.paths, self.vars, self.figure, self.timeInt)
-        print('Returned axis', axis, self.timeInt)
         for i in range(len(axis)):
             self.addAxis(DataAxis(axis[i], data[i], items[i]))
 
@@ -190,9 +187,9 @@ class AxesToolBox(QWidget):
         self.check_smooth_curve = QCheckBox('Show smooth curve')
         self.timeDefault = QCheckBox('Plot against time')
 
-        self.highlight_marked = QRadioButton("Highlight marked data", self)
-        self.hide_marked = QRadioButton("Hide marked data", self)
-        self.clear_marked = QPushButton("Clear marked data", self)
+        self.highlight_marked = QRadioButton('Highlight marked data', self)
+        self.hide_marked = QRadioButton('Hide marked data', self)
+        self.clear_marked = QPushButton('Clear marked data', self)
 
         self.trackEdit = QPushButton('Track edit', self)
         self.saveEdit = QPushButton('Save all changes', self)
