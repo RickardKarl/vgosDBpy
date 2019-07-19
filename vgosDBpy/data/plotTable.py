@@ -8,6 +8,49 @@ from vgosDBpy.data.PathParser import findCorrespondingTime
 from vgosDBpy.data.combineYMDHMS import combineYMDHMwithSec
 from vgosDBpy.data.readNetCDF import getDataFromVar
 from vgosDBpy.data.getRealName import get_name_to_print as name, get_unit_to_print as unit
+
+
+class Tablefunction():
+
+    def __init__(self):
+        self.data = {}
+        self.header = []
+
+    def tableFunctionGeneral(self,paths,vars): # USE THISONE
+        self.data_reset()
+        timePath = findCorrespondingTime(paths[0])
+        time =  combineYMDHMwithSec(timePath)
+        self.data['Time'] = time
+        c=0
+        for path in paths:
+            y = getDataFromVar( path, vars[c] )
+            self.data[ name ( path, vars[c] ) ] = y
+            c = c + 1
+        return self.data
+
+    def append_table(self, paths, vars):
+        y = getDataFromVar(paths[-1],vars[-1])
+        self.data[name(paths[-1], vars[-1])] = y
+        return self.data
+
+    def append_header(self, paths, vars):
+        self.header.append( name(paths[-1],vars[-1]) + unit(paths[-1], vars[-1]))
+        return self.header
+
+    def return_header_names(self,paths, vars):
+        self.header_reset()
+        self.header.append('Time [Y-M-D H:M:S]')
+        for i in range(0,len(paths)) :
+            n = name(paths[i],vars[i])
+            u = unit(paths[i],vars[i])
+            self.header.append(n + u)
+        return self.header
+
+    def header_reset(self):
+        self.header=[]
+
+    def data_reset(self):
+        self.data = {}
 """
 class Table():
     def __init__(self):
@@ -96,47 +139,7 @@ def tableFunction2data (path1, var1, path2, var2): # NOT USED ANYMORE USE GENERA
 """
 Takes in two arrays[], one containing paths and one names of variable, order so that the indexes agree
 """
-class Tablefunction():
 
-    def __init__(self):
-        self.data = {}
-        self.header = []
-
-    def tableFunctionGeneral(self,paths,vars): # USE THISONE
-        self.data_reset()
-        timePath = findCorrespondingTime(paths[0])
-        time =  combineYMDHMwithSec(timePath)
-        self.data['Time'] = time
-        c=0
-        for path in paths:
-            y = getDataFromVar( path, vars[c] )
-            self.data[ name ( path, vars[c] ) ] = y
-            c = c + 1
-        return self.data
-
-    def append_table(self, paths, vars):
-        y = getDataFromVar(paths[-1],vars[-1])
-        self.data[name(paths[-1], vars[-1])] = y
-        return self.data
-
-    def append_header(self, paths, vars):
-        self.header.append( name(paths[-1],vars[-1]) + unit(paths[-1], vars[-1]))
-        return self.header
-
-    def return_header_names(self,paths, vars):
-        self.header_reset()
-        self.header.append('Time [Y-M-D H:M:S]')
-        for i in range(0,len(paths)) :
-            n = name(paths[i],vars[i])
-            u = unit(paths[i],vars[i])
-            self.header.append(n + u)
-        return self.header
-
-    def header_reset(self):
-        self.header=[]
-
-    def data_reset(self):
-        self.data = {}
 
 #def append_table(old_data,path_new, var_new):
 #    y = getDataFromVar(path_new, var_new)

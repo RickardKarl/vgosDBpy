@@ -9,7 +9,7 @@ import os
     # and see if they matches any in the predefined list of directories possible, which is found by
     # looping through the wrapper that one reads in and seraches for the keyword "default_dir"
 
-def create_new_wrapper(list_changed_files, path_to_old_wrp, new_wrp_name):
+def create_new_wrapper(list_changed_files,new_file_names, path_to_old_wrp, new_wrp_name):
 
     path_to_new_wrp = new_wrp_path(path_to_old_wrp, new_wrp_name)
 
@@ -18,14 +18,14 @@ def create_new_wrapper(list_changed_files, path_to_old_wrp, new_wrp_name):
     possible_directories = parser.find_all_directories(path_to_old_wrp)
 
     old_file_names = []
-    new_file_names = []
+    #new_file_names = []
     target_directory = []
 
     # goes through the list of paths to all changed files.
     for pathToChangedFile in list_changed_files:
         #Collect old and new file name
         old_file_names.append(pathToChangedFile.split('/')[-1] )
-        new_file_names.append(NewVersionName(pathToChangedFile) )
+        #new_file_names.append(NewVersionName(pathToChangedFile) )
         parsed_path = pathToChangedFile.split('/')
         # find where the files is
         marker = 0
@@ -43,6 +43,7 @@ def create_new_wrapper(list_changed_files, path_to_old_wrp, new_wrp_name):
     for dir in target_directory:
         #not target_directory not in map yet
         if dir not in map:
+            dir = dir.lower().strip()
             map[dir] = []
         map[dir].append(old_file_names[c]+'-'+new_file_names[c])
         c += 1
@@ -54,25 +55,24 @@ def create_new_wrapper(list_changed_files, path_to_old_wrp, new_wrp_name):
     #if current_directory in map:
     #    changes_files_in_current_directory = map[current_directory]
 
-    if os.path.isfile(path_to_new_wrp):
-        raise ValueError('Path to new wrapper already exists, can not overwrite.')
+    #if os.path.isfile(path_to_new_wrp):
+    #    raise ValueError('Path to new wrapper already exists, can not overwrite.')
 
     with open(path_to_old_wrp, 'r') as old_wrapper:
         with open(path_to_new_wrp , 'w+') as new_wrapper:
 
             for line in old_wrapper:
-                if current_directory in map:
-                    changes_files_in_current_directory = map[current_directory]
-
-                written = False
                 l = line.lower().strip()
-
-                # checks id the line is entry to new directory
+                # checks if the line is entry to new directory
                 # and if so updates the current_directory
                 if l.startswith('default_dir'):
                     current_directory = l.split()[1]
-                    #if current_directory in map:
-                    #    changes_files_in_current_directory = map[current_directory]
+
+                if current_directory in map:
+                    changes_files_in_current_directory = map[current_directory]
+                written = False
+                #l = line.lower().strip()
+
 
                 for itm in changes_files_in_current_directory:
                     names = itm.split('-')
@@ -137,11 +137,12 @@ def print_wrapper_file(pathToWrp):
             print(line)
 
 def test():
-    old= '../Data/17JAN03XA/17JAN03XA_V004_iIVS_kngs.wrp'
-    new= 'new_wrp'
-    #new_path = '../../Files/10JAN04XK/10JAN04XK_V005_iGSFC_kall_testa.wrp'
-    file = ['../Data/17JAN03XA/matera/met.nc']
-    create_new_wrapper(file, old, new)
-    #print_wrapper_file(new_path)
+    old= '../../Files/10JAN04XK/10JAN04XK_V005_iGSFC_kall.wrp'
+    new= '10JAN04XK_V005_iGSFC_kall_testa_2.wrp'
+    new_path = '../../Files/10JAN04XK/10JAN04XK_V005_iGSFC_kall_testa_2.wrp'
+    file = ['../../Files/10JAN04XK/10JAN04XK/Head.nc','../../Files/10JAN04XK/10JAN04XK/WETTZELL/Met.nc']
+    new_names = ['Head_V001.nc', 'Met_v001.nc']
+    create_new_wrapper(file, new_names, old, new)
+    print_wrapper_file(new_path)
     #print_wrapper_file(old)
     #equal(old, new_path)

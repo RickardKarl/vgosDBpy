@@ -24,8 +24,8 @@ if __name__ == '__main__':
             #print_name_dtype_dim_length(path)
             #print(get_constants(path))
             #create_new_wrapper(path)
-            path = '../../Files/10JAN04XK/10JAN04XK_V005_iGSFC_kall.wrp'
-            print_wrapper_file(path)
+            #path = '../../Files/10JAN04XK/10JAN04XK_V005_iGSFC_kall.wrp'
+            #print_wrapper_file(path)
             test()
         else:
             interface = CommandLineInterface()
