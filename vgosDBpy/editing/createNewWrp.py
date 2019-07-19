@@ -45,7 +45,7 @@ def create_new_wrapper(list_changed_files,new_file_names, path_to_old_wrp, new_w
         if dir not in map:
             dir = dir.lower().strip()
             map[dir] = []
-        map[dir].append(old_file_names[c]+'-'+new_file_names[c])
+        map[dir].append(old_file_names[c]+'@'+new_file_names[c])
         c += 1
 
     # initialy we are not in a direcotory
@@ -75,7 +75,7 @@ def create_new_wrapper(list_changed_files,new_file_names, path_to_old_wrp, new_w
 
 
                 for itm in changes_files_in_current_directory:
-                    names = itm.split('-')
+                    names = itm.split('@')
                     old_name = names[0]
                     new_name = names[1]
 
