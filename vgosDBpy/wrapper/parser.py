@@ -51,7 +51,7 @@ class Parser:
             for line in scr:
                 l = line.lower().strip()
                 if l.startswith('default_dir'):
-                    directories.append( line.split()[1] )
+                    directories.append(l.split()[1] )
         return directories
 
 
