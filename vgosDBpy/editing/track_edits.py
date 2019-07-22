@@ -87,5 +87,5 @@ class EditTracking:
             path_to_file_list.append(parent_key.getPath())
             new_file_name_list.append(new_file_name)
         print(path_to_file_list)
-        print(new_file_name)
-        create_new_wrapper(path_to_file_list, new_file_name_list, self._wrapper_path, 'new_wrapper_1')
+        print('Created the following files:', new_file_name)
+        create_new_wrapper(path_to_file_list, new_file_name_list, self._wrapper_path, 'new_wrapper_2')

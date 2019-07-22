@@ -13,6 +13,9 @@ def create_new_wrapper(list_changed_files, new_file_names, path_to_old_wrp, new_
 
     path_to_new_wrp = new_wrp_path(path_to_old_wrp, new_wrp_name)
 
+    if os.path.isfile(path_to_new_wrp):
+        raise ValueError('Path to new wrapper already exists, can not overwrite.')
+
     parser = Parser(path_to_old_wrp)
 
     possible_directories = parser.find_all_directories(path_to_old_wrp)
@@ -55,9 +58,6 @@ def create_new_wrapper(list_changed_files, new_file_names, path_to_old_wrp, new_
 
     #if current_directory in map:
     #    changes_files_in_current_directory = map[current_directory]
-
-    #if os.path.isfile(path_to_new_wrp):
-    #    raise ValueError('Path to new wrapper already exists, can not overwrite.')
 
     with open(path_to_old_wrp, 'r') as old_wrapper:
         with open(path_to_new_wrp , 'w+') as new_wrapper:
