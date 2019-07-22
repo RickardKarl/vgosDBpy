@@ -3,10 +3,11 @@ import matplotlib.dates as md
 import numpy as np
 import pandas as pd
 from matplotlib.dates import DateFormatter as DF
+from netCDF4 import Dataset
 
 from vgosDBpy.data.PathParser import findCorrespondingTime
 from vgosDBpy.data.combineYMDHMS import combineYMDHMwithSec
-from vgosDBpy.data.readNetCDF import getDataFromVar, header_info_to_plot
+from vgosDBpy.data.readNetCDF import getDataFromVar, header_info_to_plot, read_netCDF_variables
 from vgosDBpy.data.getRealName import get_name_to_print as name, get_unit_to_print as unit
 """
 from PathParser import findCorrespondingTime
@@ -22,12 +23,27 @@ from datetime import datetime
 ALWYAS CALL THIS METHOD FROM OUTSIDE THIS FILE
 """
 def plot_generall (paths, vars, fig, state): # generall function tahta is always called from other function then calls the other functions.
-    if len(paths) != len(vars): # controll
-        return
-    if default_time(state) is False:
-            return ( plot_no_time(paths, vars, fig) )
+    # need to check if the variables tried to plot have several objects in paths
+    c = 0
+    marker = -1
+    for path in paths:
+        with Dataset(path, 'r', format='NETCDF4_CLASSIC') as nc:
+            if len(nc.variables[vars[c].strip()].get_dims()) > 1:
+                marker = c
+                length = len(nc.variables[vars[c].strip()].get_dims())
+
+        c += 1
+    if marker == -1 :
+        if len(paths) != len(vars): # controll
+            return
+        if default_time(state) is False:
+                return ( plot_no_time(paths, vars, fig) )
+        else:
+            return ( plot_time(paths, vars,fig) )
     else:
-        return ( plot_time(paths, vars,fig) )
+        return
+
+
 
 def plot_no_time(paths, vars, fig):
     if len(paths) == 2:
@@ -44,17 +60,18 @@ def plot_time(paths, vars, fig):
         return ( plot_two_var_time(paths, vars, fig) )
 
 def plot_one_var (paths, vars, fig):
-    y = getDataFromVar(paths[0],vars[0])
-    x = range(1,len(y)+1)
-    axis = []
-    data = []
-    axis.append(fig.add_subplot(1,1,1))
-    axis[0].plot(x,y)
-    axis[0].set_title(header_info_to_plot(paths[0]) + '\n' + 'Plot' + name(paths[0], vars[0]) )
-    axis[0].set_xlabel('Index')
-    axis[0].set_ylabel(name(paths[0],vars[0])+unit(paths[0],vars[0]))
-    data.append( pd.Series(y,index=x) )
-    return axis, data
+        y = getDataFromVar(paths[0],vars[0])
+        x = range(1,len(y)+1)
+        axis = []
+        data = []
+        axis.append(fig.add_subplot(1,1,1))
+        axis[0].plot(x,y)
+        axis[0].set_title(header_info_to_plot(paths[0]) + '\n' + 'Plot' + name(paths[0], vars[0]) )
+        axis[0].set_xlabel('Index')
+        axis[0].set_ylabel(name(paths[0],vars[0])+unit(paths[0],vars[0]))
+        data.append( pd.Series(y,index=x) )
+        return axis, data
+
 
 def plot_two_vars(paths, vars, fig):
 
@@ -104,6 +121,7 @@ def plot_three_vars (paths,vars,fig) :
     return axis, data
 
 def plot_var_time(path, var, fig):
+
     #retrive time data and if not possible just return
     axis = []
     data = []
@@ -131,6 +149,10 @@ def plot_var_time(path, var, fig):
     else:
         raise ValueError('Time and data do not have same length')
     return axis, data
+
+
+
+
 
 def plot_two_var_time (paths, vars, fig):
 
@@ -169,6 +191,36 @@ def plot_two_var_time (paths, vars, fig):
         return axis, data
     else:
         print("Dimensions do not agree")
+def OBS_plot():
+    #retrive time data and if not possible just return
+    axis = []
+    data = []
+
+    timePath = findCorrespondingTime(path)
+    if timePath is "":
+        return
+    time_data = []
+    time = combineYMDHMwithSec(timePath)
+    for t in time:
+        time_data.append(t)
+    #retive y-axis data
+
+    y = getDataFromVar(path,var)
+
+    #Create plot
+    axis.append(fig.add_subplot(1,1,1) )
+    axis[0].set_title(header_info_to_plot(path)+ "\n " + "Plot " + name(path,var) + " versus Time " )
+    if len(time_data) == len(y):
+        #axis[0].xticks(rotation= 80)
+        axis[0].plot(time_data, y)
+        axis[0].set_xlabel('Time')
+        axis[0].set_ylabel(name(path,var)+unit(path,var))
+        #axis[0].set_xticklabels(axis[0].get_xticklabels(), rotation=80)
+        data.append(pd.Series(y, index = time_data ))
+    else:
+        raise ValueError('Time and data do not have same length')
+    return axis, data
+
 
 def default_time(state):
     if state == 1:

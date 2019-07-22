@@ -4,7 +4,7 @@ from PySide2 import QtCore
 from pandas.plotting import register_matplotlib_converters
 
 from vgosDBpy.view.widgets import QWrapper, VariableTable, DataTable
-from vgosDBpy.data.readNetCDF import read_netCDF_vars_info #, read_netCDF_dimension_for_var, read_netCDF_variables,
+from vgosDBpy.data.readNetCDF import read_netCDF_vars_info,read_netCDF_data_info #, read_netCDF_dimension_for_var, read_netCDF_variables,
 from vgosDBpy.view.plot_widget_new import AxesToolBox, PlotWidget
 
 from vgosDBpy.editing.track_edits import EditTracking
@@ -109,7 +109,9 @@ class App(QWidget):
             item = self.treeview.getModel().itemFromIndex(index[0])
             if item.isNetCDF():
                 text = read_netCDF_vars_info(item.getPath())
-                self.text.setPlainText(str(text))
+                text_data =read_netCDF_data_info(item.getPath())
+                text_total = text + text_data
+                self.text.setPlainText(str(text_total))
                 self.table.updateVariables(item)
                 #self.data_table.updateData(item)
 

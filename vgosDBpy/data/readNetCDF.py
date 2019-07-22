@@ -75,11 +75,12 @@ Internal calls:
 def is_var_constant(path, var):
     dtype = get_dtype_for_var(path, var)
     dimensions = read_netCDF_dimension_for_var(path, var)
+    print(dimensions)
     #vars = read_netCDF_variables(path)
-    if dtype != 'S1' and dimensions != 'NumScans':
-        return True
-    else:
-        return False
+    if dtype != 'S1' and dimensions != "NumScans" :
+        if dimensions != "NumObs":
+            return True
+    return False
 
 """
 Takes in: path to netCDF file
@@ -98,6 +99,20 @@ def read_netCDF_vars_info(pathToNetCDF):
             info += read_var_content_S1(vars[i], pathToNetCDF) + "\n"
     return info
 
+def read_netCDF_data_info(pathToNetCDF):
+    info= ''
+    vars= read_netCDF_variables(pathToNetCDF)
+    first = True
+    for var in vars:
+        # currently nor accepting 'Stublen'
+        if is_var_constant(pathToNetCDF, var):
+            if first is True:
+                info = '\n \nVALUES STORED IN FILE: \n'
+                first = False
+            info += read_var_content_constant(pathToNetCDF, var) + '\n \n'
+    return info
+
+
 def find_dtype(pathToNetCDF):
     with Dataset(pathToNetCDF, "r", format="NETCDF4_CLASSIC") as nc:
         vars= nc.variables
@@ -105,6 +120,26 @@ def find_dtype(pathToNetCDF):
         for var in vars:
             dtype.append(nc.variables[var].dtype)
     return dtype
+
+def getDataFromVar_multDim(pathToNetCDF, var):
+    return_data = []
+    data = []
+    with Dataset(pathToNetCDF, 'r', format= 'NETCDF4_CLASSIC') as nc:
+        length = len(nc.variables[var.strip()].get_dims())
+        for i in range(0, length):
+            return_data.append(nc.variables[var.strip()][:,[i]])
+
+        for j in range (0,length):
+            temp = []
+            data.append(nc.variables[var.strip()][:,[0]])
+            r= nc.variables[var.strip()][:,[i]]
+            print(len(r))
+            #for i in range(0,len(r)):
+                #temp.append(return_data[i,[j]])
+                #temp.append(r[i])
+            #data.append(temp)
+        print(len(data))
+
 
 #only used inside this file
 
@@ -131,6 +166,27 @@ def read_var_content_S1(seekedData,pathToNetCDF):
                 head += letter
         return head
 
+def read_var_content_constant(pathToNetCDF, var):
+    name = var
+    with Dataset(pathToNetCDF, 'r', format = 'NETCDF4_CLASSIC') as nc:
+        data= nc.variables[var][:]
+        head = name +": \n"
+        #print(head)
+        #if len(data[0]) != 1:
+        #    for i in range(len(data)):
+        #        data_row = data[:][i]
+        #
+        #        for column in data_row:
+        #            letter = str(column)
+        #            head += letter
+        #            print(head)
+        #else:
+        for column in data:
+            letter = str(column)
+            head += letter+ '    '
+            #print(head)
+        return head
+
 """
 Takes in: path to netCDF file and name of specifik variable in netCDF file
 returns: that vairbales dimemsions name
@@ -139,6 +195,10 @@ def read_netCDF_dimension_for_var(pathToNetCDF, var):
     with Dataset(pathToNetCDF, "r", format="NETCDF4_CLASSIC") as nc:
         dimension = nc.variables[var].get_dims()[0].name
     return dimension
+
+def read_unit_for_var (pathToNetCDF, var):
+    with Dataset(pathToNetCDF, 'r', format= 'NETCDF4_CLASSIC') as nc:
+        return nc.variables[var].Units
 
 """
 Takes in: path to netCDF file and the name of a specific varibale in file

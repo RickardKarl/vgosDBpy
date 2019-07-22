@@ -1,7 +1,7 @@
 from PySide2.QtGui import QStandardItemModel
 from PySide2 import QtCore
 from vgosDBpy.model.standardtree import Variable, DataValue
-from vgosDBpy.data.readNetCDF import read_netCDF_variables, is_possible_to_plot, is_var_constant #read_netCDF_dimension_for_var,
+from vgosDBpy.data.readNetCDF import read_netCDF_variables, is_possible_to_plot, is_var_constant,read_unit_for_var #read_netCDF_dimension_for_var,
 from vgosDBpy.data.PathParser import findCorrespondingTime
 from vgosDBpy.data.combineYMDHMS import combineYMDHMwithSec
 class TableModel(QStandardItemModel):
@@ -60,13 +60,13 @@ class TableModel(QStandardItemModel):
         for vars in var_list:
             if is_possible_to_plot(item.getPath(), vars):
                 self.setItem(i,0, Variable(vars,item))
-                i += 1
-            elif is_var_constant(item.getPath(), vars):
-                self.setItem(i,1,Variable(vars,item))
-                i += 1
-                #self.setItem(i,1,Variable(read_netCDF_dimension_for_var(vars, item.getPath()),item))
+
+            #elif is_var_constant(item.getPath(), vars):
+            #    self.setItem(i,1,Variable(vars,item))
+            #    i += 1
+                self.setItem(i,1,Variable(read_unit_for_var(item.getPath(), vars),item))
             #    j=2
-            #i += 1
+                i += 1
 
     def updateData(self, data, items):
         '''
