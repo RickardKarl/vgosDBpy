@@ -76,7 +76,7 @@ class EditTracking:
 
             # Add these variables to the dict
             for var_item in var_list:
-                edited_variables[var_item] = self._edited_data.get(var_item)
+                edited_variables[str(var_item)] = self._edited_data.get(var_item)
 
             # Get netCDF path of the parent (which is a netCDF file, it has been checked)
             netCDF_path = parent_key.getPath()
@@ -86,6 +86,7 @@ class EditTracking:
 
             path_to_file_list.append(parent_key.getPath())
             new_file_name_list.append(new_file_name)
+
         print(path_to_file_list)
-        print(new_file_name)
-        create_new_wrapper(path_to_file_list, new_file_name_list, self._wrapper_path, 'new_wrapper_1')
+        print('Created the following files:', new_file_name)
+        create_new_wrapper(path_to_file_list, new_file_name_list, self._wrapper_path, 'new_wrapper_4')
