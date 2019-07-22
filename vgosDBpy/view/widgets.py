@@ -54,7 +54,7 @@ class VariableTable(QTableView):
         super(VariableTable, self).__init__(parent)
 
         # Setup model
-        self.model = TableModel(['Data', 'Variables'], parent)
+        self.model = TableModel(['Name', 'Unit'], parent)
         self.setModel(self.model)
 
         # Selection of items
