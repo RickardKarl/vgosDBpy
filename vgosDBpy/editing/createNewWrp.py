@@ -70,6 +70,8 @@ def create_new_wrapper(list_changed_files, new_file_names, path_to_old_wrp, new_
 
                 if current_directory in map:
                     changes_files_in_current_directory = map[current_directory]
+                else:
+                    changes_files_in_current_directory = []
                 written = False
                 #l = line.lower().strip()
 
