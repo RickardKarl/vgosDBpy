@@ -6,14 +6,12 @@ from matplotlib.backends.backend_qt5agg import NavigationToolbar2QT as Navigatio
 from matplotlib.backends.backend_pdf import PdfPages
 from matplotlib.figure import Figure
 from matplotlib.widgets import RectangleSelector
-from matplotlib.lines import Line2D
 
-from vgosDBpy.data.plotFunction import plot_generall, is_multdim_var #plotVariable, plotVariable2yAxis
+from vgosDBpy.data.plotFunction import plot_generall, is_multdim_var
 from vgosDBpy.editing.select_data import getData
 from vgosDBpy.model.data_axis import DataAxis
+from vgosDBpy.view.lines import createLine2D, createSmoothCurve
 
-import pandas as pd
-from scipy.signal import savgol_filter
 
 class PlotFigure(FigureCanvas):
     '''
@@ -64,7 +62,6 @@ class PlotFigure(FigureCanvas):
         axis = data_axis.getAxis()
         self.ax.remove(data_axis)
         self.ax.clear()
-        print('Removed', axis)
 
     def getAxis(self):
         '''
@@ -311,9 +308,8 @@ class AxesToolBox(QWidget):
 
         if self.check_smooth_curve.isChecked():
             data = self.data_axis.getData()
-            line = createLine2D(createSmoothCurve(data, window_size = int(len(data)/4)))
+            line = createLine2D(createSmoothCurve(data, window_size = int(len(data)/10)))
             self.smooth_curve = self.data_axis.addLine(line)
-
         else:
             self.smooth_curve.remove()
 
@@ -432,32 +428,3 @@ class PlotToolBox(QTabWidget):
 
         #self.show()
 '''
-
-def createLine2D(series, marker = None):
-    '''
-    Returns an artist object [Line2D] which represents the series,
-    used for adding new line to an existing axis in matplotlib
-
-    series [pd.Dataframe] is a time series
-    '''
-    return Line2D(series.index, series[:], marker = marker)
-
-def createSmoothCurve(series, window_size = 10, pol_order = 8):
-    '''
-    Return a time series [pd.Datafram] that is more smooth
-
-    series [pd.Dataframe] is a time series
-    window_size [int] is the window size of the applied filter
-    pol_order [int] is the highest order of the polynome fitted to the data,
-    has to be lower than the window size and uneven
-    '''
-    if window_size%2 == 0:
-        window_size += 1
-
-    while pol_order > window_size:
-        pol_order -= 1
-        if pol_order == 1:
-            raise ValueError('Polynome order is too small, adjust window size')
-
-    data = savgol_filter(series, window_size, pol_order)
-    return pd.Series(data, index = series.index)

@@ -93,12 +93,16 @@ class Parser:
                 elif line.startswith('default_dir'):
                     active_folder = line.split()[1]
                     if not Wrapper.inScope(active_folder):
-                        self.wrapper.addNode(active_folder, self.getActiveScope(), 'folder')
+                        self.wrapper.addNode(active_folder, self.getActiveScope(), 'node')
 
                 # Checks if line is giving a netCDF pointer
                 elif line.endswith('.nc'):
                     file_name = line.split()[-1]
                     self.wrapper.addNode(file_name, active_folder, 'netCDF')
+
+                elif line.endswith('.hist'):
+                    file_name = line.split()[-1]
+                    self.wrapper.addNode(file_name, active_folder, 'hist')
 
                 else:
                     pass

@@ -30,18 +30,20 @@ class Wrapper:
         self.root_path = '/'.join(path)
         self.root = Node(self.session_name, None, self.root_path)
         self.pointer_map = {} # Keep track of pointers with a map
+        self.hist_file = None # Keeps track of the .hist file that the wrapper points to
 
         for s in Wrapper.scopes:
-            self.addNode(s, type = 'folder')
+            self.addNode(s, type = 'node')
+
 
     def addNode(self, name, parent = None, type = 'netCDF'):
         '''
-        Add node in the tree, may be a file, data array or a folder
+        Add node in the tree, may be a file, data array or a folder/node
 
         name [string] is the node's name
         parent [string] is the name of the parent, if None then
         it have root as parent
-        type [string] is the type of node, currently there exist 'folder' or 'netCDF'
+        type [string] is the type of node, currently there exist 'node' or 'netCDF'
         '''
 
         if parent == None:
@@ -51,10 +53,13 @@ class Wrapper:
 
         path = self.generatePath(name, parent_node)
 
-        if type == 'folder':
+        if type == 'node':
             new_node = Node(name, parent_node, path)
         elif type == 'netCDF':
             new_node = NetCDF_File(name, parent_node, path)
+        elif type == 'hist':
+            new_node = HistFile(name, parent_node, path)
+            self.hist_file = new_node
         else:
             raise InvalidArgument('Invalid type in', type)
 
@@ -82,6 +87,19 @@ class Wrapper:
         Returns the root node
         '''
         return self.root
+
+    def getHistory(self):
+        '''
+        Returns history file as string
+        '''
+        if self.hist_file != None:
+            text = ''
+            with open(self.hist_file.getPath()) as file:
+                for line in file:
+                    text = text + line
+            return text
+        else:
+            return None
 
     def inScope(name):
         '''
@@ -150,6 +168,7 @@ class Node(object):
 
 
         self.netCDF = False
+        self.hist = False
 
 
     def addChildNode(self, node):
@@ -227,6 +246,9 @@ class Node(object):
     def isNetCDF(self):
         return self.netCDF
 
+    def isHistFile(self):
+        return self.hist
+
     def __str__(self):
         return self.name
 
@@ -242,7 +264,14 @@ class NetCDF_File(Node):
     def addChildNode(self, obj):
         raise TypeError('Tried assigning files to another file, needs to be a folder.')
 
+class HistFile(Node):
+    def __init__(self, name, parent, path):
+        super().__init__(name, parent, path)
+        self.children = None
+        self.hist = True
 
+    def addChildNode(self, obj):
+        raise TypeError('Tried assigning files to another file, needs to be a folder.')
 
 class PointerMap():
     '''

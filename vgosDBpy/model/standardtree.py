@@ -63,7 +63,7 @@ class TreeModel(QStandardItemModel):
                 c = children[row]
                 self.recursive(c, item)
         else:
-            if node.isNetCDF() is False:
+            if node.isNetCDF() is False and not node.isHistFile():
                 item.appendRow(QStandardItem('Empty'))
 
 
@@ -96,6 +96,12 @@ class QNodeItem(QStandardItem):
         Checks if the node points to a netCDF
         '''
         return self.node.isNetCDF()
+
+    def isHistFile(self):
+        '''
+        Checks if the node points to a .hist file
+        '''
+        return self.node.isHistFile()
 
     def type(self):
         return QNodeItem._type

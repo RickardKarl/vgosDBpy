@@ -121,7 +121,6 @@ class App(QWidget):
                 text_total = text + text_data
                 self.text.setPlainText(str(text_total))
                 self.table.updateVariables(item)
-                #self.data_table.updateData(item)
 
     def _plot_table_button(self):
         self._plotbutton()
