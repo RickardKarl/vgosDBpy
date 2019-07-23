@@ -52,7 +52,7 @@ def is_multdim_var(paths, vars):
                 marker = c
                 c += 1
     return marker
-    
+
 def checkIfTimeAvailable(paths,vars):
     c = 0
     for path in paths:
@@ -93,6 +93,7 @@ def plot_one_var (paths, vars, fig, mult = -1):
         axis[0].set_title(header_info_to_plot(paths[0]) + '\n' + 'Plot' + name(paths[0], vars[0]) )
         axis[0].set_xlabel('Index')
         axis[0].set_ylabel(name(paths[0],vars[0])+unit(paths[0],vars[0]))
+        print('made it')
         data.append( pd.Series(y,index=x) )
         return axis, data
 
@@ -229,9 +230,12 @@ def OBS_plot(paths, vars, fig):
         time = combineYMDHMwithSec(timePath)
         for t in time:
             time_data.append(t)
+    else:
+        time = range(1, len(y1)+1 )
+        time_data = time
+
     #retive y-axis data
-    print(time_data)
-    print(y1)
+
     #y = getDataFromVar(path,var)
 
     #Create plot

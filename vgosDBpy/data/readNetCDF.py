@@ -34,11 +34,13 @@ internal calls:
 def header_info_to_plot(path):
     #get date of session
     timePath = findCorrespondingTime(path)
-    time = combineYMDHMwithSec(timePath)
-    date = time[1].date()
-
-    station = read_var_content_S1("Station", path) # Station is name of data that one seeks.
-    return ( station + "   " + str(date) )
+    if timePath != '':
+        time = combineYMDHMwithSec(timePath)
+        date = time[1].date()
+        station = read_var_content_S1("Station", path) # Station is name of data that one seeks.
+        return ( station + "   " + str(date) )
+    else:
+        return ('')
 
 """
 Takes in: Path to NetCDF file
@@ -62,7 +64,7 @@ internal calls:
 def is_possible_to_plot(path, var):
     dimension = read_netCDF_dimension_for_var(path, var)
     data_type = get_dtype_for_var(path,var)
-    if dimension == "NumScans" and data_type != "S1" :
+    if dimension == "NumScans" or dimension == 'NumObs' and data_type != "S1"  :
         return True
     else:
         return False
