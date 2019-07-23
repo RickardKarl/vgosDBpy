@@ -30,7 +30,7 @@ class Wrapper:
         self.root_path = '/'.join(path)
         self.root = Node(self.session_name, None, self.root_path)
         self.pointer_map = {} # Keep track of pointers with a map
-        self.hist_file = None
+        self.hist_file = None # Keeps track of the .hist file that the wrapper points to
 
         for s in Wrapper.scopes:
             self.addNode(s, type = 'node')
@@ -98,6 +98,8 @@ class Wrapper:
                 for line in file:
                     text = text + line
             return text
+        else:
+            return None
 
     def inScope(name):
         '''

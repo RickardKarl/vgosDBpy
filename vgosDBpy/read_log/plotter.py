@@ -3,14 +3,22 @@ import pandas as pd
 
 
 def plotSeries(series):
+    '''
+    Plot series [pd.Series]
+    '''
     series.plot()
     goodTicks(series, pd.Timedelta(minutes = 6))
     plt.show()
 
 
 def goodTicks(series, time_delta):
-    time = series.index
+    '''
+    series [pd.Series]
+    time_delta [pd.Timedelta]
 
+    Return tick labels that have a spacing given by a pandas Timedelta
+    '''
+    time = series.index
     i = 0
     ticks = []
     ticks_label = []
@@ -28,5 +36,10 @@ def goodTicks(series, time_delta):
     plt.xticks(ticks, ticks_label)
 
 def createLabel(time_stamp):
+    '''
+    time_stamp [pd.Timestamp]
+
+    Returns string label from a pandas Timestamp
+    '''
     label = list(map(str,[time_stamp.hour, time_stamp.minute, time_stamp.second]))
     return ':'.join(label)

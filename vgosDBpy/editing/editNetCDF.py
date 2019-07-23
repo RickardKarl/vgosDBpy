@@ -1,14 +1,7 @@
-'''
-    Author: Rickard Karlsson
-'''
 import netCDF4 as nc
 import matplotlib.pyplot as plt
 
 from vgosDBpy.data.VersionName import NewVersionName
-
-'''
-MUST KEEP THE FORMAT WHEN CREATING A NEW netCDF file
-'''
 
 def get_netCDF_variable(file_name_path, variable_name):
     '''

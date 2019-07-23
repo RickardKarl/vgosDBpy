@@ -14,7 +14,12 @@ import sys
 from pprint import PrettyPrinter
 
 class CommandLineInterface(argparse.ArgumentParser):
-    # Has to be capitalized
+
+    '''
+    A command-line interface that is implemented with argparse.ArgumentParser
+
+    Is called by __main__.py
+    '''
 
     dumpable_variables = []
     for var in LogInfo.available_variables:
