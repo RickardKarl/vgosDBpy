@@ -7,6 +7,8 @@ from matplotlib.backends.backend_pdf import PdfPages
 from matplotlib.figure import Figure
 from matplotlib.widgets import RectangleSelector
 
+import pandas as pd
+
 from vgosDBpy.data.plotFunction import plot_generall, is_multdim_var
 from vgosDBpy.editing.select_data import getData
 from vgosDBpy.model.data_axis import DataAxis

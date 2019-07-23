@@ -11,7 +11,7 @@ def createLine2D(series, marker = None):
     '''
     return Line2D(series.index, series[:], marker = marker)
 
-def createSmoothCurve(series, window_size = 19, pol_order = 8):
+def createSmoothCurve(series, window_size = 19, pol_order = 4):
     '''
     Return a time series [pd.Datafram] that is more smooth
 
