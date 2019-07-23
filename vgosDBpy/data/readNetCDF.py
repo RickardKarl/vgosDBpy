@@ -2,6 +2,8 @@ from netCDF4 import Dataset
 import pandas as pd
 from numpy.random import uniform
 import os
+import matplotlib.pyplot as plt
+
 
 from vgosDBpy.data.combineYMDHMS import combineYMDHMwithSec
 from vgosDBpy.data.PathParser import findCorrespondingTime
@@ -126,19 +128,26 @@ def getDataFromVar_multDim(pathToNetCDF, var):
     data = []
     with Dataset(pathToNetCDF, 'r', format= 'NETCDF4_CLASSIC') as nc:
         length = len(nc.variables[var.strip()].get_dims())
-        for i in range(0, length):
-            return_data.append(nc.variables[var.strip()][:,[i]])
+        #for i in range(0, length):
+        #    return_data.append(nc.variables[var.strip()][:,[i]])
 
-        for j in range (0,length):
-            temp = []
-            data.append(nc.variables[var.strip()][:,[0]])
-            r= nc.variables[var.strip()][:,[i]]
-            print(len(r))
+        for i in range (0,length):
+        #    temp = []
+            data.append(nc.variables[var.strip()][:,[i]])
+        #    r= nc.variables[var.strip()][:,[i]]
+        #    print(len(r))
             #for i in range(0,len(r)):
                 #temp.append(return_data[i,[j]])
                 #temp.append(r[i])
             #data.append(temp)
-        print(len(data))
+        #print(len(data))
+        #y1 = data[0][:]
+        #y2 = data[1][:]
+        #print(y1)
+        #print(y2)
+    #plt.plot(y1,y2)
+    #plt.show()
+    return data
 
 
 #only used inside this file
@@ -236,7 +245,32 @@ def get_dtype_for_var(path, var):
 #########NOT USED############## 15/7 2019"##############
 #########NOT USED############## 15/7 2019"##############
 
+
 """
+def getDataFromVar_multDim(pathToNetCDF, var):
+    return_data = []
+    data = []
+    with Dataset(pathToNetCDF, 'r', format= 'NETCDF4_CLASSIC') as nc:
+        length = len(nc.variables[var.strip()].get_dims())
+        for i in range(0, length):
+            return_data.append(nc.variables[var.strip()][:,[i]])
+
+        for i in range (0,length):
+            temp = []
+            data.append(nc.variables[var.strip()][:,[i]])
+            r= nc.variables[var.strip()][:,[i]]
+            print(len(r))
+            #for i in range(0,len(r)):
+                #temp.append(return_data[i,[j]])
+                #temp.append(r[i])
+            #data.append(temp)
+        print(len(data))
+        y1 = data[0][:]
+        y2 = data[1][:]
+        print(y1)
+        print(y2)
+    plt.plot(y1,y2)
+    plt.show()
 
 #Takes in: a path to a NetCDF file
 #Returns: all variables in a netCDF file that can be plotted versus time, mening they have same Dimension "Numscans" and data type !=  S1

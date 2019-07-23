@@ -51,6 +51,8 @@ class App(QWidget):
         self.button_table = QPushButton('& Table',self)
         self.button_append_table = QPushButton('& Add to table' )
         self.button_append_plot = QPushButton( '& Add to plot')
+        self.button_clear_plot = QPushButton('& Clear plot')
+        self.button_clear_table = QPushButton('& Clear table')
 
         # Button event
         self.button_plot_table.clicked.connect(self._plot_table_button)
@@ -58,6 +60,9 @@ class App(QWidget):
         self.button_table.clicked.connect(self._tablebutton)
         self.button_append_table.clicked.connect(self._addbutton)
         self.button_append_plot.clicked.connect(self._append_plotbutton)
+        self.button_clear_plot.clicked.connect(self._clear_plot)
+        self.button_clear_table.clicked.connect(self._clear_table)
+
 
         # Matplotlib widget and toolbox
         self.plot_widget = PlotWidget(self)
@@ -79,6 +84,9 @@ class App(QWidget):
         layout.addWidget(self.button_table, 5, 0)
         layout.addWidget(self.button_append_table, 5,1)
         layout.addWidget(self.button_append_plot,4,1)
+        layout.addWidget(self.button_clear_plot,3,1)
+        layout.addWidget(self.button_clear_table,2,1)
+
 
         self.setLayout(layout)
 
@@ -161,3 +169,9 @@ class App(QWidget):
             for i in range (len(index)):
                 items.append(self.table.model.itemFromIndex(index[i]))
         self.data_table.appendData(items)
+
+    def _clear_plot(self):
+        self.plot_widget.plot_canvas.clearFigure()
+
+    def _clear_table(self):
+        self.data_table.clearTable()

@@ -102,6 +102,11 @@ class TableModel(QStandardItemModel):
         for i in range(0,len(data[name])):
             self.setItem(i,j,DataValue(str(data[name][i]), item))
 
+    def clearTable(self):
+        self.data = {}
+        self.header = []
+        self.reset()
+
         #for i in range(0,len(data[names[0]])):
         #    for j in range (0,len(names)):
         #        self.setItem(i, j, DataValue(str(data[names[j]][i]), items[j%(len(names)-1)]))

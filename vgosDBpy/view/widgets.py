@@ -154,3 +154,6 @@ class DataTable(QTableView):
         # Updates size of column when content is changed
         for i in range(self.model.columnCount()):
             self.resizeColumnToContents(i)
+
+    def clearTable(self):
+        self.model.clearTable()

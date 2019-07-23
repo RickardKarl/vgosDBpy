@@ -51,6 +51,7 @@ class Tablefunction():
 
     def data_reset(self):
         self.data = {}
+
 """
 class Table():
     def __init__(self):
