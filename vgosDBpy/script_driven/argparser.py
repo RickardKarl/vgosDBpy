@@ -11,7 +11,6 @@ from vgosDBpy.read_log.plotter import plotSeries
 
 import argparse
 import sys
-from pprint import PrettyPrinter
 
 class CommandLineInterface(argparse.ArgumentParser):
 
@@ -28,7 +27,6 @@ class CommandLineInterface(argparse.ArgumentParser):
 
     def __init__(self):
         super(CommandLineInterface,self).__init__(prog = 'vgosDBpy')
-        self.pp = PrettyPrinter(width = 120)
 
         # Adding arguments
         self.add_argument('file', help = 'Read a file (*.wrp) or (*.log)')
@@ -66,7 +64,7 @@ class CommandLineInterface(argparse.ArgumentParser):
             elif self.args.hist == True:
                 parser = Parser(self.args.file)
                 wrapper = parser.parseWrapper(self.args.file)
-                self.pp.pprint(wrapper.getHistory())
+                print(wrapper.getHistory())
 
             else:
                 parser = Parser(self.args.file)
