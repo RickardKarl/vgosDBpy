@@ -7,9 +7,7 @@ from matplotlib.backends.backend_pdf import PdfPages
 from matplotlib.figure import Figure
 from matplotlib.widgets import RectangleSelector
 
-import pandas as pd
-
-from vgosDBpy.data.plotFunction import plot_generall
+from vgosDBpy.data.plotFunction import plot_generall, is_multdim_var
 from vgosDBpy.editing.select_data import getData
 from vgosDBpy.model.data_axis import DataAxis
 from vgosDBpy.view.lines import createLine2D, createSmoothCurve
@@ -40,6 +38,8 @@ class PlotFigure(FigureCanvas):
         self.paths = []
         self.vars = []
         self.items = []
+
+        self.Mult_item_added = False
 
     def updatePlot(self):
         self.draw()
@@ -100,6 +100,10 @@ class PlotFigure(FigureCanvas):
             print('vars:' + self.vars[i] )
 
         axis, data = plot_generall(self.paths, self.vars, self.figure, self.timeInt)
+        is_mult = is_multdim_var(self.paths, self.vars)
+        if is_mult!= -1 and timeUpdated == False:
+            items.append(items[is_mult])
+
         for i in range(len(axis)):
             self.addAxis(DataAxis(axis[i], data[i], items[i]))
 
@@ -128,6 +132,15 @@ class PlotFigure(FigureCanvas):
             self.addAxis(DataAxis(axis[i], data[i], self.items[i]))
 
         # Refresh canvas
+        self.updatePlot()
+
+    def clearFigure(self):
+        self.paths = []
+        self.vars = []
+        self.items = []
+        self.Mult_item_added = False
+
+        self.resetFigure()
         self.updatePlot()
 
 
