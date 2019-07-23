@@ -32,29 +32,31 @@ def update_netCDF_variable(file_name_path, new_file_name_path, variables):
     variables [dict] {variable name: updated variable}
     '''
 
-    # Open the current netCDF file and create a new one
-    with nc.Dataset(file_name_path) as src, nc.Dataset(new_file_name_path, "w") as dst:
+    # Open the current netCDF file
+    with nc.Dataset(file_name_path, 'r') as src:
+        # Create a new netCDF file with the same format as the old one
+        with nc.Dataset(new_file_name_path, "w", format = src.data_model) as dst:
 
-        # Copy global attributes
-        dst.setncatts(src.__dict__)
+            # Copy global attributes
+            dst.setncatts(src.__dict__)
 
-        # Copy dimensions
-        for name, dimension in src.dimensions.items():
-            dst.createDimension(
-                name, (len(dimension) if not dimension.isunlimited() else None))
+            # Copy dimensions
+            for name, dimension in src.dimensions.items():
+                dst.createDimension(
+                    name, (len(dimension) if not dimension.isunlimited() else None))
 
-        # Copy variables/data except for the updated ones
-        for name, variable in src.variables.items():
-            instance = dst.createVariable(name, variable.datatype,
-                                        variable.dimensions)
-            if name not in variables.keys():
-                dst[name][:] = src[name][:]
+            # Copy variables/data except for the updated ones
+            for name, variable in src.variables.items():
+                instance = dst.createVariable(name, variable.datatype,
+                                            variable.dimensions)
+                if name not in variables.keys():
+                    dst[name][:] = src[name][:]
 
-            else:
-                dst[name][:] = variables[name]
+                else:
+                    dst[name][:] = variables[name]
 
-            # Copy variable attributes
-            dst[name].setncatts(src[name].__dict__)
+                # Copy variable attributes
+                dst[name].setncatts(src[name].__dict__)
 
 
 def create_netCDF_file(pathToNetCDF, variables):
