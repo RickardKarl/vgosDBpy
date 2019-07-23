@@ -405,7 +405,7 @@ class PlotWidget(QWidget):
         self.setLayout(layout)
 
     def getPlotToolBar(self):
-        return self.parentWidget().plot_toolbox
+        return self.parentWidget().parentWidget().plot_toolbox
 
 '''
 class PlotToolBox(QTabWidget):
