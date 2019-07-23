@@ -64,7 +64,7 @@ internal calls:
 def is_possible_to_plot(path, var):
     dimension = read_netCDF_dimension_for_var(path, var)
     data_type = get_dtype_for_var(path,var)
-    if dimension == "NumScans" or dimension == 'NumObs' and data_type != "S1"  :
+    if dimension.strip() == "NumScans" or dimension.strip() == 'NumObs' and data_type != "S1"  :
         return True
     else:
         return False

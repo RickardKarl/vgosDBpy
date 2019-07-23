@@ -19,8 +19,9 @@ class Tablefunction():
     def tableFunctionGeneral(self,paths,vars): # USE THISONE
         self.data_reset()
         timePath = findCorrespondingTime(paths[0])
-        time =  combineYMDHMwithSec(timePath)
-        self.data['Time'] = time
+        if timePath != '': 
+            time =  combineYMDHMwithSec(timePath)
+            self.data['Time'] = time
         c=0
         for path in paths:
             y = getDataFromVar( path, vars[c] )
@@ -39,7 +40,8 @@ class Tablefunction():
 
     def return_header_names(self,paths, vars):
         self.header_reset()
-        self.header.append('Time [Y-M-D H:M:S]')
+        if 'Time' in self.data:
+            self.header.append('Time [Y-M-D H:M:S]')
         for i in range(0,len(paths)) :
             n = name(paths[i],vars[i])
             u = unit(paths[i],vars[i])
