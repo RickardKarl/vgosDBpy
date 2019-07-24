@@ -1,7 +1,7 @@
 from PySide2.QtGui import QStandardItemModel
 from PySide2 import QtCore
 from vgosDBpy.model.standardtree import Variable, DataValue
-from vgosDBpy.data.readNetCDF import read_netCDF_variables, is_possible_to_plot, is_var_constant,read_unit_for_var #read_netCDF_dimension_for_var,
+from vgosDBpy.data.readNetCDF import read_netCDF_variables, is_possible_to_plot, is_var_constant,read_unit_for_var, is_numScan_or_NumObs, get_dtype_var, read_netCDF_dimension_for_var, get_dataBaseline #read_netCDF_dimension_for_var,
 from vgosDBpy.data.PathParser import findCorrespondingTime
 from vgosDBpy.data.combineYMDHMS import combineYMDHMwithSec
 class TableModel(QStandardItemModel):
@@ -57,14 +57,18 @@ class TableModel(QStandardItemModel):
         var_list = read_netCDF_variables(item.getPath())
         i = 0
         # Puts variable in first column and associated dimension in another
-        for vars in var_list:
-            if is_possible_to_plot(item.getPath(), vars):
-                self.setItem(i,0, Variable(vars,item))
+        for var in var_list:
+            if is_numScan_or_NumObs(item.getPath(), var) :
+                self.setItem(i,0,Variable(var,item))
+            #if is_possible_to_plot(item.getPath(), vars):
+            #    self.setItem(i,0, Variable(vars,item))
 
             #elif is_var_constant(item.getPath(), vars):
             #    self.setItem(i,1,Variable(vars,item))
             #    i += 1
-                self.setItem(i,1,Variable(read_unit_for_var(item.getPath(), vars),item))
+                self.setItem(i,1,Variable(read_unit_for_var(item.getPath(), var),item))
+                self.setItem(i,2,Variable(read_netCDF_dimension_for_var(item.getPath(), var),item))
+                self.setItem(i,3,Variable(get_dtype_var(item.getPath(), var),item))
             #    j=2
                 i += 1
 

@@ -13,7 +13,7 @@ from vgosDBpy.data.plotFunction import plot_generall, is_multdim_var
 from vgosDBpy.editing.select_data import getData
 from vgosDBpy.model.data_axis import DataAxis
 from vgosDBpy.view.lines import createLine2D, createSmoothCurve
-
+from vgosDBpy.data.readNetCDF import not_S1
 
 class PlotFigure(FigureCanvas):
     '''
@@ -100,17 +100,19 @@ class PlotFigure(FigureCanvas):
         for i in range(0,len(self.paths)):
             print('paths: ' +  self.paths[i])
             print('vars:' + self.vars[i] )
+        if not_S1(self.paths, self.vars):
+            axis, data = plot_generall(self.paths, self.vars, self.figure, self.timeInt)
+            is_mult = is_multdim_var(self.paths, self.vars)
+            if is_mult!= -1 and timeUpdated == False:
+                items.append(items[is_mult])
 
-        axis, data = plot_generall(self.paths, self.vars, self.figure, self.timeInt)
-        is_mult = is_multdim_var(self.paths, self.vars)
-        if is_mult!= -1 and timeUpdated == False:
-            items.append(items[is_mult])
+            for i in range(len(axis)):
+                self.addAxis(DataAxis(axis[i], data[i], items[i]))
 
-        for i in range(len(axis)):
-            self.addAxis(DataAxis(axis[i], data[i], items[i]))
-
-        # Refresh canvas
-        self.updatePlot()
+            # Refresh canvas
+            self.updatePlot()
+        else:
+            print('Trying to plot a string')
 
     def resetFigure(self):
         self.figure.clear()
@@ -129,12 +131,15 @@ class PlotFigure(FigureCanvas):
         self.vars.append(item.labels)
         self.items.append(item)
         self.resetFigure()
-        axis, data = plot_generall(self.paths, self.vars, self.figure, self.timeInt)
-        for i in range(len(axis)):
-            self.addAxis(DataAxis(axis[i], data[i], self.items[i]))
+        if not_S1(self.paths,self.vars):
+            axis, data = plot_generall(self.paths, self.vars, self.figure, self.timeInt)
+            for i in range(len(axis)):
+                self.addAxis(DataAxis(axis[i], data[i], self.items[i]))
 
-        # Refresh canvas
-        self.updatePlot()
+            # Refresh canvas
+            self.updatePlot()
+        else:
+            print('Trying to plot a string')
 
     def clearFigure(self):
         self.paths = []

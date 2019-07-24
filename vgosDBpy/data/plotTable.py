@@ -6,7 +6,7 @@ import pandas as pd
 
 from vgosDBpy.data.PathParser import findCorrespondingTime
 from vgosDBpy.data.combineYMDHMS import combineYMDHMwithSec
-from vgosDBpy.data.readNetCDF import getDataFromVar
+from vgosDBpy.data.readNetCDF import getDataFromVar, get_dataBaseline, get_S1_tableData, get_dtype_for_var
 from vgosDBpy.data.getRealName import get_name_to_print as name, get_unit_to_print as unit
 
 
@@ -19,12 +19,19 @@ class Tablefunction():
     def tableFunctionGeneral(self,paths,vars): # USE THISONE
         self.data_reset()
         timePath = findCorrespondingTime(paths[0])
-        if timePath != '': 
+        if timePath != '':
             time =  combineYMDHMwithSec(timePath)
             self.data['Time'] = time
         c=0
         for path in paths:
-            y = getDataFromVar( path, vars[c] )
+            dtype = get_dtype_for_var(path, vars[c])
+            print('DTYPE:' + dtype.name)
+            if vars[c].strip() == 'Baseline':
+                y = get_dataBaseline(path)
+            elif dtype.name.strip() == 'S1':
+                y = get_S1_tableData(path, vars[c])
+            else: # default, not S1 or baseline
+                y = getDataFromVar( path, vars[c] )
             self.data[ name ( path, vars[c] ) ] = y
             c = c + 1
         return self.data

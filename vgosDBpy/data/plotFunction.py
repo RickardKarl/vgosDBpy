@@ -35,14 +35,16 @@ def plot_generall (paths, vars, fig, state): # generall function tahta is always
     if marker == -1 :
         if len(paths) != len(vars): # controll
             return
-
         if default_time(state) is True and checkIfTimeAvailable(paths, vars) is True :
             return ( plot_time(paths, vars,fig) )
         else:
             return ( plot_no_time(paths, vars, fig) )
     else: # Have to handel this
         return OBS_plot(paths, vars, fig)
-
+"""
+def all_paths_same_length(paths, vars):
+    for path in
+"""
 def is_multdim_var(paths, vars):
     marker = -1
     c=0
