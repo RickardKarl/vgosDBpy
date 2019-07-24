@@ -12,7 +12,7 @@ import pandas as pd
 from vgosDBpy.data.plotFunction import plot_generall, is_multdim_var
 from vgosDBpy.editing.select_data import getData
 from vgosDBpy.model.data_axis import DataAxis
-from vgosDBpy.view.lines import createLine2D, createSmoothCurve
+from vgosDBpy.view.plotlines import createLine2D, createSmoothCurve
 from vgosDBpy.data.readNetCDF import not_S1
 
 class PlotFigure(FigureCanvas):
@@ -410,7 +410,7 @@ class PlotWidget(QWidget):
         self.setLayout(layout)
 
     def getPlotToolBar(self):
-        return self.parentWidget().plot_toolbox
+        return self.parentWidget().parentWidget().plot_toolbox
 
 '''
 class PlotToolBox(QTabWidget):

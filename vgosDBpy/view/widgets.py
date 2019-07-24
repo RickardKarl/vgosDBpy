@@ -3,8 +3,7 @@ from PySide2.QtWidgets import QTreeView, QTableView, QAbstractItemView
 
 from vgosDBpy.model.standardtree import TreeModel
 from vgosDBpy.model.table import TableModel
-from vgosDBpy.data.plotTable import Tablefunction as TF#tableFunctionGeneral, return_header_names #tableFunction, tableFunction2data
-#from vgodDBpy.data.plotTable import Table
+from vgosDBpy.data.plotTable import Tablefunction as TF
 
 class QWrapper(QTreeView):
     '''
@@ -86,6 +85,7 @@ class ConstantTable(QTableView):
         super(DataTable,self).__init__(parent)
         self.model = TableModel(' ', parent)
         self.setModel(self.model)
+
 class DataTable(QTableView):
     '''
     Displays data from TableModel which has values from a variable together with timestamp
@@ -97,12 +97,13 @@ class DataTable(QTableView):
         super(DataTable, self).__init__(parent)
         #self.table = Table()
         # Setup model
-        self.model = TableModel(' ', parent) # just use the two functions get_name_to_print and get_unit_to_print istead of 'Value'
+        self.model = TableModel('', parent) # just use the two functions get_name_to_print and get_unit_to_print istead of 'Value'
         self.setModel(self.model)
         self.tabfunc = TF()
         # Selection of items
         self.setSelectionMode(QAbstractItemView.ExtendedSelection)
         self.selection = self.selectionModel()
+
 
     def updateData(self, items):
         '''
