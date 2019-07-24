@@ -1,9 +1,11 @@
 
 from PySide2.QtWidgets import QTreeView, QTableView, QAbstractItemView
-
+from PySide2.QtCore import QItemSelectionModel
 from vgosDBpy.model.standardtree import TreeModel
 from vgosDBpy.model.table import TableModel
 from vgosDBpy.data.plotTable import Tablefunction as TF
+
+from datetime import datetime
 
 class QWrapper(QTreeView):
     '''
@@ -95,15 +97,23 @@ class DataTable(QTableView):
 
     def __init__(self, parent = None):
         super(DataTable, self).__init__(parent)
-        #self.table = Table()
+
         # Setup model
         self.model = TableModel('', parent) # just use the two functions get_name_to_print and get_unit_to_print istead of 'Value'
         self.setModel(self.model)
         self.tabfunc = TF()
         # Selection of items
         self.setSelectionMode(QAbstractItemView.ExtendedSelection)
+        self.setSelectionBehavior(QAbstractItemView.SelectionBehavior.SelectRows)
         self.selection = self.selectionModel()
 
+
+    def updateColumnSize(self):
+        '''
+        Updates size of column adjusted after the content
+        '''
+        for i in range(self.model.columnCount()):
+            self.resizeColumnToContents(i)
 
     def updateData(self, items):
         '''
@@ -121,14 +131,13 @@ class DataTable(QTableView):
             data = self.tabfunc.tableFunctionGeneral(path, var)
             self.model.update_header(self.tabfunc.return_header_names(path,var))
         else:
-            raise ValueError('Argument items contains wrong number of items, should be one or two.')
+            raise ValueError('Argument items can not be empty.')
 
         # Updates model
-        self.model.updateData(data,items)
+        self.model.updateData(data, items)
 
         # Updates size of column when content is changed
-        for i in range(self.model.columnCount()):
-            self.resizeColumnToContents(i)
+        self.updateColumnSize()
 
 
     def appendData(self,items):
@@ -153,8 +162,48 @@ class DataTable(QTableView):
         self.model.appendData(data,items)
 
         # Updates size of column when content is changed
-        for i in range(self.model.columnCount()):
-            self.resizeColumnToContents(i)
+        self.updateColumnSize()
 
     def clearTable(self):
         self.model.clearTable()
+
+    def updateFromDataAxis(self, data_axis, items):
+        '''
+        Updates the table by giving it the data_axis, this gives a one to one correspondance with
+        the plot
+        '''
+        if len(items) > 0:
+            # Update values in table
+            self.model.updateFromDataAxis(data_axis, items)
+
+            # Updates header
+            path = []
+            var = []
+            for itm in items:  #tm in items:
+                path.append(itm.getPath())
+                var.append(itm.labels)
+            header_labels = self.tabfunc.return_header_names(path,var)
+            header_labels.insert(0, TF.time_label)
+            self.model.update_header(header_labels)
+
+        # Updates size of column when content is changed
+        self.updateColumnSize()
+
+    def updateMarkedRows(self):
+        '''
+        Mark selected data from plot in the table
+        '''
+        for ax in self.model.data_axis:
+            column_index = self.model.column_map[ax]
+            selected_data = ax.getMarkedData()
+
+            for point in selected_data:
+                for i in range(self.model.rowCount()):
+                    model_item = self.model.item(i, 0)
+                    current_timestamp = model_item.value
+                    current_timestamp = datetime.strptime(current_timestamp, '%Y-%m-%d %H:%M:%S')
+                    if current_timestamp == point[0]:
+                        for j in range(self.model.rowCount()):
+                            model_item = self.model.item(i,j)
+                            item_index = self.model.indexFromItem(model_item)
+                            self.selection.select(item_index, QItemSelectionModel.Select)

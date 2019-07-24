@@ -187,7 +187,7 @@ class DataValue(QNodeItem):
 
     _type = 1113
 
-    def __init__(self, value, node):
+    def __init__(self, value, node = None):
         super(DataValue, self).__init__(node)
         self.value = value
 

@@ -29,25 +29,26 @@ def NewVersionName(path):
 
     # If no digit exists
     if file_digit == "":
-        new_file_name = lhs[0].upper() + lhs[1:] +"_V001."+rhs
+        new_file_name = lhs +"_V001."+rhs
 
     # Else if digit exists
     else:
-        if int(file_digit) <= 9:
-            if int(file_digit)+1 != 10:
-                file_digit = '00' + str(int(file_digit)+1)
+        int_file_digit = int(file_digit)
+        if int_file_digit <= 9:
+            if int_file_digit+1 != 10:
+                file_digit = '00' + str(int_file_digit+1)
             else:
                 file_digit = '010'
         elif len(file_digit) <= 99:
-            if int(file_digit)+1 != 100:
-                file_digit = '0' + str(int(file_digit)+1)
+            if int_file_digit+1 != 100:
+                file_digit = '0' + str(int_file_digit+1)
             else:
                 file_digit = '100'
         elif len(file_digit) <= 999:
-            if int(file_digit)+1 != 1000:
-                file_digit = str(int(file_digit)+1)
+            if int_file_digit+1 != 1000:
+                file_digit = str(int_file_digit+1)
             else:
-                if int(file_digit)+1 >= 1000:
+                if int_file_digit+1 >= 1000:
                     raise ('Can not create anymore files, excedded limit of 999 versions')
 
         file_name_non_digit = file_name_non_digit[0].upper() + file_name_non_digit[1:-1] + file_name_non_digit[-1].upper()

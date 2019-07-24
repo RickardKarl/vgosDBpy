@@ -3,7 +3,6 @@ import sys
 from PySide2.QtWidgets import QApplication
 from netCDF4 import Dataset
 from vgosDBpy.view.app import App
-#from vgosDBpy.read_log.parser import readMetData, readCableCal, printFile, mergeSeries
 from vgosDBpy.read_log.plotter import plotSeries
 from vgosDBpy.script_driven.argparser import CommandLineInterface
 

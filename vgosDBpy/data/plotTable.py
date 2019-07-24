@@ -11,7 +11,7 @@ from vgosDBpy.data.getRealName import get_name_to_print as name, get_unit_to_pri
 
 
 class Tablefunction():
-
+    time_label = 'Time [Y-M-D H:M:S]'
     def __init__(self):
         self.data = {}
         self.header = []
@@ -19,10 +19,10 @@ class Tablefunction():
     def tableFunctionGeneral(self,paths,vars): # USE THISONE
         self.data_reset()
         timePath = findCorrespondingTime(paths[0])
-        if timePath != '': 
+        if timePath != '':
             time =  combineYMDHMwithSec(timePath)
             self.data['Time'] = time
-        c=0
+        c = 0
         for path in paths:
             y = getDataFromVar( path, vars[c] )
             self.data[ name ( path, vars[c] ) ] = y
@@ -41,7 +41,7 @@ class Tablefunction():
     def return_header_names(self,paths, vars):
         self.header_reset()
         if 'Time' in self.data:
-            self.header.append('Time [Y-M-D H:M:S]')
+            self.header.append(Tablefunction.time_label)
         for i in range(0,len(paths)) :
             n = name(paths[i],vars[i])
             u = unit(paths[i],vars[i])

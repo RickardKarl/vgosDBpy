@@ -1,7 +1,7 @@
 from PySide2.QtGui import QStandardItemModel
 from PySide2 import QtCore
 from vgosDBpy.model.standardtree import Variable, DataValue
-from vgosDBpy.data.readNetCDF import read_netCDF_variables, is_possible_to_plot, is_var_constant,read_unit_for_var #read_netCDF_dimension_for_var,
+from vgosDBpy.data.readNetCDF import read_netCDF_variables, is_possible_to_plot, is_var_constant,read_unit_for_var
 from vgosDBpy.data.PathParser import findCorrespondingTime
 from vgosDBpy.data.combineYMDHMS import combineYMDHMwithSec
 
@@ -20,6 +20,10 @@ class TableModel(QStandardItemModel):
         super(TableModel,self).__init__(parent)
         self.header = header
         self.setHorizontalHeaderLabels(self.header)
+
+        # Map to keep track of which column that belongs to each DataAxis
+        self.data_axis = None # Keep track of the DataAxis that it shows from the plot
+        self.column_map = {} # DataAxis : Column index
 
     def update_header(self,names):
         self.header = names
@@ -62,11 +66,7 @@ class TableModel(QStandardItemModel):
             if is_possible_to_plot(item.getPath(), vars):
                 self.setItem(i,0, Variable(vars,item))
 
-            #elif is_var_constant(item.getPath(), vars):
-            #    self.setItem(i,1,Variable(vars,item))
-            #    i += 1
                 self.setItem(i,1,Variable(read_unit_for_var(item.getPath(), vars),item))
-            #    j=2
                 i += 1
 
     def updateData(self, data, items):
@@ -77,6 +77,7 @@ class TableModel(QStandardItemModel):
 
         data [dict] which contains data to fill the table with. E.g. {'time': time, "var_data": var_data}
         item [QStandardItems] contains the item which contains the variable with the data
+        data_axis [DataAxis] contains a list of DataAxis that corresponds to the data being plotted
         '''
         names = list(data)
         self.reset()
@@ -84,7 +85,8 @@ class TableModel(QStandardItemModel):
             for j in range (0,len(names)):
                 if len(names) > 1:
                     self.setItem(i, j, DataValue(str(data[names[j]][i]), items[j%(len(names)-1)]))
-                self.setItem(i, j, DataValue(str(data[names[j]][i]), items[0]))
+                else:
+                    self.setItem(i, j, DataValue(str(data[names[j]][i]), items[0]))
 
     def appendData(self, data, item):
         '''
@@ -110,9 +112,54 @@ class TableModel(QStandardItemModel):
         self.header = []
         self.reset()
 
-        #for i in range(0,len(data[names[0]])):
-        #    for j in range (0,len(names)):
-        #        self.setItem(i, j, DataValue(str(data[names[j]][i]), items[j%(len(names)-1)]))
+    def updateFromDataAxis(self, data_axis, items):
+        '''
+        Update table model from one/several DataAxis
+
+        data_axis [list of DataAxis] is what should be displayed in the table
+        '''
+        if len(data_axis) > 0:
+
+            time_index = data_axis[0].getData().index # Get a time index of the series,
+                                                      # all axes should have same time indices
+
+            if len(data_axis) != len(items):
+                raise ValueError('data_axis and items do no have the same length')
+            for i in range(len(time_index)):
+                self.setItem(i, 0, DataValue(str(time_index[i]), node = None))
+
+            for j in range(len(data_axis)):
+                data = data_axis[j].getData() # Retrieve pd.Series stored in DataAxis
+
+                # Check that the time indices are the same
+                # np.array_equal(a1, a2)
+                if not data_axis[j].getData().index.equals(time_index):
+                    raise ValueError('DataAxis', data_axis[j], 'do not have the same time indices as', data_axis[0])
+
+                for i in range(len(data)):
+                    self.setItem(i, 1 + j, DataValue(str(data[i]), items[j]))
+
+            self.column_map[data_axis[j]] = 1 + j
+            self.data_axis = data_axis
+
+    def markSelectedFromDataAxis(self):
+        '''
+        Mark selected data from plot in the table
+        '''
+        for ax in self.data_axis:
+            column_index = self.column_map[ax]
+            selected_data = ax.getMarkedData()
+
+            for point in selected_data:
+                for i in range(self.rowCount()):
+                    current_timestamp = self.item(i, 0).value
+                    current_timestamp = datetime.strptime(current_timestamp, '%Y-%m-%d %H:%M:%S')
+                    if current_timestamp == point[0]:
+                        self.selectRow(i)
+
+
+
+
 """
 class DataTableModel(QStandardItemModel):
 
