@@ -6,6 +6,7 @@ from vgosDBpy.model.table import TableModel
 from vgosDBpy.data.plotTable import Tablefunction as TF
 
 from datetime import datetime
+import time
 
 class QWrapper(QTreeView):
     '''
@@ -167,14 +168,18 @@ class DataTable(QTableView):
     def clearTable(self):
         self.model.clearTable()
 
-    def updateFromDataAxis(self, data_axis, items):
+    def updateFromDataAxis(self, data_axis):
         '''
         Updates the table by giving it the data_axis, this gives a one to one correspondance with
         the plot
         '''
-        if len(items) > 0:
+        if len(data_axis) > 0:
+            items = []
+            for ax in data_axis:
+                items.append(ax.getItem())
+
             # Update values in table
-            self.model.updateFromDataAxis(data_axis, items)
+            self.model.updateFromDataAxis(data_axis)
 
             # Updates header
             path = []
@@ -189,21 +194,21 @@ class DataTable(QTableView):
         # Updates size of column when content is changed
         self.updateColumnSize()
 
-    def updateMarkedRows(self):
+    def updateMarkedRows(self, data_axis):
         '''
         Mark selected data from plot in the table
         '''
-        for ax in self.model.data_axis:
-            column_index = self.model.column_map[ax]
+
+        self.selection.clear()
+
+
+        for ax in data_axis:
+            column_index = self.model.dataaxis_to_column_map[ax]
             selected_data = ax.getMarkedData()
 
-            for point in selected_data:
-                for i in range(self.model.rowCount()):
-                    model_item = self.model.item(i, 0)
-                    current_timestamp = model_item.value
-                    current_timestamp = datetime.strptime(current_timestamp, '%Y-%m-%d %H:%M:%S')
-                    if current_timestamp == point[0]:
-                        for j in range(self.model.rowCount()):
-                            model_item = self.model.item(i,j)
-                            item_index = self.model.indexFromItem(model_item)
-                            self.selection.select(item_index, QItemSelectionModel.Select)
+            for row_index in selected_data:
+                for col_index in range(self.model.columnCount()):
+                    model_item = self.model.item(row_index, col_index)
+                    item_index = self.model.indexFromItem(model_item)
+
+                    self.selection.select(item_index, QItemSelectionModel.Select) # This line takes a lot of time to execute, needs fix

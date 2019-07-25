@@ -29,7 +29,7 @@ class PlotFigure(FigureCanvas):
 
         self.timeInt = 1
         # To be initiated
-        self.ax = []
+        self._ax = []
         self.draw()
 
         self.paths = []
@@ -48,7 +48,7 @@ class PlotFigure(FigureCanvas):
         data_axis [DataAxis]
         '''
         axis = self.figure.add_axes(data_axis.getAxis())
-        self.ax.append(data_axis)
+        self._ax.append(data_axis)
 
     def removeAxis(self, data_axis):
         '''
@@ -57,14 +57,14 @@ class PlotFigure(FigureCanvas):
         data_axis [DataAxis]
         '''
         axis = data_axis.getAxis()
-        self.ax.remove(data_axis)
-        self.ax.clear()
+        self._ax.remove(data_axis)
+        self._ax.clear()
 
     def getDataAxis(self):
         '''
         Returns list of axes that belongs to the figure [list of DataAxis]
         '''
-        return self.ax
+        return self._ax
 
     def getItems(self):
         '''
@@ -113,16 +113,16 @@ class PlotFigure(FigureCanvas):
         # Refresh canvas
         self.updatePlot()
 
+
     def resetFigure(self):
         self.figure.clear()
-        for ax in self.ax:
+        for ax in self._ax:
             self.removeAxis(ax)
-        self.ax = []
+        self._ax = []
 
     def updateTime(self):
         self.updateFigure(self.items, timeUpdated = True)
-        for ax in self.ax:
-            self.parentWidget().getPlotToolBar().updateAxis(ax)
+        self.parentWidget().getPlotToolBar().updateDataAxis(self._ax)
 
     def append_plot(self, item):
         #add new item
@@ -163,7 +163,7 @@ class PlotWidget(QWidget):
     Widget that brings the PlotFigure together with a navigation toolbar that allows different
     matplotlib features such as zoom and move in plot.
     '''
-    def __init__(self, parent = None, data_table_widget = None):
+    def __init__(self, parent = None):
         super(PlotWidget, self).__init__(parent)
 
         self.plot_canvas = PlotFigure(parent = self)
@@ -174,19 +174,14 @@ class PlotWidget(QWidget):
         layout.addWidget(self.plot_canvas)
         self.setLayout(layout)
 
-        self._data_table_widget = data_table_widget
-
     def getPlotToolBar(self):
-        return self.parentWidget().parentWidget().plot_toolbox
+        return self.parentWidget().parentWidget().parentWidget().plot_toolbox
 
     def getDataAxis(self):
         return self.plot_canvas.getDataAxis()
 
     def getItems(self):
         return self.plot_canvas.getItems()
-
-    def getTableWidget(self):
-        return self._data_table_widget
 
 '''
 class PlotToolBox(QTabWidget):

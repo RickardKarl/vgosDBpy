@@ -89,4 +89,4 @@ class EditTracking:
 
         print(path_to_file_list)
         print('Created the following files:', new_file_name)
-        create_new_wrapper(path_to_file_list, new_file_name_list, self._wrapper_path, 'new_wrapper_4')
+        create_new_wrapper(path_to_file_list, new_file_name_list, self._wrapper_path, 'new_wrapper')

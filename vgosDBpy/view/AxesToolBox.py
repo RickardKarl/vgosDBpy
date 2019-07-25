@@ -18,7 +18,7 @@ class AxesToolBox(QWidget):
     marker_size = 2.3 # Controls size of markers in plots
 
 
-    def __init__(self, parent, canvas, data_axis = None):
+    def __init__(self, parent, canvas, table_widget, start_axis = None):
 
         '''
         Constructor
@@ -30,14 +30,22 @@ class AxesToolBox(QWidget):
 
         super(AxesToolBox, self).__init__(parent)
 
-        # Instance variables
+        ##### Instance variables
+
+        # Widgets
         self.canvas = canvas
+        self.table_widget = table_widget
+
+        # Control, appearance and data variables
         self.selector = None
-        self.data_axis = data_axis
-        if data_axis == None:
+        self.data_axis = canvas.getDataAxis()
+        self.current_axis = start_axis
+
+        # If current_axis is given
+        if self.current_axis == None and not len(self.data_axis) > 0:
             self.original_lines = None
         else:
-            self.original_lines = self.data_axis.getAxis().get_lines()
+            self.original_lines = self.current_axis.getAxis().get_lines()
 
 
         self.edited_curve = None # Saves the curve for edited data (where marked data is hidden)
@@ -95,19 +103,37 @@ class AxesToolBox(QWidget):
         self.trackEdit.clicked.connect(self._trackEdit)
         self.saveEdit.clicked.connect(self._saveEdit)
 
-    def updateAxis(self, data_axis):
+
+    ######## Methods for updating the DataAxis of the tool box
+    def updateDataAxis(self, data_axis):
+        '''
+        Updates the tool box with a list of DataAxis
+
+        data_axis [list of DataAxis]
+        '''
+        if len(data_axis) > 0:
+            self.current_axis = data_axis[0]
+
+            for ax in data_axis:
+                self.addSingleDataAxis(ax)
+
+    def addSingleDataAxis(self, data_axis):
         '''
         Updates the instance with a new axis
 
-        data_axis [DataAxis]
+        data_axis [list of DataAxis]
         '''
-        self.data_axis = data_axis
-        self.original_lines = data_axis.getAxis().get_lines()
-        self.updateSelector(self.data_axis)
+        self.data_axis.append(data_axis)
+        if data_axis == self.current_axis:
+            self.original_lines = data_axis.getAxis().get_lines()
+            self.updateSelector(data_axis)
+
         self._showLine()
         self._showMarkers()
-        for line in self.data_axis.getAxis().get_lines():
+        for line in data_axis.getAxis().get_lines():
             line.set_markersize(AxesToolBox.marker_size)
+
+    ######## Selector methods
 
     def updateSelector(self, data_axis):
         '''
@@ -126,12 +152,13 @@ class AxesToolBox(QWidget):
         x2, y2 = erelease.xdata, erelease.ydata
 
         # Update plot with marked data and eventually highlight them
-        self.data_axis.updateMarkedData(getData(x1, x2, y1, y2, self.data_axis.getData(), self.canvas.timeInt))
+
+        self.current_axis.updateMarkedData(getData(x1, x2, y1, y2, self.current_axis.getData(), self.canvas.timeInt))
         self.highlightMarkedData()
 
-        table_widget = self.parentWidget().data_table
-        table_widget.updateMarkedRows()
 
+        table_widget = self.parentWidget().data_table
+        table_widget.updateMarkedRows(self.data_axis)
 
     def _showLine(self, show_line = True):
         '''
@@ -164,24 +191,24 @@ class AxesToolBox(QWidget):
         '''
 
         if self.check_smooth_curve.isChecked():
-            data = self.data_axis.getData()
+            data = self.current_axis.getData()
             line = createLine2D(createSmoothCurve(data, window_size = int(len(data)/10)))
-            self.smooth_curve = self.data_axis.addLine(line)
+            self.smooth_curve = self.current_axis.addLine(line)
         else:
             self.smooth_curve.remove()
 
         self.canvas.updatePlot()
 
     def _clearMarkedData(self):
-        if self.data_axis == None:
+        if self.current_axis == None:
             pass
         else:
-            self.data_axis.clearMarkedData()
+            self.current_axis.clearMarkedData()
             self.highlightMarkedData()
 
     def _trackEdit(self):
-        edited_data = self.data_axis.getNewEdit()
-        self.parentWidget().track_edits.addEdit(self.data_axis.getNode(), edited_data.values)
+        edited_data = self.current_axis.getNewEdit()
+        self.parentWidget().track_edits.addEdit(self.current_axis.getItem(), edited_data.values)
 
     def _saveEdit(self):
         self.parentWidget().track_edits.saveEdit()
@@ -212,27 +239,28 @@ class AxesToolBox(QWidget):
         # Adds the ordinary lines if needed
         for line in self.original_lines:
             if line.axes == None:
-                self.data_axis.addLine(line)
+                self.current_axis.addLine(line)
 
         # Button press
         if self.highlight_marked.isChecked():
 
             # Retrieve marked data
             self._showLine()
-            index = []
-            value = []
-            for data in self.data_axis.getMarkedData():
-                index.append(data[0])
-                value.append(data[1])
+            index_list = []
+            for index in self.current_axis.getMarkedData():
+                index_list.append(index)
 
-            line = createLine2D(pd.Series(value, index = index))
+            marked_series = self.current_axis.getData().take(index_list)
+            print(marked_series)
+            line = createLine2D(pd.Series(marked_series))
             line.set_marker('s')
             line.set_linestyle('None')
-            self.marked_data_curve = self.data_axis.addLine(line)
+            self.marked_data_curve = self.current_axis.addLine(line)
 
         else:
             self.plotEditedData()
 
+        #self.table_widget.updateMarkedRows(self.data_axis)
         self.canvas.updatePlot()
 
     def plotEditedData(self):
@@ -240,6 +268,6 @@ class AxesToolBox(QWidget):
         Temporarily removes marked data and plots only the non-selected data
         '''
         self._showLine(show_line = False)
-        line = createLine2D(self.data_axis.getNewEdit())
+        line = createLine2D(self.current_axis.getNewEdit())
         line.set_color('r')
-        self.edited_curve = self.data_axis.addLine(line)
+        self.edited_curve = self.current_axis.addLine(line)

@@ -74,10 +74,9 @@ class App(QWidget):
         self.data_table = DataTable(self)
         self.table = VariableTable(self)
 
-
         # Matplotlib widget and toolbox
-        self.plot_widget = PlotWidget(self, self.data_table)
-        self.plot_toolbox = AxesToolBox(self, self.plot_widget.plot_canvas)
+        self.plot_widget = PlotWidget(self)
+        self.plot_toolbox = AxesToolBox(self, self.plot_widget.plot_canvas, self.data_table)
 
 
         # Tab-widget for plot and data table
@@ -152,9 +151,8 @@ class App(QWidget):
             self.plot_widget.plot_canvas.updateFigure(items)
 
             data_axis = self.plot_widget.getDataAxis()
-            for single_axis in data_axis:
-                self.plot_toolbox.updateAxis(single_axis)
-            self.data_table.updateFromDataAxis(data_axis, items)
+            self.plot_toolbox.updateDataAxis(data_axis)
+            self.data_table.updateFromDataAxis(data_axis)
 
     def _append_plotbutton(self):
         index = self._getSelected(self.table)

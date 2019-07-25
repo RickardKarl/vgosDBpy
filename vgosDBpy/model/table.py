@@ -23,7 +23,7 @@ class TableModel(QStandardItemModel):
 
         # Map to keep track of which column that belongs to each DataAxis
         self.data_axis = None # Keep track of the DataAxis that it shows from the plot
-        self.column_map = {} # DataAxis : Column index
+        self.dataaxis_to_column_map = {} # DataAxis : Column index
 
     def update_header(self,names):
         self.header = names
@@ -112,13 +112,16 @@ class TableModel(QStandardItemModel):
         self.header = []
         self.reset()
 
-    def updateFromDataAxis(self, data_axis, items):
+    def updateFromDataAxis(self, data_axis):
         '''
         Update table model from one/several DataAxis
 
         data_axis [list of DataAxis] is what should be displayed in the table
         '''
         if len(data_axis) > 0:
+            items = []
+            for ax in data_axis:
+                items.append(ax.getItem())
 
             time_index = data_axis[0].getData().index # Get a time index of the series,
                                                       # all axes should have same time indices
@@ -139,15 +142,17 @@ class TableModel(QStandardItemModel):
                 for i in range(len(data)):
                     self.setItem(i, 1 + j, DataValue(str(data[i]), items[j]))
 
-            self.column_map[data_axis[j]] = 1 + j
+            self.dataaxis_to_column_map[data_axis[j]] = 1 + j
             self.data_axis = data_axis
+    '''
+        KAN NOG TA BORT
 
     def markSelectedFromDataAxis(self):
-        '''
-        Mark selected data from plot in the table
-        '''
+    '''
+        #Mark selected data from plot in the table
+    '''
         for ax in self.data_axis:
-            column_index = self.column_map[ax]
+            column_index = self.dataaxis_to_column_map[ax]
             selected_data = ax.getMarkedData()
 
             for point in selected_data:
@@ -157,7 +162,7 @@ class TableModel(QStandardItemModel):
                     if current_timestamp == point[0]:
                         self.selectRow(i)
 
-
+    '''
 
 
 """

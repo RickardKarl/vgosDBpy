@@ -1,0 +1,2 @@
+NU Library or Lesser General Public License (LGPL) (LGPL)
+GNU General Public License v3.0

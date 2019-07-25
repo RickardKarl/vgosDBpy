@@ -7,7 +7,7 @@ class DataAxis:
     This is used to mark data and enables editing of the data
     '''
 
-    def __init__(self, axis, data, node):
+    def __init__(self, axis, data, item):
         '''
         axis [matplotlib.Axes]
         data [pd.Series]
@@ -15,9 +15,9 @@ class DataAxis:
         '''
         self._axis = axis
         self._data = data
-        self._node = node
+        self._item = item
         self._edited_data = data.copy(deep = True)
-        self._marked_data  = []
+        self._marked_data  = [] # Indices of data points in self._data that has been marked
 
     def getAxis(self):
         return self._axis
@@ -25,8 +25,8 @@ class DataAxis:
     def getData(self):
         return self._data
 
-    def getNode(self):
-        return self._node
+    def getItem(self):
+        return self._item
 
     def getEditedData(self):
         return self._edited_data
@@ -48,17 +48,19 @@ class DataAxis:
         data [pd.Series] is the selected data to be added to the marked data list
         remove_existing [bool]
 
-        Updates the marked_data with the currently selected data points
-        If remove_existing is True:
+        Updates the marked_data with the indices of the currently selected data points
+        if remove_existing is True:
             Selected data will be removed if already added to the marked data list
-        Else:
+        else:
             Data from the list will not be removed
         '''
+        time_index = self._data.index
         for point in data.iteritems():
-            if point in self._marked_data and remove_existing:
-                self._marked_data.remove(point)
+            integer_index = time_index.get_loc(point[0])
+            if integer_index in self._marked_data and remove_existing:
+                self._marked_data.remove(integer_index)
             else:
-                self._marked_data.append(point)
+                self._marked_data.append(integer_index)
 
     def clearMarkedData(self):
         '''
@@ -72,8 +74,8 @@ class DataAxis:
         '''
         Replaces all marked data from current data with a NaN
         '''
-        for data in self._marked_data:
-            self._edited_data[data[0]] = np.nan
+        for index in self._marked_data:
+            self._edited_data[index] = np.nan
 
 
     def getNewEdit(self):
