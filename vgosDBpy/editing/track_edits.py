@@ -1,5 +1,9 @@
 from vgosDBpy.editing.editNetCDF import create_netCDF_file
 from vgosDBpy.editing.createNewWrp import create_new_wrapper
+from vgosDBpy.editing.newFileNames import newHistFileName
+
+import os
+from datetime import datetime
 
 class EditTracking:
 
@@ -8,11 +12,12 @@ class EditTracking:
     Allows us to display them and save them in new files
     '''
 
-    def __init__(self, wrapper_path):
+    def __init__(self, wrapper_path, hist_path):
 
         self._edited_variables = []
         self._edited_data = {}
         self._wrapper_path = wrapper_path
+        self.hist_path = hist_path
 
     def getEditedData(self):
         return self._edited_data
@@ -49,9 +54,8 @@ class EditTracking:
     def saveEdit(self):
         '''
         Saves the changes made in the edited variables
-        Creates new netCDF files and a wrapper
-
-        NEED TO CREATE A NEW WRAPPER
+        Creates new netCDF files and a wrapper that points to the new file(s)
+        Also creates a new history file
         '''
         sort_by_parent = {}
         for variable in self._edited_variables:
@@ -89,4 +93,36 @@ class EditTracking:
 
         print(path_to_file_list)
         print('Created the following files:', new_file_name)
-        create_new_wrapper(path_to_file_list, new_file_name_list, self._wrapper_path, 'new_wrapper')
+
+        # Create new history file and add it to the wrapper changes
+        new_hist_path = self.createNewHistFile()
+        path_to_file_list.append(self.hist_path)
+        new_file_name_list.append(new_hist_path.split('/')[-1])
+
+        # Create new wrapper
+        create_new_wrapper(path_to_file_list, new_file_name_list, self._wrapper_path, 'new_wrapper1')
+
+
+
+    def createNewHistFile(self):
+        '''
+        Create a new .hist-file
+
+        Returns path to new history file
+        '''
+
+        new_hist_path = newHistFileName(self.hist_path)
+
+        if os.path.isfile(new_hist_path):
+            raise ValueError('File', new_hist_path,'already exists. Can not overwrite it.')
+
+        with open(self.hist_path, 'r') as src, open(new_hist_path,'w') as dest:
+            for line in src:
+                dest.write(line)
+            str_line = 'The following changes were made ' + str(datetime.now()) + '\n'
+            dest.write(str_line)
+            for edited_var in self._edited_variables:
+                str_line = 'Variable ' + str(edited_var) + ' in ' + 'STATION/FILNAMN' + ' was edited.' + '\n'
+                dest.write(str_line)
+
+        return new_hist_path

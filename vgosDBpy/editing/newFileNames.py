@@ -5,7 +5,7 @@ import os
 DOES: takes in a string as a path. Then decides what the next version should be called,
 plus checks if that version already exists.
 """
-def NewVersionName(path):
+def newVersionName(path):
     path_split= path.split("/")
 
     # Create path to the actual folder by removing last item in path
@@ -57,7 +57,19 @@ def NewVersionName(path):
 
     # Checks if the generated name currently exists, if so call method recurvsively
     if os.path.isfile(file_path):
-        return NewVersionName(file_path)
+        return newVersionName(file_path)
     # Else return new file name
     else:
         return file_path
+
+def newWrapperName(wrapper_path):
+    pass
+
+
+
+def newHistFileName(hist_path):
+    hist_path = hist_path.split('/')
+    hist_file = hist_path.pop().split('.')
+
+    hist_name = '/'.join(hist_path) + '/' + hist_file[0] + '_test' + '.' + hist_file[1]
+    return hist_name

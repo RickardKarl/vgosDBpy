@@ -4,7 +4,7 @@ from PySide2 import QtCore
 from pandas.plotting import register_matplotlib_converters
 
 from vgosDBpy.view.widgets import QWrapper, VariableTable, DataTable
-from vgosDBpy.data.readNetCDF import read_netCDF_vars_info,read_netCDF_data_info #, read_netCDF_dimension_for_var, read_netCDF_variables,
+from vgosDBpy.data.readNetCDF import read_netCDF_vars_info,read_netCDF_data_info
 from vgosDBpy.view.plot_widget_new import AxesToolBox, PlotWidget
 
 from vgosDBpy.editing.track_edits import EditTracking
@@ -23,9 +23,6 @@ class App(QWidget):
         '''
         super(App,self).__init__(parent)
 
-        ######### Keep track of changes
-        self.track_edits = EditTracking(wrapper_path)
-
         ######### Matplotlib time format converter registers
         register_matplotlib_converters()
 
@@ -35,6 +32,9 @@ class App(QWidget):
 
         # Wrapperview
         self.treeview = QWrapper(wrapper_path, self)
+
+        ######### Keep track of changes
+        self.track_edits = EditTracking(wrapper_path, self.treeview.getWrapper().getHistFile().getPath())
 
         # Text
         self.text = QTextEdit(self)

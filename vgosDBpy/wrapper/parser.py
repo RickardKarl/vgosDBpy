@@ -21,6 +21,9 @@ class Parser:
     def get_wrp_path(self):
         return self.root_path
 
+    def getWrapper(self):
+        return self.wrapper
+
     def getActiveScope(self):
         if len(self._active_scope) == 0:
             return None

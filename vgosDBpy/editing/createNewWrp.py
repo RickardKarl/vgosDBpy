@@ -1,7 +1,7 @@
 # How to copy a file
 from vgosDBpy.wrapper.parser import Parser
 from vgosDBpy.data.PathParser import PathParser
-from vgosDBpy.data.VersionName import NewVersionName
+from vgosDBpy.editing.newFileNames import newVersionName
 from vgosDBpy.wrapper.equalWrapper import equal
 import os
 
@@ -26,7 +26,7 @@ def create_new_wrapper(list_changed_files, new_file_names, path_to_old_wrp, new_
     # goes through the list of paths to all changed files.
     for pathToChangedFile in list_changed_files:
         #Collect old and new file name
-        old_file_names.append(pathToChangedFile.split('/')[-1] )
+        old_file_names.append(pathToChangedFile.split('/')[-1])
 
         parsed_path = pathToChangedFile.split('/')
 
@@ -47,7 +47,6 @@ def create_new_wrapper(list_changed_files, new_file_names, path_to_old_wrp, new_
         #not target_directory not in map yet
         dir = dir.lower().strip()
         if dir not in map:
-            #dir = dir.lower().strip()
             map[dir] = []
         map[dir].append(old_file_names[c]+'@'+new_file_names[c])
         c += 1
@@ -56,8 +55,6 @@ def create_new_wrapper(list_changed_files, new_file_names, path_to_old_wrp, new_
     changes_files_in_current_directory = []
     current_directory = None
 
-    #if current_directory in map:
-    #    changes_files_in_current_directory = map[current_directory]
 
     with open(path_to_old_wrp, 'r') as old_wrapper:
         with open(path_to_new_wrp , 'w+') as new_wrapper:
@@ -84,7 +81,7 @@ def create_new_wrapper(list_changed_files, new_file_names, path_to_old_wrp, new_
                         new_wrapper.write(new_name+'\n')
                         written = True
 
-                if written is False :
+                if written is False:
                     new_wrapper.write(line)
 
         new_wrapper.close()

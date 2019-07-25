@@ -41,6 +41,9 @@ class QWrapper(QTreeView):
     def getModel(self):
         return self._model
 
+    def getWrapper(self):
+        return self._model.getWrapper()
+
 class VariableTable(QTableView):
     '''
     Widget that inherits from QTableView

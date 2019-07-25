@@ -21,6 +21,9 @@ class TreeModel(QStandardItemModel):
 
     def __init__(self, header, root_path, parent=None):
         super(TreeModel,self).__init__(parent)
+
+        self._wrapper = None # Is set in setupModel
+
         self.setupModel(root_path)
         self.setHorizontalHeaderLabels(header)
 
@@ -37,6 +40,12 @@ class TreeModel(QStandardItemModel):
 
         return QtCore.Qt.ItemIsEnabled | QtCore.Qt.ItemIsSelectable #| QtCore.Qt.ItemIsEditable # Uncomment if you want to be able to edit it
 
+    def getWrapper(self):
+        '''
+        Returns the tree structure that represents the parsed wrapper
+        '''
+        return self._wrapper
+
     # Model setup
     def setupModel(self, root_path):
         '''
@@ -50,6 +59,8 @@ class TreeModel(QStandardItemModel):
         parser.parseWrapper(root_path)
         root_parent = parser.getWrapperRoot()
         self.recursive(root_parent, self.invisibleRootItem())
+
+        self._wrapper = parser.getWrapper()
 
     def recursive(self, node, parent):
         if node.isNetCDF():

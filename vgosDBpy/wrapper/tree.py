@@ -88,6 +88,9 @@ class Wrapper:
         '''
         return self.root
 
+    def getHistFile(self):
+        return self.hist_file
+
     def getHistory(self):
         '''
         Returns history file as string
