@@ -25,9 +25,9 @@ def create_new_wrapper(list_changed_files, new_file_names, path_to_old_wrp, new_
 
     # goes through the list of paths to all changed files.
     for pathToChangedFile in list_changed_files:
+
         #Collect old and new file name
         old_file_names.append(pathToChangedFile.split('/')[-1])
-
         parsed_path = pathToChangedFile.split('/')
 
         # find where the files is
@@ -48,13 +48,12 @@ def create_new_wrapper(list_changed_files, new_file_names, path_to_old_wrp, new_
         dir = dir.lower().strip()
         if dir not in map:
             map[dir] = []
-        map[dir].append(old_file_names[c]+'@'+new_file_names[c])
+        map[dir].append(old_file_names[c])
+        map[dir].append(new_file_names[c])
         c += 1
-
     # initialy we are not in a direcotory
     changes_files_in_current_directory = []
     current_directory = None
-
 
     with open(path_to_old_wrp, 'r') as old_wrapper:
         with open(path_to_new_wrp , 'w+') as new_wrapper:
@@ -72,12 +71,16 @@ def create_new_wrapper(list_changed_files, new_file_names, path_to_old_wrp, new_
 
                 written = False
 
-                for itm in changes_files_in_current_directory:
-                    names = itm.split('@')
-                    old_name = names[0]
-                    new_name = names[1]
+                if changes_files_in_current_directory != []:
+                    old_name = changes_files_in_current_directory[0]
+                    new_name = changes_files_in_current_directory[1]
 
-                    if l == old_name.lower().strip():
+                    keywords = l.split()
+                    #print(keywords)
+                    #print(old_name.lower().strip())
+                    if old_name.lower().strip() in keywords:
+                        print(old_name)
+                        print(new_name)
                         new_wrapper.write(new_name+'\n')
                         written = True
 
