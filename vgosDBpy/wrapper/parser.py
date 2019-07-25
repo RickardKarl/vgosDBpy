@@ -49,8 +49,8 @@ class Parser:
         directories = []
         with open(path,'r') as scr:
             for line in scr:
-                l = line.lower().strip()
-                if l.startswith('default_dir'):
+                l = line.strip()
+                if l.lower().startswith('default_dir'):
                     directories.append(l.split()[1] )
         return directories
 
@@ -73,24 +73,27 @@ class Parser:
             for line in src:
 
                 # Correct format of line
-                line = line.lower().strip()
+                line = line.strip()
+
+                # First keyword
+                first_keyword = line.split()[0].lower()
 
                 # Skip comments in wrapper
-                if line.startswith('!'):
+                if first_keyword.startswith('!'):
                     continue
 
                 # Check for beginning of sections
-                elif line.startswith('begin'):
+                elif first_keyword.startswith('begin'):
                     keyword = line.split()[1]
                     self.addScope(keyword)
 
                 # Check for end of sections
-                elif line.startswith('end'):
+                elif first_keyword.startswith('end'):
                     keyword = line.split()[1]
                     self.removeScope(keyword)
 
                 # Check for setting the default_dir (active_folder)
-                elif line.startswith('default_dir'):
+                elif first_keyword.startswith('default_dir'):
                     active_folder = line.split()[1]
                     if not Wrapper.inScope(active_folder):
                         self.wrapper.addNode(active_folder, self.getActiveScope(), 'node')

@@ -51,7 +51,6 @@ def NewVersionName(path):
                 if int_file_digit+1 >= 1000:
                     raise ('Can not create anymore files, excedded limit of 999 versions')
 
-        file_name_non_digit = file_name_non_digit[0].upper() + file_name_non_digit[1:-1] + file_name_non_digit[-1].upper()
         new_file_name = file_name_non_digit + file_digit + '.' + rhs
 
     file_path = path_to_file + '/' + new_file_name

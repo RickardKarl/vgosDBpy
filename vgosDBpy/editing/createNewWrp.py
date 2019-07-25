@@ -21,25 +21,25 @@ def create_new_wrapper(list_changed_files, new_file_names, path_to_old_wrp, new_
     possible_directories = parser.find_all_directories(path_to_old_wrp)
 
     old_file_names = []
-    #new_file_names = []
     target_directory = []
 
     # goes through the list of paths to all changed files.
     for pathToChangedFile in list_changed_files:
         #Collect old and new file name
         old_file_names.append(pathToChangedFile.split('/')[-1] )
-        #new_file_names.append(NewVersionName(pathToChangedFile) )
+
         parsed_path = pathToChangedFile.split('/')
+
         # find where the files is
         marker = 0
-        #parsed_path  = pathToChangedFile.split('/')
+
         for dir in possible_directories:
             if dir in parsed_path:
                 target_directory.append(dir)
                 marker = 1
                 break
         if marker == 0 :
-            target_directory.append('non')
+            target_directory.append(None)
 
     map = {} # connects a name of directory to list of strings on the fotmat 'old_name-new_name'
     c = 0
@@ -54,7 +54,7 @@ def create_new_wrapper(list_changed_files, new_file_names, path_to_old_wrp, new_
 
     # initialy we are not in a direcotory
     changes_files_in_current_directory = []
-    current_directory = 'non'
+    current_directory = None
 
     #if current_directory in map:
     #    changes_files_in_current_directory = map[current_directory]
@@ -93,13 +93,13 @@ def create_new_wrapper(list_changed_files, new_file_names, path_to_old_wrp, new_
 ## old version with only one changed file below somwhat intact
 """
     in_right_directory = False
-    current_directory = 'non'
+    current_directory = None
     with open(path_to_old_wrp, 'r') as old_wrapper:
         with open(path_to_new_wrp , 'w+') as new_wrapper:
 
             for line in old_wrapper:
                 # if target_directory is non
-                if target_directory == 'non':
+                if target_directory == None:
                     if line.strip() == old_file_name.strip():
                         new_wrapper.write(new_file_name)
                     else:

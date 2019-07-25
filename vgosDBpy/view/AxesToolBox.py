@@ -251,7 +251,6 @@ class AxesToolBox(QWidget):
                 index_list.append(index)
 
             marked_series = self.current_axis.getData().take(index_list)
-            print(marked_series)
             line = createLine2D(pd.Series(marked_series))
             line.set_marker('s')
             line.set_linestyle('None')

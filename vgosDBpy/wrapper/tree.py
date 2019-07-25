@@ -139,11 +139,11 @@ class Wrapper:
         indent = " " * 4
         s = ''
         for child in self.root.getChildren():
-            line = str(child).upper() + '\n'
+            line = str(child) + '\n'
             s = s + line
             if type(child) == Node:
                 for sub_child in child.getChildren():
-                    s = s + indent + str(sub_child).capitalize() + '\n'
+                    s = s + indent + str(sub_child) + '\n'
                     if type(sub_child) == Node:
                         for subsub_child in sub_child.getChildren():
                             s = s + indent*2 + str(subsub_child) + '\n'
