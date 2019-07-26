@@ -4,7 +4,6 @@ from vgosDBpy.data.PathParser import PathParser
 from vgosDBpy.editing.newFileNames import newVersionName, newWrapperPath
 from vgosDBpy.wrapper.equalWrapper import equal
 import os
-import sys
 
     # from split find directory by going trough all words
     # and see if they matches any in the predefined list of directories possible, which is found by
@@ -19,9 +18,6 @@ def create_new_wrapper(list_changed_files, new_file_names, path_to_old_wrp, hist
         path_to_new_wrp = newWrapperPath(path_to_new_wrp)
 
     print(path_to_new_wrp)
-
-    sys.exit()
-
 
     parser = Parser(path_to_old_wrp)
 

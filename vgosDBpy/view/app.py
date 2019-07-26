@@ -147,7 +147,7 @@ class App(QWidget):
         if not index == []:
             items = []
             for i in range(len(index)):
-                items.append(self.table.model.itemFromIndex(index[i]))
+                items.append(self.table.getModel().itemFromIndex(index[i]))
             self.plot_widget.plot_canvas.updateFigure(items)
 
             data_axis = self.plot_widget.getDataAxis()
@@ -157,7 +157,7 @@ class App(QWidget):
     def _append_plotbutton(self):
         index = self._getSelected(self.table)
         if not index == []:
-            item = self.table.model.itemFromIndex(index[-1])
+            item = self.table.getModel().itemFromIndex(index[-1])
             self.plot_widget.plot_canvas.append_plot(item)
 
         for data_axis in self.plot_widget.getDataAxis():
@@ -171,7 +171,7 @@ class App(QWidget):
         if not index == [] :
             items = []
             for i in range (len(index)):
-                items.append(self.table.model.itemFromIndex(index[i]))
+                items.append(self.table.getModel().itemFromIndex(index[i]))
             self.data_table.updateData(items)
 
 
@@ -180,7 +180,7 @@ class App(QWidget):
         if not index  == [] :
             items = []
             for i in range (len(index)):
-                items.append(self.table.model.itemFromIndex(index[i]))
+                items.append(self.table.getModel().itemFromIndex(index[i]))
         self.data_table.appendData(items)
 
     def _clear_plot(self):

@@ -59,8 +59,8 @@ class VariableTable(QTableView):
         super(VariableTable, self).__init__(parent)
 
         # Setup model
-        self.model = TableModel(['Name', 'Unit'], parent)
-        self.setModel(self.model)
+        self._model = TableModel(['Name', 'Unit'], parent)
+        self.setModel(self._model)
 
         # Selection of items
         self.setSelectionMode(QAbstractItemView.ExtendedSelection)
@@ -74,23 +74,26 @@ class VariableTable(QTableView):
         self.setColumnWidth(1, 4/10*max_width)
         '''
 
+    def getModel(self):
+        return self._model
+
     def updateVariables(self, var_list):
         '''
         Updates content of table model
 
         var_list [list of QStandardItems]
         '''
-        self.model.updateVariables(var_list)
+        self._model.updateVariables(var_list)
 
         # Updates size of column when content is changed
-        for i in range(self.model.columnCount()):
+        for i in range(self._model.columnCount()):
             self.resizeColumnToContents(i)
 
 class ConstantTable(QTableView):
     def __init__(self, parent=None):
         super(DataTable,self).__init__(parent)
-        self.model = TableModel(' ', parent)
-        self.setModel(self.model)
+        self._model = TableModel(' ', parent)
+        self.setModel(self._model)
 
 class DataTable(QTableView):
     '''
@@ -103,8 +106,8 @@ class DataTable(QTableView):
         super(DataTable, self).__init__(parent)
 
         # Setup model
-        self.model = TableModel('', parent) # just use the two functions get_name_to_print and get_unit_to_print istead of 'Value'
-        self.setModel(self.model)
+        self._model = TableModel('', parent) # just use the two functions get_name_to_print and get_unit_to_print istead of 'Value'
+        self.setModel(self._model)
         self.tabfunc = TF()
         # Selection of items
         self.setSelectionMode(QAbstractItemView.ExtendedSelection)
@@ -112,11 +115,14 @@ class DataTable(QTableView):
         self.selection = self.selectionModel()
 
 
+    def getModel(self):
+        return self._model
+
     def updateColumnSize(self):
         '''
         Updates size of column adjusted after the content
         '''
-        for i in range(self.model.columnCount()):
+        for i in range(self._model.columnCount()):
             self.resizeColumnToContents(i)
 
     def updateData(self, items):
@@ -133,12 +139,12 @@ class DataTable(QTableView):
                 path.append(itm.getPath())
                 var.append(itm.labels)
             data = self.tabfunc.tableFunctionGeneral(path, var)
-            self.model.update_header(self.tabfunc.return_header_names(path,var))
+            self._model.update_header(self.tabfunc.return_header_names(path,var))
         else:
             raise ValueError('Argument items can not be empty.')
 
         # Updates model
-        self.model.updateData(data, items)
+        self._model.updateData(data, items)
 
         # Updates size of column when content is changed
         self.updateColumnSize()
@@ -158,18 +164,18 @@ class DataTable(QTableView):
                 path.append(itm.getPath())
                 var.append(itm.labels)
             data = self.tabfunc.append_table(path, var)
-            self.model.update_header(self.tabfunc.append_header(path,var))
+            self._model.update_header(self.tabfunc.append_header(path,var))
         else:
             raise ValueError('Argument items contains wrong number of items, should be one or two.')
 
         # Updates model
-        self.model.appendData(data,items)
+        self._model.appendData(data,items)
 
         # Updates size of column when content is changed
         self.updateColumnSize()
 
     def clearTable(self):
-        self.model.clearTable()
+        self._model.clearTable()
 
     def updateFromDataAxis(self, data_axis):
         '''
@@ -182,7 +188,7 @@ class DataTable(QTableView):
                 items.append(ax.getItem())
 
             # Update values in table
-            self.model.updateFromDataAxis(data_axis)
+            self._model.updateFromDataAxis(data_axis)
 
             # Updates header
             path = []
@@ -192,7 +198,7 @@ class DataTable(QTableView):
                 var.append(itm.labels)
             header_labels = self.tabfunc.return_header_names(path,var)
             header_labels.insert(0, TF.time_label)
-            self.model.update_header(header_labels)
+            self._model.update_header(header_labels)
 
         # Updates size of column when content is changed
         self.updateColumnSize()
@@ -206,12 +212,12 @@ class DataTable(QTableView):
 
 
         for ax in data_axis:
-            column_index = self.model.dataaxis_to_column_map[ax]
+            column_index = self._model.dataaxis_to_column_map[ax]
             selected_data = ax.getMarkedData()
 
             for row_index in selected_data:
-                for col_index in range(self.model.columnCount()):
-                    model_item = self.model.item(row_index, col_index)
-                    item_index = self.model.indexFromItem(model_item)
+                for col_index in range(self._model.columnCount()):
+                    model_item = self._model.item(row_index, col_index)
+                    item_index = self._model.indexFromItem(model_item)
 
                     self.selection.select(item_index, QItemSelectionModel.Select) # This line takes a lot of time to execute, needs fix
