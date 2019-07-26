@@ -6,7 +6,6 @@ from pandas.plotting import register_matplotlib_converters
 from vgosDBpy.view.widgets import QWrapper, VariableTable, DataTable
 from vgosDBpy.data.readNetCDF import read_netCDF_vars_info,read_netCDF_data_info
 from vgosDBpy.view.plot_widget_new import AxesToolBox, PlotWidget
-
 from vgosDBpy.editing.track_edits import EditTracking
 
 class App(QWidget):

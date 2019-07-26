@@ -18,16 +18,19 @@ class TableModel(QStandardItemModel):
 
     def __init__(self, header, parent=None):
         super(TableModel,self).__init__(parent)
-        self.header = header
-        self.setHorizontalHeaderLabels(self.header)
+        self._header = header
+        self.setHorizontalHeaderLabels(self._header)
 
         # Map to keep track of which column that belongs to each DataAxis
         self.data_axis = None # Keep track of the DataAxis that it shows from the plot
         self.dataaxis_to_column_map = {} # DataAxis : Column index
 
+    def getHeader(self):
+        return self._header
+
     def update_header(self,names):
-        self.header = names
-        self.setHorizontalHeaderLabels(self.header)
+        self._header = names
+        self.setHorizontalHeaderLabels(self._header)
 
     def flags(self, index):
         '''
@@ -48,7 +51,7 @@ class TableModel(QStandardItemModel):
         (Has to be done since clear otherwise would remove the header)
         '''
         self.clear()
-        self.setHorizontalHeaderLabels(self.header)
+        self.setHorizontalHeaderLabels(self._header)
 
     def updateVariables(self, item):
         '''
@@ -109,7 +112,7 @@ class TableModel(QStandardItemModel):
 
     def clearTable(self):
         self.data = {}
-        self.header = []
+        self._header = []
         self.reset()
 
     def updateFromDataAxis(self, data_axis):
@@ -144,25 +147,6 @@ class TableModel(QStandardItemModel):
 
             self.dataaxis_to_column_map[data_axis[j]] = 1 + j
             self.data_axis = data_axis
-    '''
-        KAN NOG TA BORT
-
-    def markSelectedFromDataAxis(self):
-    '''
-        #Mark selected data from plot in the table
-    '''
-        for ax in self.data_axis:
-            column_index = self.dataaxis_to_column_map[ax]
-            selected_data = ax.getMarkedData()
-
-            for point in selected_data:
-                for i in range(self.rowCount()):
-                    current_timestamp = self.item(i, 0).value
-                    current_timestamp = datetime.strptime(current_timestamp, '%Y-%m-%d %H:%M:%S')
-                    if current_timestamp == point[0]:
-                        self.selectRow(i)
-
-    '''
 
 
 """
@@ -180,12 +164,12 @@ class DataTableModel(QStandardItemModel):
 
     def __init__(self, header, parent=None):
         super(DataTableModel,self).__init__(parent)
-        self.header = header
-        self.setHorizontalHeaderLabels(self.header)
+        self._header = header
+        self.setHorizontalHeaderLabels(self._header)
 
     def update_header(self,names):
-        self.header = names
-        self.setHorizontalHeaderLabels(self.header)
+        self._header = names
+        self.setHorizontalHeaderLabels(self._header)
 
     def flags(self, index):
         '''
@@ -206,7 +190,7 @@ class DataTableModel(QStandardItemModel):
         (Has to be done since clear otherwise would remove the header)
         '''
         self.clear()
-        self.setHorizontalHeaderLabels(self.header)
+        self.setHorizontalHeaderLabels(self._header)
 
     def updateData(self, data, items):
         '''
