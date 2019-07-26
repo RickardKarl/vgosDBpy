@@ -1,6 +1,5 @@
 from vgosDBpy.editing.editNetCDF import create_netCDF_file
 from vgosDBpy.editing.createNewWrp import create_new_wrapper
-from vgosDBpy.editing.newFileNames import newHistFileName
 
 import os
 from datetime import datetime
@@ -12,12 +11,11 @@ class EditTracking:
     Allows us to display them and save them in new files
     '''
 
-    def __init__(self, wrapper_path, hist_path):
+    def __init__(self, wrapper):
 
         self._edited_variables = []
         self._edited_data = {}
-        self._wrapper_path = wrapper_path
-        self.hist_path = hist_path
+        self._wrapper = wrapper
 
     def getEditedData(self):
         return self._edited_data
@@ -95,34 +93,46 @@ class EditTracking:
         print('Created the following files:', new_file_name)
 
         # Create new history file and add it to the wrapper changes
-        new_hist_path = self.createNewHistFile()
-        path_to_file_list.append(self.hist_path)
-        new_file_name_list.append(new_hist_path.split('/')[-1])
+        new_hist_path, timestamp = self.createNewHistFile(sort_by_parent, new_file_name_list)
+        hist_file_name = new_hist_path.split('/')[-1]
 
         # Create new wrapper
-        create_new_wrapper(path_to_file_list, new_file_name_list, self._wrapper_path, 'new_wrapper1')
+        create_new_wrapper(path_to_file_list, new_file_name_list, self._wrapper.wrapper_path, 'new_wrapper1',
+                            hist_file_name, timestamp)
 
 
 
-    def createNewHistFile(self):
+    def createNewHistFile(self, sort_var_by_file, new_file_name_list):
         '''
         Create a new .hist-file
 
         Returns path to new history file
         '''
+        # Getting timestamp of creation of file
+        timestamp = datetime.now()
 
-        new_hist_path = newHistFileName(self.hist_path)
+        # Generate new path
+        session_name = self._wrapper.session_name
+        new_hist_path = self._wrapper.getNode('History').getPath() + '/' + session_name + '_vgosDBpy_V' + timestamp.strftime('%Y%m%d%H%M%S') + '.hist'
 
+
+        # Check if it exists already so it wont overwrite anything
         if os.path.isfile(new_hist_path):
             raise ValueError('File', new_hist_path,'already exists. Can not overwrite it.')
 
-        with open(self.hist_path, 'r') as src, open(new_hist_path,'w') as dest:
-            for line in src:
-                dest.write(line)
-            str_line = 'The following changes were made ' + str(datetime.now()) + '\n'
+        # Creating and writing to the new files with the tracked changes
+        with open(new_hist_path,'w') as dest:
+            str_line = 'The following changes were made ' + timestamp.strftime('%Y-%m-%d %H:%M:%S') + '\n'
             dest.write(str_line)
-            for edited_var in self._edited_variables:
-                str_line = 'Variable ' + str(edited_var) + ' in ' + 'STATION/FILNAMN' + ' was edited.' + '\n'
-                dest.write(str_line)
 
-        return new_hist_path
+            file_index = 0
+            for old_file in sort_var_by_file:
+                str_line = 'Made changes to ' + str(old_file) + ' which are saved in ' + new_file_name_list[file_index] + '\n'
+                dest.write(str_line)
+                file_index += 1
+                for var in sort_var_by_file.get(old_file):
+                    str_line = '    Variable ' + str(var) + ' was edited.\n'
+                    dest.write(str_line)
+
+        ####### Returns path to the new .hist file
+        return new_hist_path, timestamp

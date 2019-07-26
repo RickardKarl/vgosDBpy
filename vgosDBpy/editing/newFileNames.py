@@ -64,12 +64,3 @@ def newVersionName(path):
 
 def newWrapperName(wrapper_path):
     pass
-
-
-
-def newHistFileName(hist_path):
-    hist_path = hist_path.split('/')
-    hist_file = hist_path.pop().split('.')
-
-    hist_name = '/'.join(hist_path) + '/' + hist_file[0] + '_test' + '.' + hist_file[1]
-    return hist_name

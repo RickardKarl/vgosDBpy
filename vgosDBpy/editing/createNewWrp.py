@@ -9,7 +9,7 @@ import os
     # and see if they matches any in the predefined list of directories possible, which is found by
     # looping through the wrapper that one reads in and seraches for the keyword "default_dir"
 
-def create_new_wrapper(list_changed_files, new_file_names, path_to_old_wrp, new_wrp_name):
+def create_new_wrapper(list_changed_files, new_file_names, path_to_old_wrp, new_wrp_name, hist_file_name, timestamp):
 
     path_to_new_wrp = new_wrp_path(path_to_old_wrp, new_wrp_name)
 
@@ -63,6 +63,8 @@ def create_new_wrapper(list_changed_files, new_file_names, path_to_old_wrp, new_
                 # and if so updates the current_directory
                 if l.startswith('default_dir'):
                     current_directory = l.split()[1]
+                elif l == 'end history':
+                    writeHistoryBlock(new_wrapper, hist_file_name, timestamp)
 
                 if current_directory in map:
                     changes_files_in_current_directory = map[current_directory]
@@ -76,11 +78,7 @@ def create_new_wrapper(list_changed_files, new_file_names, path_to_old_wrp, new_
                     new_name = changes_files_in_current_directory[1]
 
                     keywords = l.split()
-                    #print(keywords)
-                    #print(old_name.lower().strip())
                     if old_name.lower().strip() in keywords:
-                        print(old_name)
-                        print(new_name)
                         new_wrapper.write(new_name+'\n')
                         written = True
 
@@ -90,38 +88,17 @@ def create_new_wrapper(list_changed_files, new_file_names, path_to_old_wrp, new_
         new_wrapper.close()
     old_wrapper.close()
 
-## old version with only one changed file below somwhat intact
-"""
-    in_right_directory = False
-    current_directory = None
-    with open(path_to_old_wrp, 'r') as old_wrapper:
-        with open(path_to_new_wrp , 'w+') as new_wrapper:
+def writeHistoryBlock(file, hist_file_name, timestamp):
+    file.write('!\n')
+    file.write('Begin Process vgosDBpy\n')
+    file.write('Version ----\n')
+    file.write('CreatedBy ---\n')
+    file.write('Default_dir History\n')
+    file.write('RunTimeTag ----\n')
+    file.write('History ' + hist_file_name + '\n')
+    file.write('End Process vgosDBpy\n')
 
-            for line in old_wrapper:
-                # if target_directory is non
-                if target_directory == None:
-                    if line.strip() == old_file_name.strip():
-                        new_wrapper.write(new_file_name)
-                    else:
-                        new_wrapper.write(line)
-                else:
-                    l = line.lower().strip()
-                    if l.startswith('default_dir'):
-                        if line.split()[1] == target_directory:
-                            in_right_directory = True
-                        else:
-                            in_right_directory = False
-                    if in_right_directory is True:
-                         if line.strip() == old_file_name.strip():
-                             new_wrapper.write(new_file_name+ "\n")
-                             in_right_directory = False
-                         else:
-                             new_wrapper.write(line)
-                    else:
-                        new_wrapper.write(line)
-        new_wrapper.close()
-    old_wrapper.close()
-"""
+
 def new_wrp_path(old_wrp_path, new_wrp_name):
     splits = old_wrp_path.split('/')
 

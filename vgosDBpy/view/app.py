@@ -26,15 +26,15 @@ class App(QWidget):
         ######### Matplotlib time format converter registers
         register_matplotlib_converters()
 
-        ######### Save wrapper path
 
         ########### Creating widgets
 
         # Wrapperview
         self.treeview = QWrapper(wrapper_path, self)
 
+
         ######### Keep track of changes
-        self.track_edits = EditTracking(wrapper_path, self.treeview.getWrapper().getHistFile().getPath())
+        self.track_edits = EditTracking(self.treeview.getWrapper())
 
         # Text
         self.text = QTextEdit(self)
