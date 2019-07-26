@@ -3,6 +3,7 @@ import pandas as pd
 from numpy.random import uniform
 import os
 import matplotlib.pyplot as plt
+import numpy as np
 
 
 from vgosDBpy.data.combineYMDHMS import combineYMDHMwithSec
@@ -69,6 +70,35 @@ def is_possible_to_plot(path, var):
     else:
         return False
 
+def is_Numscans(path, var):
+    with Dataset(path, 'r', format = 'NETCDF4_CLASSIC') as nc:
+        dimensions = nc.variables[var].get_dims()
+        for dim in dimensions:
+            name = dim.name
+            if name.strip() == 'NumScans':
+                return True
+    return False
+
+def is_NumObs(path, var):
+    with Dataset(path, 'r', format = 'NETCDF4_CLASSIC') as nc:
+        dimensions = nc.variables[var].get_dims()
+        for dim in dimensions:
+            name = dim.name
+            if name.strip() == 'NumObs':
+                return True
+    return False
+
+def is_numScan_or_NumObs(path, var):
+    if is_Numscans(path,var):
+        return True
+    if is_NumObs(path,var):
+        return True
+    return False
+
+
+def read_all_dimensions_for_var(path, var):
+    with Dataset(path, 'r', format = 'NETCDF4_CLASSIC') as nc:
+        return nc.variables[var].get_dims()
 """
 Takes in: path to netCDF file amd name of var in file
 Returns: True is varibale has dtype != S1 but is not plottable
@@ -78,11 +108,10 @@ Internal calls:
 """
 def is_var_constant(path, var):
     dtype = get_dtype_for_var(path, var)
-    dimensions = read_netCDF_dimension_for_var(path, var)
-    print(dimensions)
-    #vars = read_netCDF_variables(path)
-    if dtype != 'S1' and dimensions != "NumScans" :
-        if dimensions != "NumObs":
+    if is_numScan_or_NumObs(path,var):
+        return False
+    else:
+        if dtype != 'S1':
             return True
     return False
 
@@ -98,24 +127,39 @@ def read_netCDF_vars_info(pathToNetCDF):
     info = ""
     vars = read_netCDF_variables(pathToNetCDF)
     dtypes = find_dtype(pathToNetCDF)
-    for i in range(len(dtypes)):
-        if dtypes[i] == "S1":
-            info += read_var_content_S1(vars[i], pathToNetCDF) + "\n"
-    return info
+    for i in range(len(vars)):
+        if not is_numScan_or_NumObs(pathToNetCDF, vars[i]):
+            if dtypes[i] == 'S1' :
+                #if not is_numScan_or_NumObs(pathToNetCDF, vars[i]):
+                info += vars[i] +':'+  read_var_content_S1(vars[i], pathToNetCDF) + "\n \n"
+            else:
+                info += read_var_content_constant(pathToNetCDF, vars[i]) + '\n \n '
 
+    return info
+"""
 def read_netCDF_data_info(pathToNetCDF):
     info= ''
     vars= read_netCDF_variables(pathToNetCDF)
+    dtypes = find_dtype(pathToNetCDF)
     first = True
+    i = 0
     for var in vars:
         # currently nor accepting 'Stublen'
-        if is_var_constant(pathToNetCDF, var):
-            if first is True:
+        if  not is_numScan_or_NumObs(pathToNetCDF, var) and dtypes[i] is not 'S1':
+            if i == 0:
                 info = '\n \nVALUES STORED IN FILE: \n'
-                first = False
             info += read_var_content_constant(pathToNetCDF, var) + '\n \n'
+        i += 1
     return info
+"""
 
+def not_S1(paths, vars):
+    for i in range(len(paths)):
+        with Dataset(paths[i], 'r', format = 'NETCDF4_CLASSIC') as nc:
+            dtype = nc.variables[vars[i]].dtype.name
+            if dtype.strip() == 'S1':
+                return False
+    return True
 
 def find_dtype(pathToNetCDF):
     with Dataset(pathToNetCDF, "r", format="NETCDF4_CLASSIC") as nc:
@@ -125,32 +169,9 @@ def find_dtype(pathToNetCDF):
             dtype.append(nc.variables[var].dtype)
     return dtype
 
-def getDataFromVar_multDim(pathToNetCDF, var):
-    return_data = []
-    data = []
-    with Dataset(pathToNetCDF, 'r', format= 'NETCDF4_CLASSIC') as nc:
-        length = len(nc.variables[var.strip()].get_dims())
-        #for i in range(0, length):
-        #    return_data.append(nc.variables[var.strip()][:,[i]])
-
-        for i in range (0,length):
-        #    temp = []
-            data.append(nc.variables[var.strip()][:,[i]])
-        #    r= nc.variables[var.strip()][:,[i]]
-        #    print(len(r))
-            #for i in range(0,len(r)):
-                #temp.append(return_data[i,[j]])
-                #temp.append(r[i])
-            #data.append(temp)
-        #print(len(data))
-        #y1 = data[0][:]
-        #y2 = data[1][:]
-        #print(y1)
-        #print(y2)
-    #plt.plot(y1,y2)
-    #plt.show()
-    return data
-
+def get_dtype_var(path, var):
+    with Dataset(path,'r', format = 'NETCDF4_CLASSIC') as nc:
+        return nc.variables[var].dtype.name
 
 #only used inside this file
 
@@ -162,16 +183,31 @@ Internal Calls:
 """
 def read_var_content_S1(seekedData,pathToNetCDF):
     with Dataset(pathToNetCDF, "r", format= "NETCDF4_CLASSIC") as nc:
-        data= nc.variables[seekedData][:]
+
+        dimensions = nc.variables[seekedData].get_dims()
+        lengths = []
+        for dim in dimensions:
+            lengths.append(len(dim))
+
+        data= getDataFromVar(pathToNetCDF, seekedData)
+
         head = " "
-        if len(data[:][0]) != 1:
+
+        if len(lengths) == 2:
             for i in range(len(data)):
                 data_row = data[:][i]
 
                 for column in data_row:
                     letter = column.decode('ASCII')
                     head += letter
-        else:
+
+        elif len(lengths) == 3:
+            for i in range(lengths[0]):
+                for j in range(lengths[1]):
+                    for k in range(lengths[2]):
+                        letter = data[i,j,k].decode('ASCII')
+                        head += letter
+        else: # meining defualt 1
             for column in data:
                 letter = column.decode('ASCII')
                 head += letter
@@ -182,16 +218,6 @@ def read_var_content_constant(pathToNetCDF, var):
     with Dataset(pathToNetCDF, 'r', format = 'NETCDF4_CLASSIC') as nc:
         data= nc.variables[var][:]
         head = name +": \n"
-        #print(head)
-        #if len(data[0]) != 1:
-        #    for i in range(len(data)):
-        #        data_row = data[:][i]
-        #
-        #        for column in data_row:
-        #            letter = str(column)
-        #            head += letter
-        #            print(head)
-        #else:
         for column in data:
             letter = str(column)
             head += letter+ '    '
@@ -209,7 +235,113 @@ def read_netCDF_dimension_for_var(pathToNetCDF, var):
 
 def read_unit_for_var (pathToNetCDF, var):
     with Dataset(pathToNetCDF, 'r', format= 'NETCDF4_CLASSIC') as nc:
-        return nc.variables[var].Units
+        dtype = nc.variables[var].dtype
+        if dtype.name.strip() != 'S1':
+            #return nc.variables[var].Units
+                return 'UNITTTTTT'
+        else:
+             return ''
+
+def get_data_to_table(pathToNetCDF, var):
+    dtype = get_dtype_for_var(pathToNetCDF, var).name.strip()
+    dims = get_len_dims(pathToNetCDF, var)
+    #print(dtype)
+    #print('vs')
+    #print(get_dtype_for_var(pathToNetCDF,var))
+    #print(var)
+    if var.strip() == 'Baseline':
+        y = get_dataBaseline(pathToNetCDF)
+    elif dtype == 'S1' :
+        y = get_S1_tableData(pathToNetCDF, var)
+    elif dtype == 'bytes8':
+        y =  get_bytes8_tableData(pathToNetCDF, var)
+    elif dims != 1:
+        y = getDataFromVar_multDim(pathToNetCDF, var)
+    else:
+        y = getDataFromVar_table(pathToNetCDF, var)
+    print(len(y))
+    print(len(y[0]))
+    #return y[0]
+    return y
+
+
+def get_S1_tableData(pathToNetCDF, var):
+    return_data = []
+    data = []
+    with Dataset(pathToNetCDF, "r", format="NETCDF4_CLASSIC") as nc:
+        data= nc.variables[var][:]
+        for line in data:
+            temp = ''
+            for letter in line:
+                temp += letter.decode('ASCII')
+            data.append(temp)
+        return_data.append(data)
+    return return_data
+
+def get_bytes8_tableData(pathToNetCDF, var):
+    return_data = []
+    data = []
+    with Dataset(pathToNetCDF, 'r', forma = 'NETCDF4_CLASSIC') as nc:
+        data = nc.variables[var][:]
+        for line in data :
+            temp = ''
+            for byte in line:
+                temp += str(byte)
+            data.append(temp)
+        return_data.append(data)
+    return return_data
+
+def getDataFromVar_table(path, var):
+    return_data = []
+    with Dataset(path, "r", format="NETCDF4_CLASSIC") as nc:
+        return_data.append(nc.variables[var][:])
+        return(return_data)
+
+def getDataFromVar_multDim(pathToNetCDF, var):
+    return_data = []
+    with Dataset(pathToNetCDF, 'r', format= 'NETCDF4_CLASSIC') as nc:
+        length = len(nc.variables[var.strip()].get_dims())
+        for i in range (0,length):
+            #item  =str(nc.variables[var.strip()][:,[i]]) + '*'
+            return_data.append(nc.variables[var.strip()][:,[i]])
+        return return_data
+
+def getDataFromVar_multDim_first(pathToNetCDF, var):
+    with Dataset(pathToNetCDF, 'r', format= 'NETCDF4_CLASSIC') as nc:
+        return np.squeeze(np.asarray(nc.variables[var.strip()][:,[0]]))
+
+def get_dataBaseline(pathToNetCDF):
+    baseline_table = []
+    return_data  = []
+    with Dataset(pathToNetCDF, 'r', format= 'NETCDF4_CLASSIC') as nc:
+        dimensions= nc.variables['Baseline'].get_dims()
+        content = getDataFromVar(pathToNetCDF, 'Baseline')
+        length = []
+        for dim in dimensions:
+            length.append(len(dim))
+            #print(len(dim))
+
+        temp = ''
+        for i in range(length[0]):#len(dimensions[0]):
+            temp = ''
+            for j in range(length[1]):
+                for k in range(length[2]):
+                    #print(k)
+                    temp += content[i,j,k].decode('ASCII')
+                temp += '  '
+            baseline_table.append(temp)
+        return_data.append(baseline_table)
+    return return_data
+
+
+
+
+def get_len_dims(path, var):
+    with Dataset(path, 'r', format= 'NETCDF4_CLASSIC') as nc:
+        dims = nc.variables[var].get_dims()
+        return len(dims)
+def generall_get_table_data(path, var):
+    jj= 9
 
 """
 Takes in: path to netCDF file and the name of a specific varibale in file

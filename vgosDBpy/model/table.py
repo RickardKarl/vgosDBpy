@@ -1,7 +1,7 @@
 from PySide2.QtGui import QStandardItemModel
 from PySide2 import QtCore
 from vgosDBpy.model.standardtree import Variable, DataValue
-from vgosDBpy.data.readNetCDF import read_netCDF_variables, is_possible_to_plot, is_var_constant,read_unit_for_var
+from vgosDBpy.data.readNetCDF import read_netCDF_variables, is_possible_to_plot, is_var_constant,read_unit_for_var, is_numScan_or_NumObs, get_dtype_var, read_netCDF_dimension_for_var, get_dataBaseline #read_netCDF_dimension_for_var,
 from vgosDBpy.data.PathParser import findCorrespondingTime
 from vgosDBpy.data.combineYMDHMS import combineYMDHMwithSec
 
@@ -20,13 +20,14 @@ class TableModel(QStandardItemModel):
         super(TableModel,self).__init__(parent)
         self._header = header
         self.setHorizontalHeaderLabels(self._header)
+        self.nbrItems = 0
 
         # Map to keep track of which column that belongs to each DataAxis
         self.data_axis = None # Keep track of the DataAxis that it shows from the plot
         self.dataaxis_to_column_map = {} # DataAxis : Column index
 
-    def getHeader(self):
-        return self._header
+        def getHeader(self):
+            return self._header
 
     def update_header(self,names):
         self._header = names
@@ -53,6 +54,7 @@ class TableModel(QStandardItemModel):
         self.clear()
         self.setHorizontalHeaderLabels(self._header)
 
+
     def updateVariables(self, item):
         '''
         USED BY VariableTable
@@ -65,11 +67,19 @@ class TableModel(QStandardItemModel):
         var_list = read_netCDF_variables(item.getPath())
         i = 0
         # Puts variable in first column and associated dimension in another
-        for vars in var_list:
-            if is_possible_to_plot(item.getPath(), vars):
-                self.setItem(i,0, Variable(vars,item))
+        for var in var_list:
+            if is_numScan_or_NumObs(item.getPath(), var) :
+                self.setItem(i,0,Variable(var,item))
+            #if is_possible_to_plot(item.getPath(), vars):
+            #    self.setItem(i,0, Variable(vars,item))
 
-                self.setItem(i,1,Variable(read_unit_for_var(item.getPath(), vars),item))
+            #elif is_var_constant(item.getPath(), vars):
+            #    self.setItem(i,1,Variable(vars,item))
+            #    i += 1
+                self.setItem(i,1,Variable(read_unit_for_var(item.getPath(), var),item))
+                self.setItem(i,2,Variable(read_netCDF_dimension_for_var(item.getPath(), var),item))
+                self.setItem(i,3,Variable(get_dtype_var(item.getPath(), var),item))
+            #    j=2
                 i += 1
 
     def updateData(self, data, items):
@@ -91,7 +101,9 @@ class TableModel(QStandardItemModel):
                 else:
                     self.setItem(i, j, DataValue(str(data[names[j]][i]), items[0]))
 
-    def appendData(self, data, item):
+        self.nbrItems = len(names)
+
+    def appendData(self, data_new, item):
         '''
         USED BY DataTable
 
@@ -100,18 +112,31 @@ class TableModel(QStandardItemModel):
         data [dict] which contains data to fill the table with. E.g. {'time': time, "var_data": var_data}
         item [QStandardItems] contains the item which contains the variable with the data
         '''
-        names = list(data)
-        name = names[-1]
-        d = data[name]
+        names = list(data_new)
+        start = self.nbrItems
+        print('Start:'+str(start))
         #self.reset()
-        j= len(names)-1
-        print(item)
-        print(data[name][1])
-        for i in range(0,len(data[name])):
-            self.setItem(i,j,DataValue(str(data[name][i]), item))
+        for i in range(0,len(data_new[names[0]])):
+            for j in range (0,len(names)):
+                if len(names) > 1:
+                    self.setItem(i, start+j, DataValue(str(data_new[names[j]][i]), item[j%(len(names)-1)]))
+                else:
+                    self.setItem(i, start+j, DataValue(str(data_new[names[j]][i]), item[0]))
+        self.nbrItems += len(names)
+
+        #names = list(data)
+        #name = names[-1]
+        #d = data[name]
+        #self.reset()
+        #j= len(names)-1
+        #print(item)
+        #print(data[name][1])
+        #for i in range(0,len(data[name])):
+        #    self.setItem(i,j,DataValue(str(data[names][i]), item))
 
     def clearTable(self):
         self.data = {}
+        self.nbrItems = 0
         self._header = []
         self.reset()
 

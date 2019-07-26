@@ -59,7 +59,7 @@ class VariableTable(QTableView):
         super(VariableTable, self).__init__(parent)
 
         # Setup model
-        self._model = TableModel(['Name', 'Unit'], parent)
+        self._model = TableModel(['Name', 'Unit', 'Dimension', 'Dtype'], parent)
         self.setModel(self._model)
 
         # Selection of items
@@ -114,6 +114,21 @@ class DataTable(QTableView):
         self.setSelectionBehavior(QAbstractItemView.SelectionBehavior.SelectRows)
         self.selection = self.selectionModel()
 
+    def updateItems(self,data,items):
+        print('in update')
+        for itm in items:
+            print(itm)
+        names = list(data)
+        prev = names[0]
+        i = 1
+        for j in range(0,len(names)-1):
+            prev = prev.split('#')[0]
+            name = names[i].split('#')[0]
+            if prev == name:
+                items.insert(j, items[j-1] )
+            prev = names[i]
+            i +=  1
+        return items
 
     def getModel(self):
         return self._model
@@ -143,6 +158,9 @@ class DataTable(QTableView):
         else:
             raise ValueError('Argument items can not be empty.')
 
+        # Update Items incase one path gave several data arrays
+        items = self.updateItems(data,items)
+
         # Updates model
         self._model.updateData(data, items)
 
@@ -163,13 +181,15 @@ class DataTable(QTableView):
             for itm in items:  #tm in items:
                 path.append(itm.getPath())
                 var.append(itm.labels)
-            data = self.tabfunc.append_table(path, var)
+            data_new = self.tabfunc.append_table(path, var)
+            data_all = self.tabfunc.get_table()
             self._model.update_header(self.tabfunc.append_header(path,var))
         else:
             raise ValueError('Argument items contains wrong number of items, should be one or two.')
 
+        items = self.updateItems(data_new, items)
         # Updates model
-        self._model.appendData(data,items)
+        self._model.appendData(data_new,items)
 
         # Updates size of column when content is changed
         self.updateColumnSize()
