@@ -205,6 +205,8 @@ class DataTable(QTableView):
 
     def updateMarkedRows(self, data_axis):
         '''
+        data_axis [DataAxis]
+        
         Mark selected data from plot in the table
         '''
 

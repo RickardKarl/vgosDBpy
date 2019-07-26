@@ -11,7 +11,7 @@ class DataAxis:
         '''
         axis [matplotlib.Axes]
         data [pd.Series]
-        node [model.standardtree.Variable]
+        item [model.standardtree.Variable]
         '''
         self._axis = axis
         self._data = data
