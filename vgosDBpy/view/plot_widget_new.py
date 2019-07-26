@@ -146,8 +146,6 @@ class PlotFigure(FigureCanvas):
         self.resetFigure()
         self.updatePlot()
 
-
-
     def saveCanvas(self, file_name):
         '''
         Saves current figure as a pdf
@@ -182,27 +180,3 @@ class PlotWidget(QWidget):
 
     def getItems(self):
         return self.plot_canvas.getItems()
-
-'''
-class PlotToolBox(QTabWidget):
-
-    def __init__(self, parent = None, canvas = PlotFigure()):
-        super(PlotToolBox, self).__init__(parent)
-        self.parent = parent
-        self.canvas = canvas
-        self.current_plots = []
-        ## Appearance widget
-
-    def addAxisTools(self, data_axis):
-        appearance_widget = AxesToolBox(self.parent, self.canvas, data_axis)
-        self.addTab(appearance_widget, 'Appearance')
-
-        self.current_plots.append(data_axis)
-
-
-        ## Editing widget
-        #button2 = QPushButton('Test')
-        #self.addTab(button2, 'Editing')
-
-        #self.show()
-'''
