@@ -21,6 +21,9 @@ class Parser:
     def get_wrp_path(self):
         return self.root_path
 
+    def getWrapper(self):
+        return self.wrapper
+
     def getActiveScope(self):
         if len(self._active_scope) == 0:
             return None
@@ -49,8 +52,8 @@ class Parser:
         directories = []
         with open(path,'r') as scr:
             for line in scr:
-                l = line.lower().strip()
-                if l.startswith('default_dir'):
+                l = line.strip()
+                if l.lower().startswith('default_dir'):
                     directories.append(l.split()[1] )
         return directories
 
@@ -73,32 +76,39 @@ class Parser:
             for line in src:
 
                 # Correct format of line
-                line = line.lower().strip()
+                line = line.strip()
+
+                # First keyword
+                first_keyword = line.split()[0].lower()
 
                 # Skip comments in wrapper
-                if line.startswith('!'):
+                if first_keyword == '!':
                     continue
 
                 # Check for beginning of sections
-                elif line.startswith('begin'):
+                elif first_keyword == 'begin':
                     keyword = line.split()[1]
                     self.addScope(keyword)
 
                 # Check for end of sections
-                elif line.startswith('end'):
+                elif first_keyword == 'end':
                     keyword = line.split()[1]
+                    active_folder == None
                     self.removeScope(keyword)
 
                 # Check for setting the default_dir (active_folder)
-                elif line.startswith('default_dir'):
+                elif first_keyword == 'default_dir':
                     active_folder = line.split()[1]
-                    if not Wrapper.inScope(active_folder):
-                        self.wrapper.addNode(active_folder, self.getActiveScope(), 'node')
+                    self.wrapper.addNode(active_folder, self.getActiveScope(), 'node')
 
                 # Checks if line is giving a netCDF pointer
                 elif line.endswith('.nc'):
                     file_name = line.split()[-1]
-                    self.wrapper.addNode(file_name, active_folder, 'netCDF')
+                    if active_folder == None:
+                        parent_folder = self._active_scope[-1]
+                    else:
+                        parent_folder = active_folder
+                    self.wrapper.addNode(file_name, parent_folder, 'netCDF')
 
                 elif line.endswith('.hist'):
                     file_name = line.split()[-1]

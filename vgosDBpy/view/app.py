@@ -1,4 +1,4 @@
-from PySide2.QtWidgets import QApplication, QTreeView, QAbstractItemView, QWidget, QTextEdit, QPushButton, QVBoxLayout, QGridLayout
+from PySide2.QtWidgets import QApplication, QTreeView, QAbstractItemView, QWidget, QTextEdit, QPushButton, QVBoxLayout, QGridLayout, QTabWidget
 from PySide2 import QtCore
 
 from pandas.plotting import register_matplotlib_converters
@@ -6,7 +6,6 @@ from pandas.plotting import register_matplotlib_converters
 from vgosDBpy.view.widgets import QWrapper, VariableTable, DataTable
 from vgosDBpy.data.readNetCDF import read_netCDF_vars_info #read_netCDF_data_info #, read_netCDF_dimension_for_var, read_netCDF_variables,
 from vgosDBpy.view.plot_widget_new import AxesToolBox, PlotWidget
-
 from vgosDBpy.editing.track_edits import EditTracking
 
 class App(QWidget):
@@ -23,28 +22,38 @@ class App(QWidget):
         '''
         super(App,self).__init__(parent)
 
-        ######### Keep track of changes
-        self.track_edits = EditTracking(wrapper_path)
-
         ######### Matplotlib time format converter registers
         register_matplotlib_converters()
 
-        ######### Save wrapper path
-
         ########### Creating widgets
-
         # Wrapperview
         self.treeview = QWrapper(wrapper_path, self)
 
-        # Tableview
-        self.table = VariableTable(self)
-        self.data_table = DataTable(self)
+        ######### Keep track of changes
+        self.track_edits = EditTracking(self.treeview.getWrapper())
 
         # Text
-        self.text = QTextEdit(self)
-        self.text.setReadOnly(True)
+        self.info_text = QTextEdit(self)
+        self.info_text.setReadOnly(True)
 
-        # Buttons
+        # Tableview
+        self.data_table = DataTable(self)
+        self.var_table = VariableTable(self)
+
+        # Matplotlib widget and toolbox
+        self.plot_widget = PlotWidget(self)
+        self.plot_toolbox = AxesToolBox(self, self.plot_widget.plot_canvas, self.data_table)
+
+        # Tab-widget for plot and datatable
+        self.tab_widget_plt = QTabWidget(self)
+        self.tab_widget_plt.addTab(self.plot_widget,'& Plot')
+        self.tab_widget_plt.addTab(self.data_table, '& Table')
+
+        self.tab_widget_varinfo = QTabWidget(self)
+        self.tab_widget_varinfo.addTab(self.var_table, '& Variable')
+        self.tab_widget_varinfo.addTab(self.info_text, '& Info')
+
+        ################## Buttons ########################
         # Plot and display table
         self.button_plot_table = QPushButton('& Plot + Table ')
         self.button_plot = QPushButton('& Plot',self)
@@ -63,35 +72,34 @@ class App(QWidget):
         self.button_clear_plot.clicked.connect(self._clear_plot)
         self.button_clear_table.clicked.connect(self._clear_table)
 
-
-        # Matplotlib widget and toolbox
-        self.plot_widget = PlotWidget(self)
-        self.plot_toolbox = AxesToolBox(self, self.plot_widget.plot_canvas)
-
-
-        # Layout
-        layout = QGridLayout()
-        layout.addWidget(self.treeview, 0, 0)
-        layout.addWidget(self.plot_widget, 0, 1)
-        layout.addWidget(self.data_table, 0, 2)
-
-        layout.addWidget(self.table, 1, 0)
-        layout.addWidget(self.plot_toolbox, 1, 1)
-        layout.addWidget(self.text, 1, 2)
-
-        layout.addWidget(self.button_plot_table,3,0)
-        layout.addWidget(self.button_plot, 4, 0)
-        layout.addWidget(self.button_table, 5, 0)
-        layout.addWidget(self.button_append_table, 5,1)
-        layout.addWidget(self.button_append_plot,4,1)
-        layout.addWidget(self.button_clear_plot,3,1)
-        layout.addWidget(self.button_clear_table,2,1)
-
-
-        self.setLayout(layout)
+        # Button layout
+        self.button_widget = QWidget(self)
+        button_layout = QGridLayout()
+        button_layout.addWidget(self.button_plot, 0, 0)
+        button_layout.addWidget(self.button_table, 0, 1)
+        button_layout.addWidget(self.button_append_plot, 1, 0)
+        button_layout.addWidget(self.button_append_table, 1, 1)
+        button_layout.addWidget(self.button_clear_plot, 2, 0)
+        button_layout.addWidget(self.button_clear_table, 2, 1)
+        self.button_widget.setLayout(button_layout)
 
         # Listeners
         self.treeview.selectionModel().selectionChanged.connect(self._showItemInfo)
+
+        ################## App layout ##################
+        layout = QGridLayout()
+        layout.setColumnStretch(0,1)
+        layout.setColumnStretch(1,1)
+        layout.setColumnStretch(2,3)
+
+        layout.addWidget(self.treeview, 0, 0)
+        layout.addWidget(self.tab_widget_plt, 0, 1, 1, 2)
+
+        layout.addWidget(self.tab_widget_varinfo, 1, 0)
+        layout.addWidget(self.button_widget, 1, 1)
+        layout.addWidget(self.plot_toolbox, 1, 2)
+
+        self.setLayout(layout)
 
     ### Getters ###
     def getWrapperModel():
@@ -106,7 +114,7 @@ class App(QWidget):
         '''
         return widget.selection.selectedIndexes()
 
-    ### Methods connected the interface ###
+    ### Methods connected to buttons ###
 
     def _showItemInfo(self):
         '''
@@ -119,8 +127,8 @@ class App(QWidget):
                 text = read_netCDF_vars_info(item.getPath())
                 #text_data =read_netCDF_data_info(item.getPath())
                 text_total = text #+ text_data
-                self.text.setPlainText(str(text_total))
-                self.table.updateVariables(item)
+                self.info_text.setPlainText(str(text_total))
+                self.var_table.updateVariables(item)
 
     def _plot_table_button(self):
         self._plotbutton()
@@ -130,43 +138,44 @@ class App(QWidget):
         '''
         Method for plotting data from variables
         '''
-        index = self._getSelected(self.table)
+        index = self._getSelected(self.var_table)
         if not index == []:
             items = []
             for i in range(len(index)):
-                items.append(self.table.model.itemFromIndex(index[i]))
+                items.append(self.var_table.getModel().itemFromIndex(index[i]))
             self.plot_widget.plot_canvas.updateFigure(items)
 
-        for data_axis in self.plot_widget.plot_canvas.getAxis():
-            self.plot_toolbox.updateAxis(data_axis)
+            data_axis = self.plot_widget.getDataAxis()
+            self.plot_toolbox.updateDataAxis(data_axis)
+            self.data_table.updateFromDataAxis(data_axis)
 
     def _append_plotbutton(self):
-        index = self._getSelected(self.table)
+        index = self._getSelected(self.var_table)
         if not index == []:
-            item = self.table.model.itemFromIndex(index[-1])
+            item = self.var_table.getModel().itemFromIndex(index[-1])
             self.plot_widget.plot_canvas.append_plot(item)
 
-        for data_axis in self.plot_widget.plot_canvas.getAxis():
+        for data_axis in self.plot_widget.getDataAxis():
             self.plot_toolbox.updateAxis(data_axis)
 
     def _tablebutton(self):
         '''
         Method for displaying variables in table
         '''
-        index = self._getSelected(self.table)
+        index = self._getSelected(self.var_table)
         if not index == [] :
             items = []
             for i in range (len(index)):
-                items.append(self.table.model.itemFromIndex(index[i]))
+                items.append(self.var_table.getModel().itemFromIndex(index[i]))
             self.data_table.updateData(items)
 
 
     def _addbutton(self):
-        index= self._getSelected(self.table)
+        index= self._getSelected(self.var_table)
         if not index  == [] :
             items = []
             for i in range (len(index)):
-                items.append(self.table.model.itemFromIndex(index[i]))
+                items.append(self.var_table.getModel().itemFromIndex(index[i]))
         self.data_table.appendData(items)
 
     def _clear_plot(self):

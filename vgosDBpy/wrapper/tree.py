@@ -1,4 +1,5 @@
 import re
+import os
 
 '''
 TODO:
@@ -16,7 +17,7 @@ class Wrapper:
     '''
 
     # Pre-defined scopes will have the folder made automatically
-    scopes = ['session','scan','observation','station']
+    scopes = ['Session','Scan', 'Observation','Station']
 
     def __init__(self, wrapper_path):
         '''
@@ -24,16 +25,14 @@ class Wrapper:
 
         wrapper_path [string] is the path to the wrapper file
         '''
+        self.wrapper_path = wrapper_path # Path to wrapper file
         path = wrapper_path.split('/')
         self.session_name = path[-2]
         path.pop() #removes last which is the name of the wrapper file
-        self.root_path = '/'.join(path)
+        self.root_path = '/'.join(path) # Path to seesion folder
         self.root = Node(self.session_name, None, self.root_path)
         self.pointer_map = {} # Keep track of pointers with a map
-        self.hist_file = None # Keeps track of the .hist file that the wrapper points to
-
-        for s in Wrapper.scopes:
-            self.addNode(s, type = 'node')
+        self.hist_file = [] # Keeps track of the .hist files that the wrapper points to
 
 
     def addNode(self, name, parent = None, type = 'netCDF'):
@@ -43,7 +42,7 @@ class Wrapper:
         name [string] is the node's name
         parent [string] is the name of the parent, if None then
         it have root as parent
-        type [string] is the type of node, currently there exist 'node' or 'netCDF'
+        type [string] is the type of node, currently there exist 'node', 'netCDF' or 'hist'
         '''
 
         if parent == None:
@@ -54,17 +53,21 @@ class Wrapper:
         path = self.generatePath(name, parent_node)
 
         if type == 'node':
-            new_node = Node(name, parent_node, path)
+            if not parent_node.childNodeExists(name):
+                new_node = Node(name, parent_node, path)
+            else:
+                new_node = None
         elif type == 'netCDF':
             new_node = NetCDF_File(name, parent_node, path)
         elif type == 'hist':
             new_node = HistFile(name, parent_node, path)
-            self.hist_file = new_node
+            self.hist_file.append(new_node)
         else:
             raise InvalidArgument('Invalid type in', type)
 
-        parent_node.addChildNode(new_node)
-        self.addPointer(new_node)
+        if new_node != None:
+            parent_node.addChildNode(new_node)
+            self.addPointer(new_node)
 
     def addPointer(self, node):
         '''
@@ -88,18 +91,21 @@ class Wrapper:
         '''
         return self.root
 
-    def getHistory(self):
+    def getHistFile(self):
+        return self.hist_file
+
+    def getHistory(self, hist_path):
         '''
         Returns history file as string
         '''
-        if self.hist_file != None:
+        if os.path.isfile(hist_path):
             text = ''
-            with open(self.hist_file.getPath()) as file:
+            with open(hist_path) as file:
                 for line in file:
                     text = text + line
             return text
         else:
-            return None
+            raise ValueError('Invalid path, does not exists:', hist_path)
 
     def inScope(name):
         '''
@@ -107,7 +113,7 @@ class Wrapper:
 
         name [string]
         '''
-        return name in Wrapper.scopes
+        return name.lower() in Wrapper.scopes
 
     def generatePath(self, name, parent):
         '''
@@ -139,11 +145,11 @@ class Wrapper:
         indent = " " * 4
         s = ''
         for child in self.root.getChildren():
-            line = str(child).upper() + '\n'
+            line = str(child) + '\n'
             s = s + line
             if type(child) == Node:
                 for sub_child in child.getChildren():
-                    s = s + indent + str(sub_child).capitalize() + '\n'
+                    s = s + indent + str(sub_child) + '\n'
                     if type(sub_child) == Node:
                         for subsub_child in sub_child.getChildren():
                             s = s + indent*2 + str(subsub_child) + '\n'
@@ -179,6 +185,7 @@ class Node(object):
         '''
         if self.childNodeExists(node) == False:
             self.children.append(node)
+
 
     def getParent(self):
         '''

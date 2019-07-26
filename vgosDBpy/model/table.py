@@ -18,13 +18,20 @@ class TableModel(QStandardItemModel):
 
     def __init__(self, header, parent=None):
         super(TableModel,self).__init__(parent)
-        self.header = header
-        self.setHorizontalHeaderLabels(self.header)
+        self._header = header
+        self.setHorizontalHeaderLabels(self._header)
         self.nbrItems = 0
 
+        # Map to keep track of which column that belongs to each DataAxis
+        self.data_axis = None # Keep track of the DataAxis that it shows from the plot
+        self.dataaxis_to_column_map = {} # DataAxis : Column index
+
+        def getHeader(self):
+            return self._header
+
     def update_header(self,names):
-        self.header = names
-        self.setHorizontalHeaderLabels(self.header)
+        self._header = names
+        self.setHorizontalHeaderLabels(self._header)
 
     def flags(self, index):
         '''
@@ -45,7 +52,7 @@ class TableModel(QStandardItemModel):
         (Has to be done since clear otherwise would remove the header)
         '''
         self.clear()
-        self.setHorizontalHeaderLabels(self.header)
+        self.setHorizontalHeaderLabels(self._header)
 
 
     def updateVariables(self, item):
@@ -83,6 +90,7 @@ class TableModel(QStandardItemModel):
 
         data [dict] which contains data to fill the table with. E.g. {'time': time, "var_data": var_data}
         item [QStandardItems] contains the item which contains the variable with the data
+        data_axis [DataAxis] contains a list of DataAxis that corresponds to the data being plotted
         '''
         names = list(data)
         self.reset()
@@ -129,12 +137,43 @@ class TableModel(QStandardItemModel):
     def clearTable(self):
         self.data = {}
         self.nbrItems = 0
-        self.header = []
+        self._header = []
         self.reset()
 
-        #for i in range(0,len(data[names[0]])):
-        #    for j in range (0,len(names)):
-        #        self.setItem(i, j, DataValue(str(data[names[j]][i]), items[j%(len(names)-1)]))
+    def updateFromDataAxis(self, data_axis):
+        '''
+        Update table model from one/several DataAxis
+
+        data_axis [list of DataAxis] is what should be displayed in the table
+        '''
+        if len(data_axis) > 0:
+            items = []
+            for ax in data_axis:
+                items.append(ax.getItem())
+
+            time_index = data_axis[0].getData().index # Get a time index of the series,
+                                                      # all axes should have same time indices
+
+            if len(data_axis) != len(items):
+                raise ValueError('data_axis and items do no have the same length')
+            for i in range(len(time_index)):
+                self.setItem(i, 0, DataValue(str(time_index[i]), node = None))
+
+            for j in range(len(data_axis)):
+                data = data_axis[j].getData() # Retrieve pd.Series stored in DataAxis
+
+                # Check that the time indices are the same
+                # np.array_equal(a1, a2)
+                if not data_axis[j].getData().index.equals(time_index):
+                    raise ValueError('DataAxis', data_axis[j], 'do not have the same time indices as', data_axis[0])
+
+                for i in range(len(data)):
+                    self.setItem(i, 1 + j, DataValue(str(data[i]), items[j]))
+
+            self.dataaxis_to_column_map[data_axis[j]] = 1 + j
+            self.data_axis = data_axis
+
+
 """
 class DataTableModel(QStandardItemModel):
 
@@ -150,12 +189,12 @@ class DataTableModel(QStandardItemModel):
 
     def __init__(self, header, parent=None):
         super(DataTableModel,self).__init__(parent)
-        self.header = header
-        self.setHorizontalHeaderLabels(self.header)
+        self._header = header
+        self.setHorizontalHeaderLabels(self._header)
 
     def update_header(self,names):
-        self.header = names
-        self.setHorizontalHeaderLabels(self.header)
+        self._header = names
+        self.setHorizontalHeaderLabels(self._header)
 
     def flags(self, index):
         '''
@@ -176,7 +215,7 @@ class DataTableModel(QStandardItemModel):
         (Has to be done since clear otherwise would remove the header)
         '''
         self.clear()
-        self.setHorizontalHeaderLabels(self.header)
+        self.setHorizontalHeaderLabels(self._header)
 
     def updateData(self, data, items):
         '''

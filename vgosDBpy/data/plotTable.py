@@ -11,7 +11,7 @@ from vgosDBpy.data.getRealName import get_name_to_print as name, get_unit_to_pri
 
 
 class Tablefunction():
-
+    time_label = 'Time [Y-M-D H:M:S]'
     def __init__(self):
         self.data = {}
         self.header = []
@@ -22,8 +22,7 @@ class Tablefunction():
         if timePath != '':
             time =  combineYMDHMwithSec(timePath)
             self.data['Time'] = time
-
-        c=0
+        c = 0
         for path in paths:
             y = get_data_to_table(path, vars[c]) # desission moved to that funciton
             if len(y) == 1 :

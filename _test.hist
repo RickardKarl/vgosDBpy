@@ -1,0 +1,140 @@
+TIMETAG 2018/05/22 08:34:41 UTC
+db2vgosDB                2018May18                John M. Gipson
+ Began conversion of 14JAN06XA  version    4
+From file /home/jmg/ivs/ivsdata/db/2014/14JAN06XA_V004.gz
+remove_duplicate_lcodes  2011Oct06      John M. Gipson
+check_required_lcodes    2011Oct06      John M. Gipson
+read_db_type1            2016Jan30      John M. Gipson
+   Calc version:  10.03
+type1_stat               2016Jan30      John M. Gipson
+type1_source             2015May04      John M. Gipson
+type1_atm                2012Feb04      John M. Gipson
+type1_calibrations       2015May04      John M. Gipson
+type1_clocks             2015May04      John M. Gipson
+type1_constraints        2015May04      John M. Gipson
+type1_selection          2012Feb16      John M. Gipson
+type1_weights            2012Jan23      John M. Gipson
+type_calc_eop            2015May04      John M. Gipson
+fix_ivsinfo              2016Nov05      John M. Gipson
+fix_corrinfo             2016Nov16      John M. Gipson
+rename_corr_info         2013Jan04      John M. Gipson
+read_db_type23           2012Nov27      John M. Gipson
+Observations sorted by source and baseline
+read_special_lcode       2012Nov26      John M. Gipson
+read_statdata_lcode      2012Nov26      John M. Gipson
+read_scandata_lcode      2012Nov26      John M. Gipson
+do_rescale               2014Oct15      John M. Gipson
+   Converted DEL OBSV from MICROSECOND to second
+   Converted SB DELAY from MICROSECOND to second
+   Converted SB SIGMA from MICROSECOND to second
+   Converted TOTPHASE from DEGREE to radian
+   Converted PARANGLE from DEGREE to radian
+   Converted CONSNDEL from MICROSECOND to second
+   Converted DLOBS XS from MICROSECOND to second
+   Converted TOTPHA_S from DEGREE to radian
+   Converted SB DEL_S from MICROSECOND to second
+do_eccmap                2012Nov14      John M. Gipson
+   No eccentricity vectors applied.
+do_delayfix              2012Jan07      John M. Gipson
+do_dataflags             2015May04      John M. Gipson
+ Some S-band Rate sigmas < 0.1E-13  Adding Dataflag lcode
+do_qualcode              2012Jan07      John M. Gipson
+do_frngerr               2016Feb26      John M. Gipson
+do_suppress              2012Jan07      John M. Gipson
+    do_suppress:             Warning! PHSUFLAG missing. Mimicing SDBH
+do_iono                  2018May18      John M. Gipson
+  Folllowing observations have no ionosphere calibration:
+     60    111    112    122    123    129    130    133    134    140    141    152
+    167    178    221    222    225    226    228    229    232    233    259    260
+    267    268    269    274    275    312    384    395    397    398    401    431
+    443    473    474    478    518    520    521    582    583    586    592    665
+    682    736    743    775    776    777    778    821    851    852    865    867
+    902    931    947   1033   1034   1035   1042   1120   1150   1171   1172   1173
+   1253   1254   1271   1273   1356   1376   1377   1378   1459   1466   1497   1498
+   1499   1531   1546   1562   1631   1679   1680   1681   1685   1686   1687   1688
+   1689   1736   1737   1755   1776   1778   1783   1784   1806   1807   1808   1809
+   1880   1881   1882   1883   1884   1939   1962   1983   1990   1996   1998   2022
+   2036   2046   2066   2091   2092   2093   2094   2135   2136   2137   2187   2188
+   2227   2235   2236   2283   2289   2307   2308   2488   2584   2636   2747   2846
+   2935   2936   2940   2942   3015   3057   3100   3144   3145   3146   3194   3195
+   3263   3281   3282   3384   3531   3581   3612   3619   3622   3626   3658   3667
+   3789   3860   3933   3934   3935   3936   3937   4014   4015   4016   4017   4018
+   4073   4101   4102   4103   4104   4105   4243   4262   4312   4313   4361   4415
+   4441   4442   4443   4501   4502   4535   4536   4539   4540   4587   4588   4594
+   4595   4598   4599   4630   4633   4635   4636   4658   4665   4666   4684   4687
+   4748   4774   4776   4777   4780   4781   4787   4788   4791   4792   4915   4916
+   4922   4923   4926   4927
+do_snr                   2012Jan07      John M. Gipson
+do_phasecal              2016March01    John M. Gipson
+do_freq                  2016Apr01      John M. Gipson
+do_FeedRotNet            2016Mar31      John M. Gipson
+do_phasedelaysig         2016Mar31      John M. Gipson
+do_phasedelayfull        2016Apr02      John M. Gipson
+zero_missing_obs         2013Jun24      John M. Gipson
+squeeze_obs_lcodes       2016Dec31      John M. Gipson
+Constant OBS variable DELTAEPO             =  0.000000000000000E+000
+Constant OBS variable AmbigSize            =  5.000000074505806E-008
+Constant OBS variable RefFreq              =   8212.99000000000
+Constant OBS variable ChannelFreq          =   8212.99000000000
+Constant OBS variable SampleRate           =   16000000.0000000
+Constant OBS variable SRCHPAR              =  -1.00000000000000
+Constant OBS variable RefFreq              =   2225.99000000000
+Constant OBS variable NumChannels          =      8
+Constant OBS variable BITSAMPL             =      1
+Constant OBS variable UNPHAFLG             =      0
+Constant OBS variable Polarization         = R
+Constant OBS variable DISCARD              =  0.000000000000000E+000
+Constant OBS variable IDELAY               =  0.000000000000000E+000
+Constant OBS variable QBFACTOR             =   50.0000000000000
+Constant OBS variable CORELVER             =     -1
+Constant OBS variable DBEDITVE             =   2013
+Constant OBS variable ERRORATE             =      0
+Constant OBS variable FOURFVER             =      3
+Constant OBS variable StartOffset          =      0
+Constant OBS variable ChannelID            = g
+Constant OBS variable FRNGERR              =
+Constant OBS variable FRQGROUP             = X
+Constant OBS variable DataFlag             =      0
+Constant OBS variable PhaseCalFreq         =   5010
+Constant OBS variable FreqGroupIono        =   8572.80181907825
+Constant OBS variable FreqRateIono         =   8600.06349337608
+Constant OBS variable FreqPhaseIono        =   8215.99938307947
+squeeze_channel_lcodes   2015Apr22      John M. Gipson
+make_db_xref_vgosDB      2016Sep21      John M. Gipson
+Merging in 14JAN06SA version    2
+From file /home/jmg/ivs/ivsdata/db/2014/14JAN06SA_V002.gz
+remove_duplicate_lcodes  2011Oct06      John M. Gipson
+read_db_type23_          2013Jun20      John M. Gipson
+do_rescale               2014Oct15      John M. Gipson
+   Converted DEL OBSV from MICROSECOND to second
+   Converted SB DELAY from MICROSECOND to second
+   Converted SB SIGMA from MICROSECOND to second
+   Converted TOTPHASE from DEGREE to radian
+do_dataflags             2015May04      John M. Gipson
+ Some X-band Delay sigmas < 0.1E-13  Adding Dataflag lcode
+do_freq                  2016Apr01      John M. Gipson
+    do_freq:                 Warning! Fixing lcode #CHANELS because min value is        0 which is <=0.
+do_phasecal              2016March01    John M. Gipson
+do_phasedelaysig         2016Mar31      John M. Gipson
+ Some X-band Phase SNRS are < 0.1E-01  Adding Dataflag lcode
+do_phasedelayfull        2016Apr02      John M. Gipson
+do_frngerr               2016Feb26      John M. Gipson
+zero_missing_obs         2013Jun24      John M. Gipson
+rename_corr_info         2013Jan04      John M. Gipson
+squeeze_obs_lcodes       2016Dec31      John M. Gipson
+Constant OBS variable DELTAEPO             =  0.000000000000000E+000
+Constant OBS variable RefFreq              =   2225.99000000000
+Constant OBS variable SampleRate           =   16000000.0000000
+Constant OBS variable BITSAMPL             =      1
+Constant OBS variable DISCARD              =  0.000000000000000E+000
+Constant OBS variable IDELAY               =  0.000000000000000E+000
+Constant OBS variable QBFACTOR             =   100.000000000000
+Constant OBS variable CORELVER             =     -1
+Constant OBS variable DBEDITVE             =   2013
+Constant OBS variable ERRORATE             =      0
+Constant OBS variable FOURFVER             =      3
+Constant OBS variable StartOffset          =      0
+Constant OBS variable FRNGERR              =
+Constant OBS variable FRQGROUP             = S
+squeeze_channel_lcodes   2015Apr22      John M. Gipson
+ Finished conversion of 14JAN06XA  at: 2018/05/22 08:34:51
