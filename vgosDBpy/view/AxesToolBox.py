@@ -202,32 +202,6 @@ class AxesToolBox(QWidget):
 
         self.canvas.updatePlot()
 
-    def _timeDefault(self):
-        if self.timeDefault.isChecked():
-            self.canvas.timeInt = 1
-        else:
-            self.canvas.timeInt = 0
-        # if there exist a plot update it
-        #if len(self.canvas.paths) > 0:
-
-        self.canvas.updateTime()
-
-    
-
-    def _clearMarkedData(self):
-        if self.current_axis == None:
-            pass
-        else:
-            self.current_axis.clearMarkedData()
-            self.highlightMarkedData()
-
-    def _trackEdit(self):
-        edited_data = self.current_axis.getNewEdit()
-        self.parentWidget().track_edits.addEdit(self.current_axis.getItem(), edited_data.values)
-
-    def _saveEdit(self):
-        self.parentWidget().track_edits.saveEdit()
-
     def highlightMarkedData(self):
         '''
         Method that highlight the marked data or temporarily removes it from the plot
@@ -275,3 +249,30 @@ class AxesToolBox(QWidget):
         line = createLine2D(self.current_axis.getNewEdit())
         line.set_color('r')
         self.edited_curve = self.current_axis.addLine(line)
+
+    def _timeDefault(self):
+        if self.timeDefault.isChecked():
+            self.canvas.timeInt = 1
+        else:
+            self.canvas.timeInt = 0
+        # if there exist a plot update it
+        #if len(self.canvas.paths) > 0:
+
+        self.canvas.updateTime()
+
+
+    #### Methods for editing data
+
+    def _clearMarkedData(self):
+        if self.current_axis == None:
+            pass
+        else:
+            self.current_axis.clearMarkedData()
+            self.highlightMarkedData()
+
+    def _trackEdit(self):
+        edited_data = self.current_axis.getNewEdit()
+        self.parentWidget().track_edits.addEdit(self.current_axis.getItem(), edited_data.values)
+
+    def _saveEdit(self):
+        self.parentWidget().track_edits.saveEdit()
