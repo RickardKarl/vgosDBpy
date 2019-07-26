@@ -20,6 +20,7 @@ class TableModel(QStandardItemModel):
         super(TableModel,self).__init__(parent)
         self.header = header
         self.setHorizontalHeaderLabels(self.header)
+        self.nbrItems = 0
 
     def update_header(self,names):
         self.header = names
@@ -45,6 +46,7 @@ class TableModel(QStandardItemModel):
         '''
         self.clear()
         self.setHorizontalHeaderLabels(self.header)
+
 
     def updateVariables(self, item):
         '''
@@ -88,9 +90,12 @@ class TableModel(QStandardItemModel):
             for j in range (0,len(names)):
                 if len(names) > 1:
                     self.setItem(i, j, DataValue(str(data[names[j]][i]), items[j%(len(names)-1)]))
-                self.setItem(i, j, DataValue(str(data[names[j]][i]), items[0]))
+                else:
+                    self.setItem(i, j, DataValue(str(data[names[j]][i]), items[0]))
 
-    def appendData(self, data, item):
+        self.nbrItems = len(names)
+
+    def appendData(self, data_new, item):
         '''
         USED BY DataTable
 
@@ -99,18 +104,31 @@ class TableModel(QStandardItemModel):
         data [dict] which contains data to fill the table with. E.g. {'time': time, "var_data": var_data}
         item [QStandardItems] contains the item which contains the variable with the data
         '''
-        names = list(data)
-        name = names[-1]
-        d = data[name]
+        names = list(data_new)
+        start = self.nbrItems
+        print('Start:'+str(start))
         #self.reset()
-        j= len(names)-1
-        print(item)
-        print(data[name][1])
-        for i in range(0,len(data[name])):
-            self.setItem(i,j,DataValue(str(data[name][i]), item))
+        for i in range(0,len(data_new[names[0]])):
+            for j in range (0,len(names)):
+                if len(names) > 1:
+                    self.setItem(i, start+j, DataValue(str(data_new[names[j]][i]), item[j%(len(names)-1)]))
+                else:
+                    self.setItem(i, start+j, DataValue(str(data_new[names[j]][i]), item[0]))
+        self.nbrItems += len(names)
+
+        #names = list(data)
+        #name = names[-1]
+        #d = data[name]
+        #self.reset()
+        #j= len(names)-1
+        #print(item)
+        #print(data[name][1])
+        #for i in range(0,len(data[name])):
+        #    self.setItem(i,j,DataValue(str(data[names][i]), item))
 
     def clearTable(self):
         self.data = {}
+        self.nbrItems = 0
         self.header = []
         self.reset()
 

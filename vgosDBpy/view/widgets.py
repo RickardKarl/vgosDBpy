@@ -104,6 +104,21 @@ class DataTable(QTableView):
         self.setSelectionMode(QAbstractItemView.ExtendedSelection)
         self.selection = self.selectionModel()
 
+    def updateItems(self,data,items):
+        print('in update')
+        for itm in items:
+            print(itm)
+        names = list(data)
+        prev = names[0]
+        i = 1
+        for j in range(0,len(names)-1):
+            prev = prev.split('#')[0]
+            name = names[i].split('#')[0]
+            if prev == name:
+                items.insert(j, items[j-1] )
+            prev = names[i]
+            i +=  1
+        return items
 
     def updateData(self, items):
         '''
@@ -122,6 +137,9 @@ class DataTable(QTableView):
             self.model.update_header(self.tabfunc.return_header_names(path,var))
         else:
             raise ValueError('Argument items contains wrong number of items, should be one or two.')
+
+        # Update Items incase one path gave several data arrays
+        items = self.updateItems(data,items)
 
         # Updates model
         self.model.updateData(data,items)
@@ -144,13 +162,15 @@ class DataTable(QTableView):
             for itm in items:  #tm in items:
                 path.append(itm.getPath())
                 var.append(itm.labels)
-            data = self.tabfunc.append_table(path, var)
+            data_new = self.tabfunc.append_table(path, var)
+            data_all = self.tabfunc.get_table()
             self.model.update_header(self.tabfunc.append_header(path,var))
         else:
             raise ValueError('Argument items contains wrong number of items, should be one or two.')
 
+        items = self.updateItems(data_new, items)
         # Updates model
-        self.model.appendData(data,items)
+        self.model.appendData(data_new,items)
 
         # Updates size of column when content is changed
         for i in range(self.model.columnCount()):
