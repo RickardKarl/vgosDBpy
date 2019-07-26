@@ -53,21 +53,6 @@ class App(QWidget):
         self.tab_widget_varinfo.addTab(self.var_table, '& Variable')
         self.tab_widget_varinfo.addTab(self.info_text, '& Info')
 
-        # App layout
-        layout = QGridLayout()
-        layout.setColumnStretch(0,1)
-        layout.setColumnStretch(1,1)
-        layout.setColumnStretch(2,3)
-
-        layout.addWidget(self.treeview, 0, 0)
-        layout.addWidget(self.tab_widget_plt, 0, 1, 1, 2)
-
-        layout.addWidget(self.tab_widget_varinfo, 1, 0)
-        layout.addWidget(self.button_widget, 1, 1)
-        layout.addWidget(self.plot_toolbox, 1, 2)
-
-        self.setLayout(layout)
-
         ################## Buttons ########################
         # Plot and display table
         self.button_plot_table = QPushButton('& Plot + Table ')
@@ -100,6 +85,21 @@ class App(QWidget):
 
         # Listeners
         self.treeview.selectionModel().selectionChanged.connect(self._showItemInfo)
+
+        ################## App layout ##################
+        layout = QGridLayout()
+        layout.setColumnStretch(0,1)
+        layout.setColumnStretch(1,1)
+        layout.setColumnStretch(2,3)
+
+        layout.addWidget(self.treeview, 0, 0)
+        layout.addWidget(self.tab_widget_plt, 0, 1, 1, 2)
+
+        layout.addWidget(self.tab_widget_varinfo, 1, 0)
+        layout.addWidget(self.button_widget, 1, 1)
+        layout.addWidget(self.plot_toolbox, 1, 2)
+
+        self.setLayout(layout)
 
     ### Getters ###
     def getWrapperModel():
