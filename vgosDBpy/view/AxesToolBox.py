@@ -212,56 +212,7 @@ class AxesToolBox(QWidget):
 
         self.canvas.updateTime()
 
-def highlightMarkedData(self):
-    '''
-    Method that highlight the marked data or temporarily removes it from the plot
-    '''
-
-    # Removes previous curves if needed
-    if self.marked_data_curve != None:
-        if self.marked_data_curve.axes != None:
-            self.marked_data_curve.remove()
-    if self.edited_curve != None:
-        if self.edited_curve.axes != None:
-            self.edited_curve.remove()
-
-    # Adds the ordinary lines if needed
-    for line in self.original_lines:
-        if line.axes == None:
-            self.current_axis.addLine(line)
-
-    # Button press
-    if self.highlight_marked.isChecked():
-
-        # Retrieve marked data
-        self._showLine()
-        index_list = []
-        for index in self.current_axis.getMarkedData():
-            index_list.append(index)
-
-        marked_series = self.current_axis.getData().take(index_list)
-        line = createLine2D(pd.Series(marked_series))
-        line.set_marker('s')
-        line.set_linestyle('None')
-        self.marked_data_curve = self.current_axis.addLine(line)
-
-    else:
-        self.plotEditedData()
-
-    #self.table_widget.updateMarkedRows(self.data_axis)
-    self.canvas.updatePlot()
-
-def plotEditedData(self):
-    '''
-    Temporarily removes marked data and plots only the non-selected data
-    '''
-    self._showLine(show_line = False)
-    line = createLine2D(self.current_axis.getNewEdit())
-    line.set_color('r')
-    self.edited_curve = self.current_axis.addLine(line)
-
-
-    ##### Methods that controls editing of data
+    
 
     def _clearMarkedData(self):
         if self.current_axis == None:
@@ -276,3 +227,51 @@ def plotEditedData(self):
 
     def _saveEdit(self):
         self.parentWidget().track_edits.saveEdit()
+
+    def highlightMarkedData(self):
+        '''
+        Method that highlight the marked data or temporarily removes it from the plot
+        '''
+
+        # Removes previous curves if needed
+        if self.marked_data_curve != None:
+            if self.marked_data_curve.axes != None:
+                self.marked_data_curve.remove()
+        if self.edited_curve != None:
+            if self.edited_curve.axes != None:
+                self.edited_curve.remove()
+
+        # Adds the ordinary lines if needed
+        for line in self.original_lines:
+            if line.axes == None:
+                self.current_axis.addLine(line)
+
+        # Button press
+        if self.highlight_marked.isChecked():
+
+            # Retrieve marked data
+            self._showLine()
+            index_list = []
+            for index in self.current_axis.getMarkedData():
+                index_list.append(index)
+
+            marked_series = self.current_axis.getData().take(index_list)
+            line = createLine2D(pd.Series(marked_series))
+            line.set_marker('s')
+            line.set_linestyle('None')
+            self.marked_data_curve = self.current_axis.addLine(line)
+
+        else:
+            self.plotEditedData()
+
+        #self.table_widget.updateMarkedRows(self.data_axis)
+        self.canvas.updatePlot()
+
+    def plotEditedData(self):
+        '''
+        Temporarily removes marked data and plots only the non-selected data
+        '''
+        self._showLine(show_line = False)
+        line = createLine2D(self.current_axis.getNewEdit())
+        line.set_color('r')
+        self.edited_curve = self.current_axis.addLine(line)
