@@ -97,7 +97,7 @@ class EditTracking:
         hist_file_name = new_hist_path.split('/')[-1]
 
         # Create new wrapper
-        create_new_wrapper(path_to_file_list, new_file_name_list, self._wrapper.wrapper_path, 'new_wrapper1',
+        create_new_wrapper(path_to_file_list, new_file_name_list, self._wrapper.wrapper_path,
                             hist_file_name, timestamp)
 
 

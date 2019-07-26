@@ -1,20 +1,27 @@
 # How to copy a file
 from vgosDBpy.wrapper.parser import Parser
 from vgosDBpy.data.PathParser import PathParser
-from vgosDBpy.editing.newFileNames import newVersionName
+from vgosDBpy.editing.newFileNames import newVersionName, newWrapperPath
 from vgosDBpy.wrapper.equalWrapper import equal
 import os
+import sys
 
     # from split find directory by going trough all words
     # and see if they matches any in the predefined list of directories possible, which is found by
     # looping through the wrapper that one reads in and seraches for the keyword "default_dir"
 
-def create_new_wrapper(list_changed_files, new_file_names, path_to_old_wrp, new_wrp_name, hist_file_name, timestamp):
+def create_new_wrapper(list_changed_files, new_file_names, path_to_old_wrp, hist_file_name, timestamp):
 
-    path_to_new_wrp = new_wrp_path(path_to_old_wrp, new_wrp_name)
+    path_to_new_wrp = newWrapperPath(path_to_old_wrp)
+    print('Creating wrapper with path:', path_to_new_wrp)
 
     if os.path.isfile(path_to_new_wrp):
-        raise ValueError('Path to new wrapper already exists, can not overwrite.')
+        path_to_new_wrp = newWrapperPath(path_to_new_wrp)
+
+    print(path_to_new_wrp)
+
+    sys.exit()
+
 
     parser = Parser(path_to_old_wrp)
 
@@ -97,16 +104,6 @@ def writeHistoryBlock(file, hist_file_name, timestamp):
     file.write('RunTimeTag ----\n')
     file.write('History ' + hist_file_name + '\n')
     file.write('End Process vgosDBpy\n')
-
-
-def new_wrp_path(old_wrp_path, new_wrp_name):
-    splits = old_wrp_path.split('/')
-
-    if not new_wrp_name.endswith('.wrp'):
-        new_wrp_name = new_wrp_name + '.wrp'
-
-    splits[-1] = new_wrp_name
-    return '/'.join(splits)
 
 # DEBUG Function
 def print_wrapper_file(pathToWrp):
