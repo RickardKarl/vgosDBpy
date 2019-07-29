@@ -264,20 +264,20 @@ def get_data_to_table(pathToNetCDF, var):
     dims_len = get_len_dims(pathToNetCDF, var)
     dim = read_netCDF_dimension_for_var(pathToNetCDF,var)
     #print('Dims='+ str(dims))
-    print(dtype)
+    #print(dtype)
     #print('vs')
     #print(get_dtype_for_var(pathToNetCDF,var))
     #print(var)
     if var.strip() == 'Baseline':
-        print('enter 1')
+        #print('enter 1')
         y = get_dataBaseline(pathToNetCDF)
     elif dim.strip() == 'NumStation' and dtype == 'S1':
         y = get_NumStation_S1_table(pathToNetCDF, var)
     elif dims_len != 1:
         y = getDataFromVar_multDim(pathToNetCDF, var)
-        print('enter 2')
+        #print('enter 2')
     elif dtype == 'S1' :
-        print('enter 3')
+        #print('enter 3')
         y = get_S1_tableData(pathToNetCDF, var)
     #elif dtype == 'bytes8':
     #    y =  get_bytes8_tableData(pathToNetCDF, var)
@@ -285,8 +285,8 @@ def get_data_to_table(pathToNetCDF, var):
     else:
         y = getDataFromVar_table(pathToNetCDF, var)
         print('enter 5')
-    print(len(y))
-    print(len(y[0]))
+    #print(len(y))
+    #print(len(y[0]))
     #return y[0]
     return y
 
@@ -342,7 +342,7 @@ def getDataFromVar_table(path, var):
     return_data = []
     with Dataset(path, "r", format="NETCDF4_CLASSIC") as nc:
         return_data.append(nc.variables[var][:])
-        print(return_data)
+        #print(return_data)
         return(return_data)
 
 def getDataFromVar_multDim(pathToNetCDF, var):
@@ -351,7 +351,7 @@ def getDataFromVar_multDim(pathToNetCDF, var):
         length = len(nc.variables[var.strip()].get_dims())
         for i in range (0,length):
             dtype = nc.variables[var.strip()][:,[i]].dtype
-            print(nc.variables[var.strip()][:,[i]].dtype)
+            #print(nc.variables[var.strip()][:,[i]].dtype)
             if dtype == 'S1':
                 data_var= nc.variables[var][:,[i]]
                 data= []

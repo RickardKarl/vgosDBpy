@@ -119,7 +119,7 @@ class TableModel(QStandardItemModel):
         '''
         names = list(data_new)
         start = self.nbrItems
-        print('Start:'+str(start))
+        #print('Start:'+str(start))
         #self.reset()
         for i in range(0,len(data_new[names[0]])):
             for j in range (0,len(names)):
@@ -143,7 +143,7 @@ class TableModel(QStandardItemModel):
 
         self.reset()
         self.nbrItems = 0
-        #self._header = []
+        self._header = []
         self.setHorizontalHeaderLabels(self._header)
         #self.data_axis = None # Keep track of the DataAxis that it shows from the plot
         #self.dataaxis_to_column_map = {} # DataAxis : Column index

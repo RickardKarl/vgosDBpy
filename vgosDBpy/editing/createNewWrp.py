@@ -12,12 +12,12 @@ import os
 def create_new_wrapper(list_changed_files, new_file_names, path_to_old_wrp, hist_file_name, timestamp):
 
     path_to_new_wrp = newWrapperPath(path_to_old_wrp)
-    print('Creating wrapper with path:', path_to_new_wrp)
+    #print('Creating wrapper with path:', path_to_new_wrp)
 
     if os.path.isfile(path_to_new_wrp):
         path_to_new_wrp = newWrapperPath(path_to_new_wrp)
 
-    print(path_to_new_wrp)
+    #print(path_to_new_wrp)
 
     parser = Parser(path_to_old_wrp)
 

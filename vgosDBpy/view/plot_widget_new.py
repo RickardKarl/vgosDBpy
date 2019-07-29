@@ -101,8 +101,8 @@ class PlotFigure(FigureCanvas):
                 self.items.append(itm)
 
         for i in range(0,len(self.paths)):
-            print('paths: ' +  self.paths[i])
-            print('vars:' + self.vars[i] )
+            #print('paths: ' +  self.paths[i])
+            #print('vars:' + self.vars[i] )
 
         if not_S1(self.paths, self.vars):
             axis, data = plot_generall(self.paths, self.vars, self.figure, self.timeInt)
