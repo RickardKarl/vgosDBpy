@@ -6,6 +6,7 @@ import pandas as pd
 from vgosDBpy.editing.select_data import getData
 from vgosDBpy.view.plotlines import createLine2D, createSmoothCurve
 
+
 class AxesToolBox(QWidget):
     '''
     A class that controls the PlotFigure and DataTable
@@ -25,6 +26,7 @@ class AxesToolBox(QWidget):
 
         parent [QWidget]
         canvas [PlotFigure]
+        table_widget [DataTable]
         data_axis [DataAxis]
         '''
 
@@ -35,6 +37,9 @@ class AxesToolBox(QWidget):
         # Widgets
         self.canvas = canvas
         self.table_widget = table_widget
+
+        ### Listen to changes of selection in table_widget
+        self.table_widget.selection.selectionChanged.connect(self._selection_changed_callback_table)
 
         # Control, appearance and data variables
         self.selector = None
@@ -122,7 +127,7 @@ class AxesToolBox(QWidget):
         '''
         Updates the instance with a new axis
 
-        data_axis [list of DataAxis]
+        data_axis [DataAxis]
         '''
         self.data_axis.append(data_axis)
         if data_axis == self.current_axis:
@@ -142,9 +147,9 @@ class AxesToolBox(QWidget):
 
         data_axis [DataAxis]
         '''
-        self.selector = RectangleSelector(data_axis.getAxis(), self._selector_callback, drawtype='box')
+        self.selector = RectangleSelector(data_axis.getAxis(), self._selector_callback_plot, drawtype='box')
 
-    def _selector_callback(self, eclick, erelease):
+    def _selector_callback_plot(self, eclick, erelease):
         '''
         Called by RectangleSelector
         '''
@@ -152,14 +157,39 @@ class AxesToolBox(QWidget):
         x1, y1 = eclick.xdata, eclick.ydata
         x2, y2 = erelease.xdata, erelease.ydata
 
-        # Update plot with marked data and eventually highlight them
+        marked_data = getData(x1, x2, y1, y2, self.current_axis.getData(), self.canvas.timeInt)
 
-        self.current_axis.updateMarkedData(getData(x1, x2, y1, y2, self.current_axis.getData(), self.canvas.timeInt))
+        # Update marked data
+        self.current_axis.updateMarkedData(marked_data)
+
+        # Update appearance of plot and table
+        self._updateWidgets()
+
+    def _selection_changed_callback_table(self):
+
+        # Get marked data
+        marked_data = self.table_widget.getModel().getDataFromSelected(self.table_widget.selection.selectedIndexes(), self.current_axis)
+
+        # Update current axis with the marked data
+        self.current_axis.updateMarkedData(marked_data)
+
+        # Update appearance of plot and table
+        self._updateWidgets()
+
+    def _updateWidgets(self):
+        '''
+        Update the appearance of the widgets with respect of the marked/edited data
+        '''
+        self.blockSignals(True)
+
+        # Update plot figure with marked data
         self.highlightMarkedData()
 
+        # Update table with marked data
+        self.table_widget.updateMarkedRows(self.data_axis)
+        
+        self.blockSignals(True)
 
-        table_widget = self.parentWidget().data_table
-        table_widget.updateMarkedRows(self.data_axis)
 
     ######## Button methods that control appearance
 
@@ -268,7 +298,7 @@ class AxesToolBox(QWidget):
             pass
         else:
             self.current_axis.clearMarkedData()
-            self.highlightMarkedData()
+            self._updateWidgets()
 
     def _trackEdit(self):
         edited_data = self.current_axis.getNewEdit()

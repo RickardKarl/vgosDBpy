@@ -111,8 +111,17 @@ class DataTable(QTableView):
         self.tabfunc = TF()
         # Selection of items
         self.setSelectionMode(QAbstractItemView.ExtendedSelection)
-        self.setSelectionBehavior(QAbstractItemView.SelectionBehavior.SelectRows)
+        #self.setSelectionBehavior(QAbstractItemView.SelectionBehavior.SelectRow)
         self.selection = self.selectionModel()
+
+
+
+    ######### Getters
+
+    def getModel(self):
+        return self._model
+
+    ######### Update methods
 
     def updateItems(self,data,items):
         print('in update')
@@ -129,9 +138,6 @@ class DataTable(QTableView):
             prev = names[i]
             i +=  1
         return items
-
-    def getModel(self):
-        return self._model
 
     def updateColumnSize(self):
         '''
@@ -197,6 +203,8 @@ class DataTable(QTableView):
     def clearTable(self):
         self._model.clearTable()
 
+    ######### Update through DataAxis methods
+
     def updateFromDataAxis(self, data_axis):
         '''
         Updates the table by giving it the data_axis, this gives a one to one correspondance with
@@ -217,7 +225,7 @@ class DataTable(QTableView):
                 path.append(itm.getPath())
                 var.append(itm.labels)
             header_labels = self.tabfunc.return_header_names(path,var)
-            header_labels.insert(0, TF.time_label)
+            header_labels.insert(TableModel.time_col, TF.time_label)
             self._model.update_header(header_labels)
 
         # Updates size of column when content is changed
@@ -226,20 +234,15 @@ class DataTable(QTableView):
     def updateMarkedRows(self, data_axis):
         '''
         data_axis [DataAxis]
-        
+
         Mark selected data from plot in the table
         '''
-
-        self.selection.clear()
-
-
         for ax in data_axis:
-            column_index = self._model.dataaxis_to_column_map[ax]
+
+            col_index = self._model.dataaxis_to_column_map.get(ax)
             selected_data = ax.getMarkedData()
 
             for row_index in selected_data:
-                for col_index in range(self._model.columnCount()):
-                    model_item = self._model.item(row_index, col_index)
-                    item_index = self._model.indexFromItem(model_item)
-
-                    self.selection.select(item_index, QItemSelectionModel.Select) # This line takes a lot of time to execute, needs fix
+                model_item = self._model.item(row_index, col_index)
+                item_index = self._model.indexFromItem(model_item)
+                self.selection.select(item_index, QItemSelectionModel.Select) # This line takes a lot of time to execute, needs fix

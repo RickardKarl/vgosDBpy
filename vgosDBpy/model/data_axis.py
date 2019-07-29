@@ -77,7 +77,6 @@ class DataAxis:
         for index in self._marked_data:
             self._edited_data[index] = np.nan
 
-
     def getNewEdit(self):
         '''
         Returns an edited pd.Series without the current marked data

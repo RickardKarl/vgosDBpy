@@ -1,5 +1,7 @@
 from PySide2.QtGui import QStandardItemModel
 from PySide2 import QtCore
+import pandas as pd
+
 from vgosDBpy.model.standardtree import Variable, DataValue
 from vgosDBpy.data.readNetCDF import read_netCDF_variables, is_possible_to_plot, is_var_constant,read_unit_for_var, is_numScan_or_NumObs, get_dtype_var, read_netCDF_dimension_for_var, get_dataBaseline #read_netCDF_dimension_for_var,
 from vgosDBpy.data.PathParser import findCorrespondingTime
@@ -16,6 +18,8 @@ class TableModel(QStandardItemModel):
     parent [QWidget]
     '''
 
+    time_col = 0
+
     def __init__(self, header, parent=None):
         super(TableModel,self).__init__(parent)
         self._header = header
@@ -25,9 +29,10 @@ class TableModel(QStandardItemModel):
         # Map to keep track of which column that belongs to each DataAxis
         self.data_axis = None # Keep track of the DataAxis that it shows from the plot
         self.dataaxis_to_column_map = {} # DataAxis : Column index
+        self.column_to_dataaxis_map = {}
 
-        def getHeader(self):
-            return self._header
+    def getHeader(self):
+        return self._header
 
     def update_header(self,names):
         self._header = names
@@ -146,6 +151,7 @@ class TableModel(QStandardItemModel):
 
         data_axis [list of DataAxis] is what should be displayed in the table
         '''
+
         if len(data_axis) > 0:
             items = []
             for ax in data_axis:
@@ -157,9 +163,15 @@ class TableModel(QStandardItemModel):
             if len(data_axis) != len(items):
                 raise ValueError('data_axis and items do no have the same length')
             for i in range(len(time_index)):
-                self.setItem(i, 0, DataValue(str(time_index[i]), node = None))
+                self.setItem(i, TableModel.time_col, DataValue(time_index[i], node = None))
 
+            col_index = 0
             for j in range(len(data_axis)):
+
+                # Checks so it does not write in same col as time
+                if col_index == TableModel.time_col:
+                    col_index += 1
+
                 data = data_axis[j].getData() # Retrieve pd.Series stored in DataAxis
 
                 # Check that the time indices are the same
@@ -168,10 +180,47 @@ class TableModel(QStandardItemModel):
                     raise ValueError('DataAxis', data_axis[j], 'do not have the same time indices as', data_axis[0])
 
                 for i in range(len(data)):
-                    self.setItem(i, 1 + j, DataValue(str(data[i]), items[j]))
+                    self.setItem(i, col_index, DataValue(str(data[i]), items[j]))
 
-            self.dataaxis_to_column_map[data_axis[j]] = 1 + j
-            self.data_axis = data_axis
+            self.dataaxis_to_column_map[data_axis[j]] = col_index
+            self.column_to_dataaxis_map[col_index] = data_axis[j]
+
+            col_index += 1
+
+        self.data_axis = data_axis
+
+
+
+
+
+    def getDataFromSelected(self, selected_items, current_axis):
+
+        '''
+        selected_items [list of QModelIndex]
+        current_axis [DataAxis]
+        '''
+        time_index = []
+        value = []
+        current_col = self.dataaxis_to_column_map.get(current_axis)
+
+        for index in selected_items:
+
+            # Get indices in table
+            item_col = index.column()
+            item_row = index.row()
+
+            item = self.itemFromIndex(index)
+
+            if item_col != TableModel.time_col and item_col == current_col:
+
+                # Get timestamp
+                timestamp = self.item(item_row, TableModel.time_col).value
+                time_index.append(timestamp)
+
+                # Get value
+                value.append(item.value)
+
+        return pd.Series(value, index = time_index)
 
 
 """
