@@ -140,10 +140,11 @@ class TableModel(QStandardItemModel):
         #    self.setItem(i,j,DataValue(str(data[names][i]), item))
 
     def clearTable(self):
-        self.data = {}
-        self.nbrItems = 0
-        self._header = []
+
         self.reset()
+        self.nbrItems = 0
+        #self._header = []
+        self.setHorizontalHeaderLabels(self._header)
         #self.data_axis = None # Keep track of the DataAxis that it shows from the plot
         #self.dataaxis_to_column_map = {} # DataAxis : Column index
 
