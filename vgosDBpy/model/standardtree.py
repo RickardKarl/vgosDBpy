@@ -207,16 +207,16 @@ class DataValue(QNodeItem):
 
     def data(self, role = QtCore.Qt.DisplayRole):
         if role == QtCore.Qt.DisplayRole:
-            return self.value
+            return str(self.value)
 
         elif role == QtCore.Qt.EditRole:
-            return self.value
+            return str(self.value)
 
         else:
             return None
 
     def __str__(self):
-        return self.value
+        return str(self.value)
 
     def __repr__(self):
-        return self.value
+        return str(self.value)

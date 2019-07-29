@@ -17,9 +17,9 @@ class PlotFigure(FigureCanvas):
     Can display several axes
     '''
     def __init__(self, figure = Figure(tight_layout = True), parent = None):
+
         '''
         Constructor:
-
         figure [matplotlib.Figure]
         parent [QWidget]
         '''
@@ -99,12 +99,15 @@ class PlotFigure(FigureCanvas):
                 self.paths.append(itm.getPath())
                 self.vars.append(itm.labels)
                 self.items.append(itm)
+
         for i in range(0,len(self.paths)):
             print('paths: ' +  self.paths[i])
             print('vars:' + self.vars[i] )
+
         if not_S1(self.paths, self.vars):
             axis, data = plot_generall(self.paths, self.vars, self.figure, self.timeInt)
             is_mult = is_multdim_var(self.paths, self.vars)
+
             if is_mult!= -1 and timeUpdated == False:
                 items.append(items[is_mult])
 
@@ -115,7 +118,6 @@ class PlotFigure(FigureCanvas):
             self.updatePlot()
         else:
             print('Trying to plot a string')
-
 
     def resetFigure(self):
         self.figure.clear()

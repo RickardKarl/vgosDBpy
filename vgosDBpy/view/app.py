@@ -84,7 +84,7 @@ class App(QWidget):
         self.button_widget.setLayout(button_layout)
 
         # Listeners
-        self.treeview.selectionModel().selectionChanged.connect(self._showItemInfo)
+        self.treeview.selection.selectionChanged.connect(self._showItemInfo)
 
         ################## App layout ##################
         layout = QGridLayout()
