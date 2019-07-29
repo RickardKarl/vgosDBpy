@@ -115,9 +115,6 @@ class DataTable(QTableView):
         self.selection = self.selectionModel()
 
     def updateItems(self,data,items):
-        print('in update')
-        for itm in items:
-            print(itm)
         names = list(data)
         prev = names[0]
         i = 1
@@ -196,6 +193,12 @@ class DataTable(QTableView):
 
     def clearTable(self):
         self._model.clearTable()
+        self.setModel(self._model)
+        self.setSelectionMode(QAbstractItemView.ExtendedSelection)
+        self.setSelectionBehavior(QAbstractItemView.SelectionBehavior.SelectRows)
+        self.selection = self.selectionModel()
+        self.tabfunc.data_reset()
+        self.tabfunc.header_reset()
 
     def updateFromDataAxis(self, data_axis):
         '''
@@ -217,7 +220,7 @@ class DataTable(QTableView):
                 path.append(itm.getPath())
                 var.append(itm.labels)
             header_labels = self.tabfunc.return_header_names(path,var)
-            header_labels.insert(0, TF.time_label)
+            #header_labels[0]=TF.time_label
             self._model.update_header(header_labels)
 
         # Updates size of column when content is changed
@@ -226,7 +229,7 @@ class DataTable(QTableView):
     def updateMarkedRows(self, data_axis):
         '''
         data_axis [DataAxis]
-        
+
         Mark selected data from plot in the table
         '''
 

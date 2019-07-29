@@ -1,7 +1,7 @@
 from PySide2.QtGui import QStandardItemModel
 from PySide2 import QtCore
 from vgosDBpy.model.standardtree import Variable, DataValue
-from vgosDBpy.data.readNetCDF import read_netCDF_variables, is_possible_to_plot, is_var_constant,read_unit_for_var, is_numScan_or_NumObs, get_dtype_var, read_netCDF_dimension_for_var, get_dataBaseline #read_netCDF_dimension_for_var,
+from vgosDBpy.data.readNetCDF import read_netCDF_variables, is_possible_to_plot, is_var_constant,read_unit_for_var, is_numScan_or_NumObs, get_dtype_var, read_netCDF_dimension_for_var, get_dataBaseline , show_in_table#read_netCDF_dimension_for_var,
 from vgosDBpy.data.PathParser import findCorrespondingTime
 from vgosDBpy.data.combineYMDHMS import combineYMDHMwithSec
 
@@ -68,7 +68,7 @@ class TableModel(QStandardItemModel):
         i = 0
         # Puts variable in first column and associated dimension in another
         for var in var_list:
-            if is_numScan_or_NumObs(item.getPath(), var) :
+            if show_in_table(item.getPath(),var):
                 self.setItem(i,0,Variable(var,item))
             #if is_possible_to_plot(item.getPath(), vars):
             #    self.setItem(i,0, Variable(vars,item))
@@ -139,6 +139,9 @@ class TableModel(QStandardItemModel):
         self.nbrItems = 0
         self._header = []
         self.reset()
+        #self.data_axis = None # Keep track of the DataAxis that it shows from the plot
+        #self.dataaxis_to_column_map = {} # DataAxis : Column index
+
 
     def updateFromDataAxis(self, data_axis):
         '''
