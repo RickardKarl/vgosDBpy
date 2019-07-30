@@ -123,7 +123,8 @@ class AxesToolBox(QWidget):
             self.current_axis = data_axis[0]
 
             for ax in data_axis:
-                self.addSingleDataAxis(ax)
+                if ax not in self.data_axis:
+                    self.addSingleDataAxis(ax)
 
     def addSingleDataAxis(self, data_axis):
         '''
@@ -136,12 +137,13 @@ class AxesToolBox(QWidget):
         if data_axis == self.current_axis:
 
             self.original_lines = data_axis.getAxis().get_lines()
+            for line in self.original_lines:
+                line.remove()
 
             self.plotCurrentAxis()
             self.updateSelector(data_axis)
 
-        for line in self.original_lines:
-            line.remove()
+
 
         self._showLine()
         self._showMarkers()
@@ -230,14 +232,13 @@ class AxesToolBox(QWidget):
 
 
 
-
     ######## Button methods that control appearance
 
-    def _showLine(self, show_line = True):
+    def _showLine(self):
         '''
         Method that displays/hide the line in the plot
         '''
-        if self.check_line.isChecked() and show_line:
+        if self.check_line.isChecked():
             self.edited_curve.set_linestyle('-')
         else:
             self.edited_curve.set_linestyle('None')
@@ -250,6 +251,7 @@ class AxesToolBox(QWidget):
         '''
         if self.check_marker.isChecked():
             self.edited_curve.set_marker('o')
+            self.edited_curve.set_markersize(AxesToolBox.marker_size)
         else:
             self.edited_curve.set_marker('None')
 
@@ -260,13 +262,13 @@ class AxesToolBox(QWidget):
         '''
         Method that displays/hide a smooth curve fit in the data
         '''
+        if self.lineExists(self.smooth_curve):
+            self.smooth_curve.remove()
 
-        if self.check_smooth_curve.isChecked() and self.lineExists(self.smooth_curve):
+        if self.check_smooth_curve.isChecked():
             data = self.current_axis.getEditedData()
             line = createLine2D(createSmoothCurve(data, window_size = int(len(data)/10)))
             self.smooth_curve = self.current_axis.addLine(line)
-        elif self.lineExists(self.smooth_curve):
-            self.smooth_curve.remove()
 
         self.canvas.updatePlot()
 
