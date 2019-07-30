@@ -6,7 +6,7 @@ import pandas as pd
 
 from vgosDBpy.data.PathParser import findCorrespondingTime
 from vgosDBpy.data.combineYMDHMS import combineYMDHMwithSec
-from vgosDBpy.data.readNetCDF import get_data_to_table#getDataFromVar, get_dataBaseline, get_S1_tableData, get_dtype_for_var
+from vgosDBpy.data.readNetCDF import get_data_to_table
 from vgosDBpy.data.getRealName import get_name_to_print as name, get_unit_to_print as unit
 
 

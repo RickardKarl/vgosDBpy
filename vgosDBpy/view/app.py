@@ -167,7 +167,8 @@ class App(QWidget):
             items = []
             for i in range (len(index)):
                 items.append(self.var_table.getModel().itemFromIndex(index[i]))
-            self.data_table.updateData(items)
+            if not items == [] :
+                self.data_table.updateData(items)
 
 
     def _addbutton(self):

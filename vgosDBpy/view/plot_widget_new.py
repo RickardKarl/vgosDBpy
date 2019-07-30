@@ -100,7 +100,7 @@ class PlotFigure(FigureCanvas):
                 self.vars.append(itm.labels)
                 self.items.append(itm)
 
-        for i in range(0,len(self.paths)):
+        #for i in range(0,len(self.paths)):
             #print('paths: ' +  self.paths[i])
             #print('vars:' + self.vars[i] )
 

@@ -3,9 +3,10 @@ from PySide2 import QtCore
 import pandas as pd
 
 from vgosDBpy.model.standardtree import Variable, DataValue
-from vgosDBpy.data.readNetCDF import read_netCDF_variables, is_possible_to_plot, is_var_constant,read_unit_for_var, is_numScan_or_NumObs, get_dtype_var, read_netCDF_dimension_for_var, get_dataBaseline , show_in_table#read_netCDF_dimension_for_var,
+from vgosDBpy.data.readNetCDF import read_netCDF_variables, is_possible_to_plot, is_var_constant, is_numScan_or_NumObs, get_dtype_var, read_netCDF_dimension_for_var, get_dataBaseline , show_in_table#read_netCDF_dimension_for_var,
 from vgosDBpy.data.PathParser import findCorrespondingTime
 from vgosDBpy.data.combineYMDHMS import combineYMDHMwithSec
+from vgosDBpy.data.getRealName import get_unit_to_print
 
 class TableModel(QStandardItemModel):
     '''
@@ -81,7 +82,7 @@ class TableModel(QStandardItemModel):
             #elif is_var_constant(item.getPath(), vars):
             #    self.setItem(i,1,Variable(vars,item))
             #    i += 1
-                self.setItem(i,1,Variable(read_unit_for_var(item.getPath(), var),item))
+                self.setItem(i,1,Variable(get_unit_to_print(item.getPath(), var),item))
                 self.setItem(i,2,Variable(read_netCDF_dimension_for_var(item.getPath(), var),item))
                 self.setItem(i,3,Variable(get_dtype_var(item.getPath(), var),item))
             #    j=2
@@ -99,6 +100,7 @@ class TableModel(QStandardItemModel):
         '''
         names = list(data)
         self.reset()
+        #self.clearTable()
         for i in range(0,len(data[names[0]])):
             for j in range (0,len(names)):
                 if len(names) > 1:
@@ -140,10 +142,10 @@ class TableModel(QStandardItemModel):
         #    self.setItem(i,j,DataValue(str(data[names][i]), item))
 
     def clearTable(self):
-
+        self._header = []
         self.reset()
         self.nbrItems = 0
-        self._header = []
+        #self._header = []
         self.setHorizontalHeaderLabels(self._header)
         #self.data_axis = None # Keep track of the DataAxis that it shows from the plot
         #self.dataaxis_to_column_map = {} # DataAxis : Column index

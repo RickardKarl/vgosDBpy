@@ -252,12 +252,24 @@ def read_netCDF_dimension_for_var(pathToNetCDF, var):
 
 def read_unit_for_var (pathToNetCDF, var):
     with Dataset(pathToNetCDF, 'r', format= 'NETCDF4_CLASSIC') as nc:
-        dtype = nc.variables[var].dtype
-        if dtype.name.strip() != 'S1':
-            #return nc.variables[var].Units
-                return 'UNITTTTTT'
-        else:
-             return ''
+        #dtype = get_dtype_for_var(pathToNetCDF,var)
+        #print(var)
+        #print(dtype)
+        #print(len(dtype))
+        #if dtype == 'S1':
+        #    return '-'
+        #else:
+        #    print('hello')
+        #    print(nc.variables[var].Units)
+        #    print(len(nc.variables[var].Units))
+        #    return nc.variables[var].Units
+        #else:
+        #     return 'Kjj'
+        try:
+            unit = nc.variables[var].Units
+        except:
+            unit = '-'
+        return "  ["+unit+"]"
 
 def get_data_to_table(pathToNetCDF, var):
     dtype = get_dtype_for_var(pathToNetCDF, var)
@@ -284,7 +296,7 @@ def get_data_to_table(pathToNetCDF, var):
     #    print('enter 4')
     else:
         y = getDataFromVar_table(pathToNetCDF, var)
-        print('enter 5')
+        #print('enter 5')
     #print(len(y))
     #print(len(y[0]))
     #return y[0]

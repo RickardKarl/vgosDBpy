@@ -17,10 +17,14 @@ def get_name_to_print(path, var):
 
 def get_unit_to_print(path,var):
     with Dataset(path, "r", format="NETCDF4") as nc:
-        dtype = nc.variables[var].dtype
+        #dtype = nc.variables[var].dtype
         #if dtype.name.strip() != 'S1':
-            #unit=nc.variables[var].Units.name
+        #    unit=nc.variables[var].Units
         #else:
         #    unit = ''
-        #return "  ["+unit+"]"
-        return 'UNIT'
+        try:
+            unit = nc.variables[var].Units
+        except:
+            unit = '-'
+        return "  ["+unit+"]"
+        #return 'UNIT'
