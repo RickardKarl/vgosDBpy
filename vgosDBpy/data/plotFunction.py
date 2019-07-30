@@ -35,7 +35,6 @@ def plot_generall (paths, vars, fig, state): # generall function tahta is always
                 c += 1
     """
     marker = is_multdim_var(paths, vars)
-    print(marker)
     if len(paths) != len(vars): # controll
         return
     if default_time(state) is True and checkIfTimeAvailable(paths, vars) is True :

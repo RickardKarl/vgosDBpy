@@ -138,9 +138,6 @@ class DataTable(QTableView):
     ######### Update methods
 
     def updateItems(self,data,items):
-        print('In update')
-        for itm in items:
-            print(itm)
         names = list(data)
         prev = names[0]
         i = 1
@@ -216,6 +213,12 @@ class DataTable(QTableView):
 
     def clearTable(self):
         self._model.clearTable()
+        self.setModel(self._model)
+        self.setSelectionMode(QAbstractItemView.ExtendedSelection)
+        self.setSelectionBehavior(QAbstractItemView.SelectionBehavior.SelectRows)
+        self.selection = self.selectionModel()
+        self.tabfunc.data_reset()
+        self.tabfunc.header_reset()
 
     ######### Update through DataAxis methods
 

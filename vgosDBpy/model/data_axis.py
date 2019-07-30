@@ -67,8 +67,6 @@ class DataAxis:
         Unselect all marked data points
         '''
         self._marked_data = []
-        self._edited_data = self._data
-
 
     def removeMarkedData(self):
         '''
@@ -81,6 +79,5 @@ class DataAxis:
         '''
         Returns an edited pd.Series without the current marked data
         '''
-        self.resetEditedData()
         self.removeMarkedData()
         return self._edited_data
