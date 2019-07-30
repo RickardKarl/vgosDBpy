@@ -59,6 +59,7 @@ class AxesToolBox(QWidget):
 
         # Buttons and their respective functions ##################################################
         appearance_widget = QWidget(self)
+
         self.check_line = QCheckBox('Show line')
         self.check_marker = QCheckBox('Show markers')
         self.check_smooth_curve = QCheckBox('Show smooth curve')
@@ -98,9 +99,9 @@ class AxesToolBox(QWidget):
         self.timeDefault.setCheckState(QtCore.Qt.Checked)
         self.timeDefault.stateChanged.connect(self._timeDefault)
 
-        self.remove_marked.clicked.connect(self._clearMarkedData)
-        self.restore_marked.clicked.connect(self._clearMarkedData)
-        
+        self.remove_marked.clicked.connect(self._trackEdit)
+        self.restore_marked.clicked.connect(self._restoreChanges)
+
         self.saveEdit.clicked.connect(self._saveEdit)
 
 
@@ -125,14 +126,46 @@ class AxesToolBox(QWidget):
         data_axis [DataAxis]
         '''
         self.data_axis.append(data_axis)
+
         if data_axis == self.current_axis:
+
             self.original_lines = data_axis.getAxis().get_lines()
+
+            self.plotCurrentAxis()
             self.updateSelector(data_axis)
+
+        for line in self.original_lines:
+            line.remove()
 
         self._showLine()
         self._showMarkers()
-        for line in data_axis.getAxis().get_lines():
-            line.set_markersize(AxesToolBox.marker_size)
+        self.edited_curve.set_markersize(AxesToolBox.marker_size)
+
+    def plotCurrentAxis(self, plot_edited_data = True):
+        if plot_edited_data:
+            data = self.current_axis.getNewEdit()
+        else:
+            data = self.current_axis.getData()
+
+        if self.lineExists(self.edited_curve) and plot_edited_data:
+            self.edited_curve.remove()
+
+        line = createLine2D(data)
+
+        if plot_edited_data:
+            self.edited_curve = self.current_axis.addLine(line)
+
+    def lineExists(self, line):
+        if line != None:
+            if line.axes != None:
+                return True
+            else:
+                return False
+        else:
+            return False
+
+
+
 
     ######## Selector methods
 
@@ -158,7 +191,7 @@ class AxesToolBox(QWidget):
         self.current_axis.updateMarkedData(marked_data)
 
         # Update appearance of plot and table
-        self._updateWidgets()
+        self._updateSelectionWidgets()
 
     def _selection_changed_callback_table(self):
 
@@ -169,13 +202,12 @@ class AxesToolBox(QWidget):
         self.current_axis.updateMarkedData(marked_data)
 
         # Update appearance of plot and table
-        self._updateWidgets()
+        self._updateSelectionWidgets()
 
-    def _updateWidgets(self):
+    def _updateSelectionWidgets(self):
         '''
         Update the appearance of the widgets with respect of the marked/edited data
         '''
-        self.blockSignals(True)
 
         # Update plot figure with marked data
         self.highlightMarkedData()
@@ -183,7 +215,14 @@ class AxesToolBox(QWidget):
         # Update table with marked data
         self.table_widget.updateMarkedRows(self.data_axis)
 
-        self.blockSignals(True)
+    def _updateDisplayedData(self):
+        self.canvas.updatePlot()
+        self.table_widget.updateFromDataAxis(self.data_axis)
+        self._showLine()
+        self._showMarkers()
+        self._showSmoothCurve()
+
+
 
 
     ######## Button methods that control appearance
@@ -192,11 +231,10 @@ class AxesToolBox(QWidget):
         '''
         Method that displays/hide the line in the plot
         '''
-        for line in self.original_lines:
-            if self.check_line.isChecked() and show_line:
-                line.set_linestyle('-')
-            else:
-                line.set_linestyle('None')
+        if self.check_line.isChecked() and show_line:
+            self.edited_curve.set_linestyle('-')
+        else:
+            self.edited_curve.set_linestyle('None')
 
         self.canvas.updatePlot()
 
@@ -204,11 +242,10 @@ class AxesToolBox(QWidget):
         '''
         Method that displays/hide the markers in the data
         '''
-        for line in self.original_lines:
-            if self.check_marker.isChecked():
-                line.set_marker('o')
-            else:
-                line.set_marker('None')
+        if self.check_marker.isChecked():
+            self.edited_curve.set_marker('o')
+        else:
+            self.edited_curve.set_marker('None')
 
         self.canvas.updatePlot()
 
@@ -218,11 +255,11 @@ class AxesToolBox(QWidget):
         Method that displays/hide a smooth curve fit in the data
         '''
 
-        if self.check_smooth_curve.isChecked():
+        if self.check_smooth_curve.isChecked() and self.lineExists(self.smooth_curve):
             data = self.current_axis.getEditedData()
             line = createLine2D(createSmoothCurve(data, window_size = int(len(data)/10)))
             self.smooth_curve = self.current_axis.addLine(line)
-        else:
+        elif self.lineExists(self.smooth_curve):
             self.smooth_curve.remove()
 
         self.canvas.updatePlot()
@@ -233,50 +270,29 @@ class AxesToolBox(QWidget):
         '''
 
         # Removes previous curves if needed
-        if self.marked_data_curve != None:
-            if self.marked_data_curve.axes != None:
-                self.marked_data_curve.remove()
-        if self.edited_curve != None:
-            if self.edited_curve.axes != None:
-                self.edited_curve.remove()
-
-        # Adds the ordinary lines if needed
-        for line in self.original_lines:
-            if line.axes == None:
-                self.current_axis.addLine(line)
+        if self.lineExists(self.marked_data_curve):
+            self.marked_data_curve.remove()
 
         # Button press
-        self.plotEditedData()
         index_list = []
         for index in self.current_axis.getMarkedData():
             index_list.append(index)
 
-        marked_series = self.current_axis.getData().take(index_list)
+        marked_series = self.current_axis.getEditedData().take(index_list)
         line = createLine2D(pd.Series(marked_series))
         line.set_marker('s')
         line.set_linestyle('None')
         self.marked_data_curve = self.current_axis.addLine(line)
 
-
         #self.table_widget.updateMarkedRows(self.data_axis)
         self.canvas.updatePlot()
 
-    def plotEditedData(self):
-        '''
-        Plots edited data
-        '''
-        self._showLine(show_line = False)
-        line = createLine2D(self.current_axis.getNewEdit())
-        line.set_color('r')
-        self.edited_curve = self.current_axis.addLine(line)
 
     def _timeDefault(self):
         if self.timeDefault.isChecked():
             self.canvas.timeInt = 1
         else:
             self.canvas.timeInt = 0
-        # if there exist a plot update it
-        #if len(self.canvas.paths) > 0:
 
         self.canvas.updateTime()
 
@@ -284,16 +300,27 @@ class AxesToolBox(QWidget):
     #### Methods for editing data
 
     def _clearMarkedData(self):
+
         if self.current_axis == None:
             pass
         else:
             self.current_axis.clearMarkedData()
-            self._updateWidgets()
+            self._updateSelectionWidgets()
 
     def _trackEdit(self):
+
         edited_data = self.current_axis.getNewEdit()
         self.parentWidget().track_edits.addEdit(self.current_axis.getItem(), edited_data.values)
+
+        self.plotCurrentAxis()
         self._clearMarkedData()
+        self._updateDisplayedData()
+
+    def _restoreChanges(self):
+        self.current_axis.resetEditedData()
+        self._clearMarkedData()
+        self.plotCurrentAxis()
+        self._updateDisplayedData()
 
     def _saveEdit(self):
         self.parentWidget().track_edits.saveEdit()
