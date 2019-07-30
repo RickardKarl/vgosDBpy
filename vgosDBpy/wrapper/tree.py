@@ -1,15 +1,6 @@
 import re
 import os
 
-'''
-TODO:
-
-Introduce netCDF reading so that arrays are another type of Node
-
-There is a problem with the pointer_map when files have the same name,
-have not seen any consequences yet but reduces generality
-'''
-
 
 class Wrapper:
     '''

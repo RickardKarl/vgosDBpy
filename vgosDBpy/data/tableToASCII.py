@@ -4,7 +4,7 @@ def convertToAscii(tableview):
 
     model = tableview.getModel() # Get model of table view
     table_out = PrettyTable() # Setup instance
-    table_out.field_names = model.getHeader() # Set header
+    #table_out.field_names = model.getHeader() # Set header
 
     for row_index in range(model.rowCount()):
 

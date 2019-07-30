@@ -19,6 +19,19 @@ class DataAxis:
         self._edited_data = data.copy(deep = True)
         self._marked_data  = [] # Indices of data points in self._data that has been marked
 
+    def __eq__(self, other):
+        if isinstance(other, self.__class__):
+            return self._item == other.getItem() and self._data.equals(other.getData())
+        else:
+            return False
+
+
+    def __hash__(self):
+        return hash(self._item)*22 + int(self._edited_data.mean()) + int(self._edited_data.median())
+
+
+
+
     def getAxis(self):
         return self._axis
 
@@ -67,8 +80,6 @@ class DataAxis:
         Unselect all marked data points
         '''
         self._marked_data = []
-        self._edited_data = self._data
-
 
     def removeMarkedData(self):
         '''
@@ -81,6 +92,5 @@ class DataAxis:
         '''
         Returns an edited pd.Series without the current marked data
         '''
-        self.resetEditedData()
         self.removeMarkedData()
         return self._edited_data

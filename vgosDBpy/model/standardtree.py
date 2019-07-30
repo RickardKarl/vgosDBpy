@@ -150,6 +150,13 @@ class QNodeItem(QStandardItem):
         return hash(self.labels)*33 + hash(self.labels)*22 + hash(str(self.node.parent))*11
 
 
+    def __eq__(self, other):
+        if isinstance(other, self.__class__):
+            return self.node == other.node
+        else:
+            return False
+    
+
 
 class NetCDFItem(QNodeItem):
 
