@@ -151,20 +151,25 @@ class TableModel(QStandardItemModel):
         #self.dataaxis_to_column_map = {} # DataAxis : Column index
 
 
-    def updateFromDataAxis(self, data_axis):
+    def updateFromDataAxis(self, data_axis, get_edited_data = True):
         '''
         Update table model from one/several DataAxis
 
         data_axis [list of DataAxis] is what should be displayed in the table
         '''
 
+
         if len(data_axis) > 0:
             items = []
             for ax in data_axis:
                 items.append(ax.getItem())
 
-            time_index = data_axis[0].getData().index # Get a time index of the series,
-                                                      # all axes should have same time indices
+            # Get a time index of the series,
+            # all axes should have same time indices
+            if get_edited_data:
+                time_index = data_axis[0].getEditedData().index
+            else:
+                time_index = data_axis[0].getData().index
 
             if len(data_axis) != len(items):
                 raise ValueError('data_axis and items do no have the same length')
@@ -178,11 +183,15 @@ class TableModel(QStandardItemModel):
                 if col_index == TableModel.time_col:
                     col_index += 1
 
-                data = data_axis[j].getData() # Retrieve pd.Series stored in DataAxis
+                # Retrieve pd.Series stored in DataAxis
+                if get_edited_data:
+                    data = data_axis[j].getEditedData()
+                else:
+                    data = data_axis[j].getData()
 
                 # Check that the time indices are the same
                 # np.array_equal(a1, a2)
-                if not data_axis[j].getData().index.equals(time_index):
+                if not data.index.equals(time_index):
                     raise ValueError('DataAxis', data_axis[j], 'do not have the same time indices as', data_axis[0])
 
                 for i in range(len(data)):
@@ -194,10 +203,6 @@ class TableModel(QStandardItemModel):
             col_index += 1
 
         self.data_axis = data_axis
-
-
-
-
 
     def getDataFromSelected(self, selected_items, current_axis):
 
