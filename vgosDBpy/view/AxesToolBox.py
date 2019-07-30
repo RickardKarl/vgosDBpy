@@ -6,6 +6,7 @@ import pandas as pd
 
 from vgosDBpy.editing.select_data import getData
 from vgosDBpy.view.plotlines import createLine2D, createSmoothCurve
+from vgosDBpy.data.tableToASCII import convertToAscii
 
 import time
 
@@ -71,6 +72,7 @@ class AxesToolBox(QWidget):
         self.restore_marked = QPushButton('Restore removed data', self)
 
         self.saveEdit = QPushButton('Save changes', self)
+        self.printTable = QPushButton('Print table', self)
 
         # Layout ##################################################
         appearance_layout = QGridLayout()
@@ -84,6 +86,7 @@ class AxesToolBox(QWidget):
         appearance_layout.addWidget(self.restore_marked, 1, 1)
 
         appearance_layout.addWidget(self.saveEdit, 0, 3)
+        appearance_layout.addWidget(self.printTable, 1, 3)
 
         appearance_widget.setLayout(appearance_layout)
 
@@ -105,6 +108,7 @@ class AxesToolBox(QWidget):
         self.restore_marked.clicked.connect(self._restoreChanges)
 
         self.saveEdit.clicked.connect(self._saveEdit)
+        self.printTable.clicked.connect(self._printTable)
 
 
     ######## Methods for updating the DataAxis of the tool box
@@ -299,7 +303,7 @@ class AxesToolBox(QWidget):
         self.canvas.updateTime()
 
 
-    #### Methods for editing data
+    #### Methods for editing and saving data
 
     def _clearMarkedData(self):
 
@@ -326,3 +330,6 @@ class AxesToolBox(QWidget):
 
     def _saveEdit(self):
         self.parentWidget().track_edits.saveEdit()
+
+    def _printTable(self):
+        print(convertToAscii(self.table_widget))
