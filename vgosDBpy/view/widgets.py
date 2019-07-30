@@ -1,6 +1,7 @@
 
 from PySide2.QtWidgets import QTreeView, QTableView, QAbstractItemView
-from PySide2.QtCore import QItemSelectionModel
+from PySide2.QtCore import QItemSelectionModel, Signal
+
 from vgosDBpy.model.standardtree import TreeModel
 from vgosDBpy.model.table import TableModel
 from vgosDBpy.data.plotTable import Tablefunction as TF
@@ -102,6 +103,9 @@ class DataTable(QTableView):
     parent [QWidget] is the parent widget
     '''
 
+    # SIGNAL
+    _custom_mouse_release = Signal(str)
+
     def __init__(self, parent = None):
         super(DataTable, self).__init__(parent)
 
@@ -114,17 +118,27 @@ class DataTable(QTableView):
         #self.setSelectionBehavior(QAbstractItemView.SelectionBehavior.SelectRow)
         self.selection = self.selectionModel()
 
-
-
     ######### Getters
 
     def getModel(self):
         return self._model
 
+    ######### Event listener
+
+    def mouseReleaseEvent(self, e):
+        super(DataTable, self).mouseReleaseEvent(e)
+        self._custom_mouse_release.emit('Custom mouse release')
+
+    def selectionChanged(self, selected, deselected):
+        super(DataTable, self).selectionChanged(selected, deselected)
+
+    def getSignal(self):
+        return self._custom_mouse_release
+
     ######### Update methods
 
     def updateItems(self,data,items):
-        print('in update')
+        print('In update')
         for itm in items:
             print(itm)
         names = list(data)
@@ -155,7 +169,7 @@ class DataTable(QTableView):
         '''
         path = []
         var = []
-        if len(items) > 0 :
+        if len(items) > 0:
             for itm in items:  #tm in items:
                 path.append(itm.getPath())
                 var.append(itm.labels)
@@ -237,6 +251,8 @@ class DataTable(QTableView):
 
         Mark selected data from plot in the table
         '''
+        self.selection.clear()
+
         for ax in data_axis:
 
             col_index = self._model.dataaxis_to_column_map.get(ax)

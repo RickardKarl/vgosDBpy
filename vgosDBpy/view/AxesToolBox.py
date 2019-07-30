@@ -1,11 +1,13 @@
 from PySide2.QtWidgets import QGridLayout, QWidget, QCheckBox, QRadioButton, QPushButton
 from PySide2 import QtCore
+from PySide2.QtGui import QMouseEvent
 from matplotlib.widgets import RectangleSelector
 import pandas as pd
 
 from vgosDBpy.editing.select_data import getData
 from vgosDBpy.view.plotlines import createLine2D, createSmoothCurve
 
+import time
 
 class AxesToolBox(QWidget):
     '''
@@ -39,7 +41,7 @@ class AxesToolBox(QWidget):
         self.table_widget = table_widget
 
         ### Listen to changes of selection in table_widget
-        self.table_widget.selection.selectionChanged.connect(self._selection_changed_callback_table)
+        self.table_widget.getSignal().connect(self._selection_changed_callback_table)
 
         # Control, appearance and data variables
         self.selector = None
@@ -164,9 +166,9 @@ class AxesToolBox(QWidget):
 
         # Update appearance of plot and table
         self._updateWidgets()
+        print('plot')
 
     def _selection_changed_callback_table(self):
-
         # Get marked data
         marked_data = self.table_widget.getModel().getDataFromSelected(self.table_widget.selection.selectedIndexes(), self.current_axis)
 
@@ -175,20 +177,21 @@ class AxesToolBox(QWidget):
 
         # Update appearance of plot and table
         self._updateWidgets()
+        print('table')
 
     def _updateWidgets(self):
         '''
         Update the appearance of the widgets with respect of the marked/edited data
         '''
-        self.blockSignals(True)
 
         # Update plot figure with marked data
         self.highlightMarkedData()
 
         # Update table with marked data
+        #self.table_widget.getSignal().disconnect(self._selection_changed_callback_table)
         self.table_widget.updateMarkedRows(self.data_axis)
-        
-        self.blockSignals(True)
+        #self.table_widget.getSignal().connect(self._selection_changed_callback_table)
+
 
 
     ######## Button methods that control appearance

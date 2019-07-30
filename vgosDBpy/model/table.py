@@ -191,8 +191,6 @@ class TableModel(QStandardItemModel):
 
 
 
-
-
     def getDataFromSelected(self, selected_items, current_axis):
 
         '''
