@@ -170,7 +170,6 @@ class App(QWidget):
             if not items == [] :
                 self.data_table.updateData(items)
 
-
     def _addbutton(self):
         index= self._getSelected(self.var_table)
         if not index  == [] :

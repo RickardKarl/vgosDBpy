@@ -25,10 +25,8 @@ class DataAxis:
         else:
             return False
 
-
     def __hash__(self):
         return hash(self._item)*22 + int(self._edited_data.mean()) + int(self._edited_data.median())
-
 
     def getAxis(self):
         return self._axis
