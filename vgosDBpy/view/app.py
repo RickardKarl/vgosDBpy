@@ -55,7 +55,6 @@ class App(QWidget):
 
         ################## Buttons ########################
         # Plot and display table
-        self.button_plot_table = QPushButton('& Plot + Table ')
         self.button_plot = QPushButton('& Plot',self)
         self.button_table = QPushButton('& Table',self)
         self.button_append_table = QPushButton('& Add to table' )
@@ -64,7 +63,6 @@ class App(QWidget):
         self.button_clear_table = QPushButton('& Clear table')
 
         # Button event
-        self.button_plot_table.clicked.connect(self._plot_table_button)
         self.button_plot.clicked.connect(self._plotbutton)
         self.button_table.clicked.connect(self._tablebutton)
         self.button_append_table.clicked.connect(self._addbutton)
