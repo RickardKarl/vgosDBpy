@@ -76,7 +76,6 @@ def create_new_wrapper(list_changed_files, new_file_names, path_to_old_wrp, hist
                 if changes_files_in_current_directory != []:
 
                     for file_names in changes_files_in_current_directory:
-                        print(file_names)
                         old_name = file_names[0]
                         new_name = file_names[1]
 
