@@ -6,7 +6,7 @@ import pandas as pd
 
 from vgosDBpy.editing.select_data import getData
 from vgosDBpy.view.plotlines import createLine2D, createSmoothCurve
-from vgosDBpy.data.tableToASCII import convertToAscii
+from vgosDBpy.data.tableToASCII import convertToAscii, write_ascii_file
 
 import time
 
@@ -349,4 +349,15 @@ class AxesToolBox(QWidget):
         self.parentWidget().track_edits.saveEdit()
 
     def _printTable(self):
-        print(convertToAscii(self.table_widget))
+        ptable = convertToAscii(self.table_widget)
+        session_name = self.parentWidget().treeview.getWrapper().session_name
+        info = 'Session: ' + session_name
+
+        file_name = ''
+        for head in ptable.field_names:
+            if len(head) > 3:
+                head = head[0:3]
+            file_name = file_name + '_' + head
+
+        path = session_name + file_name + '.txt'
+        write_ascii_file(ptable, info, path)

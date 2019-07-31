@@ -4,7 +4,7 @@ def convertToAscii(tableview):
 
     model = tableview.getModel() # Get model of table view
     table_out = PrettyTable() # Setup instance
-    #table_out.field_names = model.getHeader() # Set header
+    table_out.field_names = model.getHeader() # Set header
 
     for row_index in range(model.rowCount()):
 
@@ -20,10 +20,13 @@ def convertToAscii(tableview):
     return table_out
 
 
-def write_ascii_file(ptable, file_path):
+def write_ascii_file(ptable, other_info, file_path):
     '''
     ptable [PrettyTable] is the table that should be written to a file in ASCII format
+    other_info [string]
     '''
     table_txt = ptable.get_string()
     with open(file_path,'w') as file:
+            file.write(other_info)
+            file.write('\n')
             file.write(table_txt)

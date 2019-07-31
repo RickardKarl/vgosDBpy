@@ -7,6 +7,7 @@ from vgosDBpy.view.widgets import QWrapper, VariableTable, DataTable
 from vgosDBpy.data.readNetCDF import read_netCDF_vars_info #read_netCDF_data_info #, read_netCDF_dimension_for_var, read_netCDF_variables,
 from vgosDBpy.view.plot_widget_new import AxesToolBox, PlotWidget
 from vgosDBpy.editing.track_edits import EditTracking
+from vgosDBpy.wrapper.tree import Wrapper
 
 class App(QWidget):
     '''
@@ -127,6 +128,11 @@ class App(QWidget):
                 text_total = text #+ text_data
                 self.info_text.setPlainText(str(text_total))
                 self.var_table.updateVariables(item)
+
+            elif item.isHistFile():
+                text = Wrapper.getHistory(item.getPath())
+                self.info_text.setPlainText(text)
+
 
     def _plot_table_button(self):
         self._plotbutton()
