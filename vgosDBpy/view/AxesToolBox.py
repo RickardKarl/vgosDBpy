@@ -66,7 +66,7 @@ class AxesToolBox(QWidget):
         self.check_line = QCheckBox('Show line')
         self.check_marker = QCheckBox('Show markers')
         self.check_smooth_curve = QCheckBox('Show smooth curve')
-        self.timeDefault = QCheckBox('Plot against time')
+        self.timeDefault = QCheckBox('Display time on X-axis')
 
         self.remove_marked = QPushButton('Remove data', self)
         self.restore_marked = QPushButton('Restore removed data', self)
@@ -119,12 +119,15 @@ class AxesToolBox(QWidget):
 
         data_axis [list of DataAxis]
         '''
+
         if len(data_axis) > 0:
+            self.resetToolBox()
             self.current_axis = data_axis[0]
 
             for ax in data_axis:
                 if ax not in self.data_axis:
                     self.addSingleDataAxis(ax)
+
 
     def addSingleDataAxis(self, data_axis):
         '''
@@ -136,14 +139,12 @@ class AxesToolBox(QWidget):
 
         if data_axis == self.current_axis:
 
-            self.original_lines = data_axis.getAxis().get_lines()
-            for line in self.original_lines:
+            original_lines = data_axis.getAxis().get_lines()
+            original_lines:
                 line.remove()
 
             self.plotCurrentAxis()
             self.updateSelector(data_axis)
-
-
 
         self._showLine()
         self._showMarkers()
@@ -172,6 +173,20 @@ class AxesToolBox(QWidget):
         else:
             return False
 
+
+    def resetToolBox(self):
+        self.selector = None
+        self.data_axis = []
+
+        if self.lineExists(self.edited_curve):
+            self.edited_curve.remove()
+            self.edited_curve = None
+        if self.lineExists(self.smooth_curve):
+            self.smooth_curve.remove()
+            self.smooth_curve = None
+        if self.lineExists(self.marked_data_curve):
+            self.marked_data_curve.remove()
+            self.marked_data_curve = None
 
 
 
