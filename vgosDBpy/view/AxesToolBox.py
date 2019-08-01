@@ -49,13 +49,6 @@ class AxesToolBox(QWidget):
         self.data_axis = canvas.getDataAxis()
         self.current_axis = start_axis
 
-        # Checks if current_axis is given
-        if self.current_axis == None and not len(self.data_axis) > 0:
-            self.original_lines = None
-        else:
-            self.original_lines = self.current_axis.getAxis().get_lines()
-
-
         self.edited_curve = None # Saves the curve for edited data (where marked data is hidden)
         self.smooth_curve = None # Saves the smooth curve
         self.marked_data_curve = None # Saves marked data points to plot
@@ -140,7 +133,7 @@ class AxesToolBox(QWidget):
         if data_axis == self.current_axis:
 
             original_lines = data_axis.getAxis().get_lines()
-            original_lines:
+            for line in original_lines:
                 line.remove()
 
             self.plotCurrentAxis()
