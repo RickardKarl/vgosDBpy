@@ -316,6 +316,8 @@ def get_data_to_table(pathToNetCDF, var):
     if var.strip() == 'Baseline':
         #print('enter 1')
         y = get_dataBaseline(pathToNetCDF)
+    elif var.strip() == 'QualityCode':
+        y = get_QualityCode_table(pathToNetCDF,var)
     elif dim.strip() == 'NumStation' and dtype == 'S1':
         y = get_NumStation_S1_table(pathToNetCDF, var)
     elif dim.strip() == 'NumObs' and dtype == 'S1':
@@ -345,8 +347,10 @@ def get_S1_tableData(pathToNetCDF, var):
     with Dataset(pathToNetCDF, "r", format="NETCDF4_CLASSIC") as nc:
         data= nc.variables[var][:]
         for line in data:
+
             temp = ''
             for letter in line:
+
                 temp += letter.decode('ASCII')
             data.append(temp)
         return_data.append(data)
@@ -394,6 +398,20 @@ def getDataFromVar_table(path, var):
         return_data.append(nc.variables[var][:])
         #print(return_data)
         return(return_data)
+
+
+def get_QualityCode_table(pathToNetCDF,var):
+    return_data = []
+    data_arr = []
+    with Dataset(pathToNetCDF, "r", format="NETCDF4_CLASSIC") as nc:
+        data= nc.variables[var][:]
+        for line in data:
+            temp = ''
+            temp += line.decode('ASCII')
+            data_arr.append(temp)
+        return_data.append(data_arr)
+    return return_data
+
 
 def getDataFromVar_multDim(pathToNetCDF, var):
     #if is_TimeDim2(pathToNetCDF, var):
@@ -476,201 +494,3 @@ Returns: thr data type of that variable
 def get_dtype_for_var(path, var):
     with Dataset(path, "r", format = "NETCDF4_CLASSIC" ) as nc:
         return nc.variables[var].dtype
-
-
-
-#########NOT USED############## 15/7 2019"##############
-#########NOT USED############## 15/7 2019"##############
-#########NOT USED############## 15/7 2019"##############
-#########NOT USED############## 15/7 2019"##############
-#########NOT USED############## 15/7 2019"##############
-#########NOT USED############## 15/7 2019"##############
-#########NOT USED############## 15/7 2019"##############
-#########NOT USED############## 15/7 2019"##############
-########NOT USED############## 15/7 2019"##############
-#########NOT USED############## 15/7 2019"##############
-#########NOT USED############## 15/7 2019"##############
-#########NOT USED############## 15/7 2019"##############
-#########NOT USED############## 15/7 2019"##############
-#########NOT USED############## 15/7 2019"##############
-#########NOT USED############## 15/7 2019"##############
-#########NOT USED############## 15/7 2019"##############
-
-########NOT USED############## 15/7 2019"##############
-#########NOT USED############## 15/7 2019"##############
-#########NOT USED############## 15/7 2019"##############
-#########NOT USED############## 15/7 2019"##############
-#########NOT USED############## 15/7 2019"##############
-#########NOT USED############## 15/7 2019"##############
-#########NOT USED############## 15/7 2019"##############
-#########NOT USED############## 15/7 2019"##############
-
-
-"""
-def getDataFromVar_multDim(pathToNetCDF, var):
-    return_data = []
-    data = []
-    with Dataset(pathToNetCDF, 'r', format= 'NETCDF4_CLASSIC') as nc:
-        length = len(nc.variables[var.strip()].get_dims())
-        for i in range(0, length):
-            return_data.append(nc.variables[var.strip()][:,[i]])
-
-        for i in range (0,length):
-            temp = []
-            data.append(nc.variables[var.strip()][:,[i]])
-            r= nc.variables[var.strip()][:,[i]]
-            print(len(r))
-            #for i in range(0,len(r)):
-                #temp.append(return_data[i,[j]])
-                #temp.append(r[i])
-            #data.append(temp)
-        print(len(data))
-        y1 = data[0][:]
-        y2 = data[1][:]
-        print(y1)
-        print(y2)
-    plt.plot(y1,y2)
-    plt.show()
-
-#Takes in: a path to a NetCDF file
-#Returns: all variables in a netCDF file that can be plotted versus time, mening they have same Dimension "Numscans" and data type !=  S1
-#Internal calls:
-#                find_dtype(path)
-#                read_netCDF_vars(path)
-
-def possible_to_plot(pathToNetCDF):
-    dtypes = find_dtype(pathToNetCDF)
-    vars = read_netCDF_vars(pathToNetCDF)
-    timePath = findCorrespondingTime(pathToNetCDF)
-    plotVars = []
-    i=0;
-    for i in range(len(dtypes)):#type in dtypes:
-        if dtypes[i] != "S1" and len(vars[i]) == len(time):
-            plotVars.append(vars[i])
-    return plotVars
-
-
-#wierd name, Takes in a path to netCDf file and a name to a variable in it
-#returns an table containing the index, time and data for the given variable.
-
-def read_var_content_float64(seekedData, pathToNetCDF): #NEVER USED, BORDE EJ FUNKA
-    timePath = findCorrespondingTime(pathToNetCDF)
-    Time= combineYMDHMwithSec(timePath)
-    with Dataset(pathToNetCDF,"r", format="NETCDF4_CLASSIC") as nc:
-        data = nc.variables[seekedData][:]
-        table = PT()
-        table.field_names = [seekedData, "Index", "Time", "Data"]
-        for i in range(len(data)):
-            table.add_row([" ", i, Time[i], data[i]])
-        table.get_string(title= seekedData)
-        return table
-
-
-def read_var_content_S1_header(seekedData, pathToNetCDF):
-    header = ""
-    if seekedData == 'Stub':
-        header.append("File name : " + read_var_content_S1(seekedData, pathToNetCDF))
-    if seekedData == 'CreateTime':
-        header.append("File Created: " + read_var_content_S1(seekedData, pathToNetCDF))
-    if seekedData == 'CreatedBy':
-        header.append("Author : " + read_var_content_S1(seekedData, pathToNetCDF))
-    if seekedData == 'Stub':
-        header.append("File name: " + read_var_content_S1(seekedData, pathToNetCDF))
-
-"""
-
-"""
-#Not really relevant for now I think
-
-def read_var_content(seekedData,pathToNetCDF,Time,dtype):
-    #if dtype == "float64":
-    #    return read_var_content_float64(seekedData,pathToNetCDF,Time)
-    if dtype == "S1":
-        return read_var_content_S1(seekedData, pathToNetCDF)
-    else:
-        return read_var_content_float64(seekedData,pathToNetCDF, Time)
-
-
-"""
-
-
-
-"""
-Reads in the data type for alla variables in a netCDF file and returns as an vector
-"""
-
-
-"""
-currently only returning true if dimension is numscan
-"""
-
-"""
-return an array of the data assosiated with an variable
-"""
-
-
-"""
-def get_constants(path):
-    dtype = find_dtype(path)
-    dimensions = find_dimensions(path)
-    vars = read_netCDF_variables(path)
-
-    c = 0
-    constants = []
-    for var in vars :
-        if dtype[c] != 'S1' and dimensions[c] != 'NumScans':
-            constants.append(var)
-        c += 1
-    return constants
-
-
-def get_constants_content(path):
-    constants = get_constants(path)
-    content= []
-    for cont in constants:
-        content.append(getDataFromVar(path, cont))
-    return content
-"""
-#det get_info_from_var()
-
-#path = "./../../Files/10JAN04XU/Apriori/Antenna.nc"
-#print(read_netCDF_vars_info(path))
-
-#path= "./../../../../Files/10JAN04XU/KOKEE/Met.nc"
-#pathTime = "./../../../../Files/10JAN04XU/KOKEE/TimeUTC.nc"
-#YMDHMS= combineYMDHMwithSec(pathTime)
-#vars_in_file  = read_netCDF_variables(path)
-#dtypes = find_dtype(path)
-#print(vars_in_file)
-#print(dtypes)
-
-
-"""
-#####################Methods assosiatedwith specifik var##############################
-"""
-"""
-def get_data_constant(path, var):
-
-
-    #for i in range(len(dtypes)):#type in dtypes:
-    #    if dtypes[i] != "S1" and len (vars[i]) == len(time):
-    #        plotVars.append(vars[i])
-    #return plotVars
-
-#print(vars_in_file)
-#print(read_netCDF_vars_info(path))
-
-#print(dtypes)
-#print(vars_in_file)
-
-#for i in range(len(vars_in_file)):
-#with Dataset(path, "r", format="NETCDF4_CLASSIC") as nc:
-     #print(len(nc.variables[vars_in_file[12]]))
-     #print(len(nc.variables[vars_in_file[13]]))
-#     if dtypes[i] == "S1":
-    #else:
-#print(vars_in_file[StationList])
-    #print(nc.variables["StationList"][:])
-        #if vars_in_file[i]!= "StationList":
-       print((read_var_content(vars_in_file[i], path, YMDHMS, dtypes[i])))
-"""
