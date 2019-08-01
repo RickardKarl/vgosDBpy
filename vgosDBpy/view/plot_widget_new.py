@@ -88,38 +88,38 @@ class PlotFigure(FigureCanvas):
 
         items [list of QStandardItem]
         '''
+        if len(items) > 0:
+            # Discards the old graph
+            self.resetFigure()
 
-        # Discards the old graph
-        self.resetFigure()
+            if timeUpdated is False:
+                self.paths = []
+                self.vars = []
+                self.items = []
 
-        if timeUpdated is False:
-            self.paths = []
-            self.vars = []
-            self.items = []
+                for itm in items:
+                    self.paths.append(itm.getPath())
+                    self.vars.append(itm.labels)
+                    self.items.append(itm)
 
-            for itm in items:
-                self.paths.append(itm.getPath())
-                self.vars.append(itm.labels)
-                self.items.append(itm)
+            #for i in range(0,len(self.paths)):
+                #print('paths: ' +  self.paths[i])
+                #print('vars: ' + self.vars[i])
 
-        #for i in range(0,len(self.paths)):
-            #print('paths: ' +  self.paths[i])
-            #print('vars: ' + self.vars[i])
+            if not_S1(self.paths, self.vars):
+                axis, data = self.plot_function.plotFunction(self.paths, self.vars, self.figure, self.timeInt)
+                is_mult = is_multdim_var(self.paths, self.vars)
 
-        if not_S1(self.paths, self.vars):
-            axis, data = self.plot_function.plotFunction(self.paths, self.vars, self.figure, self.timeInt)
-            is_mult = is_multdim_var(self.paths, self.vars)
+                if is_mult!= -1 and timeUpdated == False:
+                    items.append(items[is_mult])
 
-            if is_mult!= -1 and timeUpdated == False:
-                items.append(items[is_mult])
+                for i in range(len(axis)):
+                    self.addAxis(DataAxis(axis[i], data[i], items[i]))
 
-            for i in range(len(axis)):
-                self.addAxis(DataAxis(axis[i], data[i], items[i]))
-
-            # Refresh canvas
-            self.updatePlot()
-        else:
-            print('Trying to plot a string')
+                # Refresh canvas
+                self.updatePlot()
+            else:
+                print('Trying to plot a string')
 
     def resetFigure(self):
         self.figure.clear()
