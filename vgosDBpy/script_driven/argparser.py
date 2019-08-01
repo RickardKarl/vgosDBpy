@@ -29,11 +29,12 @@ class CommandLineInterface(argparse.ArgumentParser):
         super(CommandLineInterface,self).__init__(prog = 'vgosDBpy')
 
         # Adding arguments
-        self.add_argument('file', help = 'Read a file (*.wrp) or (*.log)')
-        self.add_argument('--var', metavar = 'VARIABLE',
-         help = 'Name of the variables that can be displayed: ' + ', '.join(CommandLineInterface.dumpable_variables))
+        self.add_argument('file', help = 'Read a file (*.wrp)')
         self.add_argument('-g','--graphic', help = 'Activate graphical user interface when reading wrapper',
                         action="store_true")
+
+        #self.add_argument('--var', metavar = 'VARIABLE',
+        # help = 'Name of the variables that can be displayed: ' + ', '.join(CommandLineInterface.dumpable_variables))
 
 
         # Retrieve arguments
@@ -62,7 +63,7 @@ class CommandLineInterface(argparse.ArgumentParser):
                 parser = Parser(self.args.file)
                 wrapper = parser.parseWrapper(self.args.file)
                 print(wrapper)
-
+        '''
         elif self.args.file.endswith('.log'):
             if self.args.var != None:
                 variable_exists = self.args.var.lower() in LogInfo.available_variables
@@ -70,9 +71,9 @@ class CommandLineInterface(argparse.ArgumentParser):
 
                 read_log = LogInfo(self.args.file)
                 read_log.plotVar(self.args.var)
-
-        else:
-            raise ValueError('Wrong file given, does not end with .wrp or .log', self.args.file)
+        '''
+        #else:
+        #    raise ValueError('Wrong file given, does not end with .wrp or .log', self.args.file)
 
 
     def loop():
