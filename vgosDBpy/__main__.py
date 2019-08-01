@@ -21,12 +21,14 @@ if __name__ == '__main__':
             #path = "./../../Files/10JAN04XU/Session/GroupBLWeights.nc"
             #path = "../../Files/10JAN04XK/10JAN04XK_V005_iGSFC_kall.wrp"
             #path = "./../../Files/10JAN04XU/Head.nc"
-            #path = "./../../Files/10JAN04XK/Observables/SNR_bX.nc"
+            path = "./../../Files/10JAN04XK/Observables/QualityCode_bS.nc"
+            path2 = "./../../Files/10JAN04XK/Observables/QualityCode_bX.nc"
             #path = "./../../Files/10JAN04XK/TSUKUB32/Part-HorizonGrad_kNMF.nc"
-            path = "./../../Files/10JAN04XK/Observables/Baseline.nc"
-            #path2 ="./../../Files/10JAN04XK/TSUKUB32/AzEl.nc"
-            #path =  './../../Files/10JAN04XK/Apriori/Antenna.nc'
-            #path2 = './../../Files/10JAN04XK/Apriori/Eccentricity.nc'
+            #path = "./../../Files/10JAN04XK/Observables/Source.nc"
+            #path = "./../../Files/10JAN04XK/TSUKUB32/AzEl.nc"
+            #path2 = './../../Files/10JAN04XK/TSUKUB32/Part-AxisOffset.nc'
+            #path =  './../../Files/10JAN04XK/Apriori/Station.nc'
+            #path2 = './../../Files/10JAN04XK/CrossReference/ObsCrossRef.nc'
             #path = "./../../Files/10JAN04XK/Scan/ERPApriori.nc"
             print_name_dtype_dim_length(path)
 
@@ -46,7 +48,7 @@ if __name__ == '__main__':
                     dtypes = nc.variables[var].dtype
                     for dim in dimension:
                         print('.    '+ dim.name)
-            """
+
             print_name_dtype_dim_length(path2)
             with Dataset(path2, 'r', format = 'NETCDF4_CLASSIC') as nc:
                 vars = nc.variables
@@ -58,7 +60,7 @@ if __name__ == '__main__':
                     dtypes = nc.variables[var].dtype
                     for dim in dimension:
                         print('.    '+ dim.name)
-            """
+
             #find_dimensions(path)
             #getDataFromVar_multDim(path,'obs2Scan')
             #print(read_netCDF_data_info(path))

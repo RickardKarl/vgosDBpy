@@ -12,6 +12,8 @@ def get_name_to_print(path, var):
             return "Humidity "#"[" +unit+ "]"
         elif var == 'Cal-Cabel':
             return "Cal-Cabel  "#"[" +unit+ "]"
+        elif var == 'Time':
+            return 'Time'
         else:
             return var
 
@@ -22,6 +24,8 @@ def get_unit_to_print(path,var):
         #    unit=nc.variables[var].Units
         #else:
         #    unit = ''
+        if var == 'Time':
+            return '[M:D:H]'
         try:
             unit = nc.variables[var].Units
         except:

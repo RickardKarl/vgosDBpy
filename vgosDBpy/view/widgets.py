@@ -231,7 +231,6 @@ class DataTable(QTableView):
             items = []
             for ax in data_axis:
                 items.append(ax.getItem())
-
             # Update values in table
             self._model.updateFromDataAxis(data_axis)
 
@@ -241,9 +240,10 @@ class DataTable(QTableView):
             for itm in items:  #tm in items:
                 path.append(itm.getPath())
                 var.append(itm.labels)
+            data = self.tabfunc.tableFunctionGeneral(path,var)
             header_labels = self.tabfunc.return_header_names(path,var)
             header_labels.insert(TableModel.time_col, TF.time_label)
-            self._model.update_header(header_labels)
+            self._model.update_header(self.tabfunc.return_header_names(path,var))
 
         # Updates size of column when content is changed
         self.updateColumnSize()

@@ -197,10 +197,10 @@ class TableModel(QStandardItemModel):
                 for i in range(len(data)):
                     self.setItem(i, col_index, DataValue(str(data[i]), items[j]))
 
-            self.dataaxis_to_column_map[data_axis[j]] = col_index
-            self.column_to_dataaxis_map[col_index] = data_axis[j]
+                self.dataaxis_to_column_map[data_axis[j]] = col_index
+                self.column_to_dataaxis_map[col_index] = data_axis[j]
 
-            col_index += 1
+                col_index += 1
 
         self.data_axis = data_axis
 

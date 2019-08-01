@@ -5,10 +5,11 @@ from matplotlib.backends.backend_qt5agg import NavigationToolbar2QT as Navigatio
 from matplotlib.backends.backend_pdf import PdfPages
 from matplotlib.figure import Figure
 
-from vgosDBpy.data.plotFunction import plot_generall, is_multdim_var
+#from vgosDBpy.data.plotFunction import is_multdim_var#plot_generall,
+from vgosDBpy.data.plotFunctionNew import Plotfunction_class
 from vgosDBpy.model.data_axis import DataAxis
 from vgosDBpy.view.plotlines import createLine2D, createSmoothCurve
-from vgosDBpy.data.readNetCDF import not_S1
+from vgosDBpy.data.readNetCDF import not_S1, is_multdim_var
 from vgosDBpy.view.AxesToolBox import AxesToolBox
 
 class PlotFigure(FigureCanvas):
@@ -38,6 +39,7 @@ class PlotFigure(FigureCanvas):
         self.items = []
 
         self.Mult_item_added = False
+        self.plot_function = Plotfunction_class()
 
     def updatePlot(self):
         self.draw()
@@ -105,7 +107,7 @@ class PlotFigure(FigureCanvas):
             #print('vars: ' + self.vars[i])
 
         if not_S1(self.paths, self.vars):
-            axis, data = plot_generall(self.paths, self.vars, self.figure, self.timeInt)
+            axis, data = self.plot_function.plotFunction(self.paths, self.vars, self.figure, self.timeInt)
             is_mult = is_multdim_var(self.paths, self.vars)
 
             if is_mult!= -1 and timeUpdated == False:
@@ -136,7 +138,7 @@ class PlotFigure(FigureCanvas):
         self.items.append(item)
         self.resetFigure()
         if not_S1(self.paths,self.vars):
-            axis, data = plot_generall(self.paths, self.vars, self.figure, self.timeInt)
+            axis, data = self.plot_function.plotFunction(self.paths, self.vars, self.figure, self.timeInt)
             for i in range(len(axis)):
                 self.addAxis(DataAxis(axis[i], data[i], self.items[i]))
 
