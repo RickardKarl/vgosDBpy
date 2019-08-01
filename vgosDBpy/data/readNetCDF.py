@@ -323,7 +323,7 @@ def get_data_to_table(pathToNetCDF, var):
     elif dim.strip() == 'NumObs' and dtype == 'S1':
         y = get_NumStation_S1_table(pathToNetCDF,var)
     elif dims_len != 1:
-        print('MULTDIM')
+        #print('MULTDIM')
         y = getDataFromVar_multDim(pathToNetCDF, var)
         #print('enter 2')
     elif dtype == 'S1' :
@@ -367,16 +367,16 @@ def get_NumStation_S1_table(pathToNetCDF,var):
 
         for dim in dimensions:
             length.append(len(dim))
-        print(length)
+        #print(length)
         for i in range(length[0]): #len(dimensions[0]):
             temp = ''
             for j in range(length[1]):
                 temp += content[i,j].decode('ASCII')
             temp += '  '
-            print(temp)
+            #print(temp)
             table.append(temp)
         return_data.append(table)
-        print(len(return_data))
+        #print(len(return_data))
         return return_data
 
 def get_bytes8_tableData(pathToNetCDF, var):
@@ -424,15 +424,15 @@ def getDataFromVar_multDim_all(pathToNetCDF, var):
     return_data = []
     with Dataset(pathToNetCDF, 'r', format= 'NETCDF4_CLASSIC') as nc:
         length = len(nc.variables[var.strip()].get_dims())
-        print(length)
+        #print(length)
         length2 = len(nc.variables[var][0,:])
-        print(length2)
+        #print(length2)
         for i in range (0,length2):
             dtype = nc.variables[var.strip()][:,[i]].dtype
             #print(nc.variables[var.strip()][:,[i]].dtype)
             if dtype == 'S1':
                 data_var= nc.variables[var][:,[i]]
-                print(data_var)
+                #print(data_var)
                 data= []
                 for line in data_var:
                     temp = ''
@@ -441,7 +441,7 @@ def getDataFromVar_multDim_all(pathToNetCDF, var):
                     data.append(temp)
                 return_data.append(data)
             else:#item  =str(nc.variables[var.strip()][:,[i]]) + '*'
-                print('Not S1')
+                #print('Not S1')
                 return_data.append(nc.variables[var.strip()][:,[i]])
         return return_data
 

@@ -25,7 +25,7 @@ class Tablefunction():
         c = 0
         for path in paths:
             y = get_data_to_table(path, vars[c]) # desission moved to that funciton
-            print(len(y))
+            #print(len(y))
             if len(y) == 1 :
                 self.data[name(path,vars[c])] = y[0]
             else:
