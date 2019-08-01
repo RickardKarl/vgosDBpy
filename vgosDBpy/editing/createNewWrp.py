@@ -14,10 +14,8 @@ def create_new_wrapper(list_changed_files, new_file_names, path_to_old_wrp, hist
     path_to_new_wrp = newWrapperPath(path_to_old_wrp)
     #print('Creating wrapper with path:', path_to_new_wrp)
 
-    if os.path.isfile(path_to_new_wrp):
+    while os.path.isfile(path_to_new_wrp):
         path_to_new_wrp = newWrapperPath(path_to_new_wrp)
-
-    #print(path_to_new_wrp)
 
     parser = Parser(path_to_old_wrp)
 
@@ -51,8 +49,7 @@ def create_new_wrapper(list_changed_files, new_file_names, path_to_old_wrp, hist
         dir = dir.lower().strip()
         if dir not in map:
             map[dir] = []
-        map[dir].append(old_file_names[c])
-        map[dir].append(new_file_names[c])
+        map[dir].append([old_file_names[c], new_file_names[c]])
         c += 1
     # initialy we are not in a direcotory
     changes_files_in_current_directory = []
@@ -77,19 +74,24 @@ def create_new_wrapper(list_changed_files, new_file_names, path_to_old_wrp, hist
                 written = False
 
                 if changes_files_in_current_directory != []:
-                    old_name = changes_files_in_current_directory[0]
-                    new_name = changes_files_in_current_directory[1]
 
-                    keywords = l.split()
-                    if old_name.lower().strip() in keywords:
-                        new_wrapper.write(new_name+'\n')
-                        written = True
+                    for file_names in changes_files_in_current_directory:
+                        old_name = file_names[0]
+                        new_name = file_names[1]
+
+                        keywords = l.split()
+                        if old_name.lower().strip() in keywords:
+                            new_wrapper.write(new_name+'\n')
+                            written = True
+                            break
 
                 if written is False:
                     new_wrapper.write(line)
 
         new_wrapper.close()
     old_wrapper.close()
+
+    return path_to_new_wrp
 
 def writeHistoryBlock(file, hist_file_name, timestamp):
     file.write('!\n')

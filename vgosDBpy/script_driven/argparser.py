@@ -34,8 +34,6 @@ class CommandLineInterface(argparse.ArgumentParser):
          help = 'Name of the variables that can be displayed: ' + ', '.join(CommandLineInterface.dumpable_variables))
         self.add_argument('-g','--graphic', help = 'Activate graphical user interface when reading wrapper',
                         action="store_true")
-        self.add_argument('--hist', help = 'Dump history of given wrapper',
-                        action="store_true")
 
 
         # Retrieve arguments
@@ -59,12 +57,6 @@ class CommandLineInterface(argparse.ArgumentParser):
                 window.show()
                 # Run the main Qt loop
                 sys.exit(app.exec_())
-
-            # Non-GUI
-            elif self.args.hist == True:
-                parser = Parser(self.args.file)
-                wrapper = parser.parseWrapper(self.args.file)
-                print(wrapper.getHistory())
 
             else:
                 parser = Parser(self.args.file)

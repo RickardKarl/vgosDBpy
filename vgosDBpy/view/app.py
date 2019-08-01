@@ -7,6 +7,7 @@ from vgosDBpy.view.widgets import QWrapper, VariableTable, DataTable
 from vgosDBpy.data.readNetCDF import read_netCDF_vars_info #read_netCDF_data_info #, read_netCDF_dimension_for_var, read_netCDF_variables,
 from vgosDBpy.view.plot_widget_new import AxesToolBox, PlotWidget
 from vgosDBpy.editing.track_edits import EditTracking
+from vgosDBpy.wrapper.tree import Wrapper
 
 class App(QWidget):
     '''
@@ -55,7 +56,6 @@ class App(QWidget):
 
         ################## Buttons ########################
         # Plot and display table
-        self.button_plot_table = QPushButton('& Plot + Table ')
         self.button_plot = QPushButton('& Plot',self)
         self.button_table = QPushButton('& Table',self)
         self.button_append_table = QPushButton('& Add to table' )
@@ -64,7 +64,6 @@ class App(QWidget):
         self.button_clear_table = QPushButton('& Clear table')
 
         # Button event
-        self.button_plot_table.clicked.connect(self._plot_table_button)
         self.button_plot.clicked.connect(self._plotbutton)
         self.button_table.clicked.connect(self._tablebutton)
         self.button_append_table.clicked.connect(self._addbutton)
@@ -130,6 +129,11 @@ class App(QWidget):
                 self.info_text.setPlainText(str(text_total))
                 self.var_table.updateVariables(item)
 
+            elif item.isHistFile():
+                text = Wrapper.getHistory(item.getPath())
+                self.info_text.setPlainText(text)
+
+
     def _plot_table_button(self):
         self._plotbutton()
         self._tablebutton()
@@ -171,7 +175,6 @@ class App(QWidget):
                 items.append(self.var_table.getModel().itemFromIndex(index[i]))
             if not items == [] :
                 self.data_table.updateData(items)
-
 
     def _addbutton(self):
         index= self._getSelected(self.var_table)

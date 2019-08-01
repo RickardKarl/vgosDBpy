@@ -75,7 +75,7 @@ class TreeModel(QStandardItemModel):
                 self.recursive(c, item)
         else:
             if node.isNetCDF() is False and not node.isHistFile():
-                item.appendRow(QStandardItem('Empty'))
+                item.appendRow(QNodeItem('Empty'))
 
 
 class QNodeItem(QStandardItem):
@@ -155,7 +155,7 @@ class QNodeItem(QStandardItem):
             return self.node == other.node
         else:
             return False
-    
+
 
 
 class NetCDFItem(QNodeItem):

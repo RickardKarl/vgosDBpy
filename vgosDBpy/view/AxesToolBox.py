@@ -6,7 +6,7 @@ import pandas as pd
 
 from vgosDBpy.editing.select_data import getData
 from vgosDBpy.view.plotlines import createLine2D, createSmoothCurve
-from vgosDBpy.data.tableToASCII import convertToAscii
+from vgosDBpy.data.tableToASCII import convertToAscii, write_ascii_file
 
 import time
 
@@ -49,13 +49,6 @@ class AxesToolBox(QWidget):
         self.data_axis = canvas.getDataAxis()
         self.current_axis = start_axis
 
-        # Checks if current_axis is given
-        if self.current_axis == None and not len(self.data_axis) > 0:
-            self.original_lines = None
-        else:
-            self.original_lines = self.current_axis.getAxis().get_lines()
-
-
         self.edited_curve = None # Saves the curve for edited data (where marked data is hidden)
         self.smooth_curve = None # Saves the smooth curve
         self.marked_data_curve = None # Saves marked data points to plot
@@ -66,7 +59,7 @@ class AxesToolBox(QWidget):
         self.check_line = QCheckBox('Show line')
         self.check_marker = QCheckBox('Show markers')
         self.check_smooth_curve = QCheckBox('Show smooth curve')
-        self.timeDefault = QCheckBox('Plot against time')
+        self.timeDefault = QCheckBox('Display time on X-axis')
 
         self.remove_marked = QPushButton('Remove data', self)
         self.restore_marked = QPushButton('Restore removed data', self)
@@ -119,12 +112,15 @@ class AxesToolBox(QWidget):
 
         data_axis [list of DataAxis]
         '''
+
         if len(data_axis) > 0:
+            self.resetToolBox()
             self.current_axis = data_axis[0]
 
             for ax in data_axis:
                 if ax not in self.data_axis:
                     self.addSingleDataAxis(ax)
+
 
     def addSingleDataAxis(self, data_axis):
         '''
@@ -136,14 +132,12 @@ class AxesToolBox(QWidget):
 
         if data_axis == self.current_axis:
 
-            self.original_lines = data_axis.getAxis().get_lines()
-            for line in self.original_lines:
+            original_lines = data_axis.getAxis().get_lines()
+            for line in original_lines:
                 line.remove()
 
             self.plotCurrentAxis()
             self.updateSelector(data_axis)
-
-
 
         self._showLine()
         self._showMarkers()
@@ -172,6 +166,20 @@ class AxesToolBox(QWidget):
         else:
             return False
 
+
+    def resetToolBox(self):
+        self.selector = None
+        self.data_axis = []
+
+        if self.lineExists(self.edited_curve):
+            self.edited_curve.remove()
+            self.edited_curve = None
+        if self.lineExists(self.smooth_curve):
+            self.smooth_curve.remove()
+            self.smooth_curve = None
+        if self.lineExists(self.marked_data_curve):
+            self.marked_data_curve.remove()
+            self.marked_data_curve = None
 
 
 
@@ -334,4 +342,15 @@ class AxesToolBox(QWidget):
         self.parentWidget().track_edits.saveEdit()
 
     def _printTable(self):
-        print(convertToAscii(self.table_widget))
+        ptable = convertToAscii(self.table_widget)
+        session_name = self.parentWidget().treeview.getWrapper().session_name
+        info = 'Session: ' + session_name
+
+        file_name = ''
+        for head in ptable.field_names:
+            if len(head) > 3:
+                head = head[0:3]
+            file_name = file_name + '_' + head
+
+        path = session_name + file_name + '.txt'
+        write_ascii_file(ptable, info, path)

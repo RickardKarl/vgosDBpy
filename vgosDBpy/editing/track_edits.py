@@ -12,7 +12,6 @@ class EditTracking:
     '''
 
     def __init__(self, wrapper):
-
         self._edited_variables = []
         self._edited_data = {}
         self._wrapper = wrapper
@@ -70,6 +69,7 @@ class EditTracking:
 
         path_to_file_list = [] # Saves path to the file that is replaced
         new_file_name_list = [] # Saves name of all newly created files
+
         for parent_key in sort_by_parent:
             # Get variables that belongs to the same parent
             var_list = sort_by_parent.get(parent_key)
@@ -90,24 +90,34 @@ class EditTracking:
             new_file_name_list.append(new_file_name)
 
         print(path_to_file_list)
-        print('Created the following files:', new_file_name)
+        print('Created the following files:', new_file_name_list)
 
         # Create new history file and add it to the wrapper changes
-        new_hist_path, timestamp = self.createNewHistFile(sort_by_parent, new_file_name_list)
+        new_hist_path, timestamp = self.createNewHistFile(sort_by_parent, path_to_file_list, new_file_name_list)
         hist_file_name = new_hist_path.split('/')[-1]
 
         # Create new wrapper
-        create_new_wrapper(path_to_file_list, new_file_name_list, self._wrapper.wrapper_path,
+        new_wrp_path = create_new_wrapper(path_to_file_list, new_file_name_list, self._wrapper.wrapper_path,
                             hist_file_name, timestamp)
 
+        print('Created the following wrapper:', new_wrp_path)
+        print('Created the following history file:', new_hist_path)
 
 
-    def createNewHistFile(self, sort_var_by_file, new_file_name_list):
+
+    def createNewHistFile(self, sort_var_by_file, path_to_file_list, new_file_name_list):
         '''
         Create a new .hist-file
 
         Returns path to new history file
         '''
+
+        # Get folders
+        folder = []
+        for path in path_to_file_list:
+            f = path.split('/')[-2]
+            folder.append(f)
+
         # Getting timestamp of creation of file
         timestamp = datetime.now()
 
@@ -127,7 +137,7 @@ class EditTracking:
 
             file_index = 0
             for old_file in sort_var_by_file:
-                str_line = 'Made changes to ' + str(old_file) + ' which are saved in ' + new_file_name_list[file_index] + '\n'
+                str_line = 'Made changes to ' + str(old_file) + ' in ' + folder[file_index] + ', which are saved in ' + new_file_name_list[file_index] + '\n'
                 dest.write(str_line)
                 file_index += 1
                 for var in sort_var_by_file.get(old_file):
