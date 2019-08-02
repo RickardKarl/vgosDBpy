@@ -4,7 +4,7 @@ from PySide2 import QtCore
 from pandas.plotting import register_matplotlib_converters
 
 from vgosDBpy.view.widgets import QWrapper, VariableTable, DataTable
-from vgosDBpy.data.readNetCDF import read_netCDF_vars_info #read_netCDF_data_info #, read_netCDF_dimension_for_var, read_netCDF_variables,
+from vgosDBpy.data.readNetCDF import read_netCDF_vars_info 
 from vgosDBpy.view.plot_widget_new import AxesToolBox, PlotWidget
 from vgosDBpy.editing.track_edits import EditTracking
 from vgosDBpy.wrapper.tree import Wrapper
@@ -186,6 +186,7 @@ class App(QWidget):
 
     def _clear_plot(self):
         self.plot_widget.plot_canvas.clearFigure()
+        self.data_table.clearTable()
 
     def _clear_table(self):
         self.data_table.clearTable()

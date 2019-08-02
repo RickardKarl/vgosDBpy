@@ -40,7 +40,7 @@ class PathParser():
 
     def get_parts(self):
         return self.parts
-
+"""
 def findCorrespondingTime(path):
     time_path = ""
     if os.path.isfile(path):
@@ -51,3 +51,4 @@ def findCorrespondingTime(path):
             return time_path
         else:
              return ''
+"""

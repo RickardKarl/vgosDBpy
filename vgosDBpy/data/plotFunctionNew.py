@@ -5,19 +5,18 @@ import pandas as pd
 from matplotlib.dates import DateFormatter as DF
 from netCDF4 import Dataset
 
-from vgosDBpy.data.PathParser import findCorrespondingTime
-from vgosDBpy.data.combineYMDHMS import combineYMDHMwithSec
-from vgosDBpy.data.readNetCDF import getDataFromVar, header_info_to_plot, read_netCDF_variables, getDataFromVar_multDim, is_TimeDim2, is_multdim_var, is_possible_to_plot,get_data_to_plot
+#from vgosDBpy.data.PathParser import findCorrespondingTime
+from vgosDBpy.data.combineYMDHMS import combineYMDHMwithSec, checkIfTimeAvailable, default_time,findCorrespondingTime
+from vgosDBpy.data.readNetCDF import header_info_to_plot,get_data_to_plot
 from vgosDBpy.data.getRealName import get_name_to_print as name, get_unit_to_print as unit
-"""
-from PathParser import findCorrespondingTime
-from combineYMDHMS import combineYMDHMwithSec
-from readNetCDF import getDataFromVar
-from getRealName import get_name_to_print as name
-"""
+
 import os
 from datetime import datetime
 
+# # TODO:
+    #- legend
+    #- labelcolor
+    #- mult dim plot
 
 """
 ALWYAS CALL THIS METHOD FROM OUTSIDE THIS FILE
@@ -98,9 +97,11 @@ class Plotfunction_class():
         self.length_axis = 1
 
     def add_to_x_axis(self,path, var, data):
+        data = np.squeeze(np.asarray(data))
         self.x.createAxisItem(path,var,data)
 
     def add_to_y_axis(self,path,var,data):
+        data = np.squeeze(np.asarray(data))
         if self.y1.isEmpty == True:
             self.y1.createAxisItem(path,var,data)
         elif self.y2.isEmpty == True:
@@ -120,10 +121,9 @@ class Plotfunction_class():
         self.add_to_x_axis(path,'Index', idx)
 
     def _append_data(self):
-        #for itm in self.y1:
         if self.y1.isEmpty == False:
             self.data.append(pd.Series(self.y1.getData(), index = self.x.getData() ) )
-        #for im in self.y2:
+
         if self.y2.isEmpty == False:
             self.data.append(pd.Series(self.y2.getData(), index = self.x.getData() ) )
 
@@ -133,41 +133,51 @@ class Plotfunction_class():
         #clears all info
         self.clear()
         nbr = len(paths)
-        self.place = 0
+        self.place = -1
         if default_time(state) is True and checkIfTimeAvailable(paths, vars) is True :
             plot_to_time = True
         else :
             plot_to_time = False
 
         """
-        So far we are not working with aither data or axis just creating x, y1, y2
+        So far we are not working with neither data nor axis just creating x, y1, y2
         """
         # First find which data that should be x-axis
         # possible options is time, index or data form path.
-
+        Temp =  get_data_to_plot(paths[0],vars[0])
         if nbr == 1 and plot_to_time is False:
-            Temp = get_data_to_plot(paths[0],vars[0])
-            self._add_index_to_xAxis(paths[0],Temp)
-            self.add_to_y_axis(paths[0],vars[0],Temp)
+            #Temp = get_data_to_plot(paths[0],vars[0])
+            #if len(Temp) == 1:
+            self._add_index_to_xAxis(paths[0],Temp[0])
+            for itm in Temp :
+                self.add_to_y_axis(paths[0],vars[0],itm)
+            #self.add_to_y_axis(paths[0],vars[0],Temp)
         else:
             if plot_to_time is True :
                 self._add_time_to_xAxis(paths[0])
             else:
-                Temp = get_data_to_plot(paths[0],vars[0])
-                self.add_to_x_axis(paths[0], vars[0], Temp)
-                self.place = 1
+                for i in range(len(paths)):
+                    Temp = get_data_to_plot(paths[i],vars[i])
+                    if len(Temp) == 1 and self.x.isEmpty == True:
+                        #Temp = get_data_to_plot(paths[0],vars[0])
+                        self.add_to_x_axis(paths[i], vars[i], Temp)
+                        self.place = i
+            if self.x.isEmpty == True :
+                self._add_index_to_xAxis(paths[0],Temp)
 
 
             # now we have data stored in x
 
             # find the data to store in y1 and y2 or just y1
 
-            for i in range(self.place, len(paths) ):
-                path = paths[i]
-                var = vars[i]
-                Temp = get_data_to_plot(path,var)
-                #for t in Temp: # might later not be necessary
-                self.add_to_y_axis(path,var,Temp)
+            for i in range(0, len(paths) ):
+                if i != self.place :
+                    path = paths[i]
+                    var = vars[i]
+                    Temp = get_data_to_plot(path,var)
+                    #for t in Temp: # might later not be necessary
+                    for temp_data in Temp:
+                        self.add_to_y_axis(path,var,temp_data)
 
         """
         now we move on the defining axis and data using x, y1, y2
@@ -178,9 +188,10 @@ class Plotfunction_class():
         if self.y1.isEmpty == False:
             self._createAxis(fig)
             color = 'tab:red'
+            XX = range(len(self.y1.getData()))
             self.axis[0].set_xlabel(self.x.get_axis_lable())
             self.axis[0].set_ylabel(self.y1.get_axis_lable())
-            self.axis[0].plot(self.x.getData(), self.y1.getData(), color=color)
+            self.axis[0].plot(self.x.getData(), self.y1.getData())
             self.axis[0].tick_params(axis=self.y1.getVar(), labelcolor=color)
 
         if self.y2.isEmpty == False:
@@ -190,7 +201,7 @@ class Plotfunction_class():
             self.axis[1].set_ylabel(self.y2.get_axis_lable())
             self.axis[1].tick_params(axis=self.y2.getVar(), labelcolor=color)
 
-        #plt.title(header_info_to_plot(path1)+ "\nPlot " +name(paths[1],vars[1]) + "and " + name(paths[2], vars[2]) + " against " +name(paths[0], vars[0]))
+        plt.title(header_info_to_plot(paths[0])+ "\nPlot " +name(self.y1.getPath(),self.y1.getVar()) +  " against " +name(self.x.getPath(), self.x.getVar()))
         self._append_data()
         return self.axis, self.data
 
@@ -210,8 +221,8 @@ def checkIfTimeAvailable(paths,vars):
         time = combineYMDHMwithSec(timePath)
         for t in time:
             time_data.append(t)
-        y = getDataFromVar(path,vars[c])
-        if len(time_data) != len(y):
+        y = get_data_to_plot(path,vars[c])
+        if len(time_data) != len(y[0]):
             return False
         c += 1
     return True

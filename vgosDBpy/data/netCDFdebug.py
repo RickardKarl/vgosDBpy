@@ -1,4 +1,4 @@
-from vgosDBpy.data.readNetCDF import read_netCDF_variables, find_dtype, getDataFromVar
+from vgosDBpy.data.readNetCDF import read_netCDF_variables, find_dtype_netCDF, getDataFromVar
 from netCDF4 import Dataset
 
 
@@ -39,7 +39,7 @@ def find_content(pathToNetCDF):
 
 def print_name_dtype_dim_length(pathToNetCDF):
     vars = read_netCDF_variables(pathToNetCDF)
-    dtypes = find_dtype(pathToNetCDF)
+    dtypes = find_dtype_netCDF(pathToNetCDF)
     dims = find_dimensions(pathToNetCDF)
     lengths = find_length(pathToNetCDF)
     content = find_content(pathToNetCDF)

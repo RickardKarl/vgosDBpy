@@ -3,9 +3,9 @@ from PySide2 import QtCore
 import pandas as pd
 
 from vgosDBpy.model.standardtree import Variable, DataValue
-from vgosDBpy.data.readNetCDF import read_netCDF_variables, is_possible_to_plot, is_var_constant, is_numScan_or_NumObs, get_dtype_var, read_netCDF_dimension_for_var, get_dataBaseline , show_in_table#read_netCDF_dimension_for_var,
-from vgosDBpy.data.PathParser import findCorrespondingTime
-from vgosDBpy.data.combineYMDHMS import combineYMDHMwithSec
+from vgosDBpy.data.readNetCDF import read_netCDF_variables, get_dtype_for_var, find_dimension_var, show_in_table
+#from vgosDBpy.data.PathParser import findCorrespondingTime
+from vgosDBpy.data.combineYMDHMS import combineYMDHMwithSec,findCorrespondingTime
 from vgosDBpy.data.getRealName import get_unit_to_print
 
 class TableModel(QStandardItemModel):
@@ -76,15 +76,9 @@ class TableModel(QStandardItemModel):
         for var in var_list:
             if show_in_table(item.getPath(),var):
                 self.setItem(i,0,Variable(var,item))
-            #if is_possible_to_plot(item.getPath(), vars):
-            #    self.setItem(i,0, Variable(vars,item))
-
-            #elif is_var_constant(item.getPath(), vars):
-            #    self.setItem(i,1,Variable(vars,item))
-            #    i += 1
                 self.setItem(i,1,Variable(get_unit_to_print(item.getPath(), var),item))
-                self.setItem(i,2,Variable(read_netCDF_dimension_for_var(item.getPath(), var),item))
-                self.setItem(i,3,Variable(get_dtype_var(item.getPath(), var),item))
+                self.setItem(i,2,Variable(find_dimension_var(item.getPath(), var),item))
+                self.setItem(i,3,Variable(get_dtype_for_var(item.getPath(), var),item))
             #    j=2
                 i += 1
 
