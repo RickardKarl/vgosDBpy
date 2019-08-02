@@ -9,7 +9,7 @@ Includes methods connected to each button.
 
 ## AxesToolBox.py
 
-####### AxesToolBox
+###### AxesToolBox
 
 Widget that contains buttons (including connected methods) that control the appearance of the
 plot.
@@ -24,14 +24,14 @@ Has some current flaws regarding the editing and what is actually displayed.
 
 ## plot_widgets.py
 
-####### PlotFigure
+###### PlotFigure
 
 A Qt-widget that integrates matplotlib.
 
 Contains a figure that keep track of *DataAxis* and displays them.
 
 
-####### PlotWidget
+###### PlotWidget
 
 A parent QWidget that contains *PlotFigure* and a navigation toolbar that is integrated with matplotlib.
 
@@ -46,21 +46,21 @@ Current options are: ordinary line or smoothened given a data set.
 
 ## widgets.py
 
-####### QWrapper (Inherits from QTreeView)
+###### QWrapper (Inherits from QTreeView)
 
 Visual representation of the wrapper as a directory structure
 Reads in *TreeModel*.
 
 
-####### VariableTable (Inherits from QTableView)
+###### VariableTable (Inherits from QTableView)
 
 Table widget that display the variable content from a netCDF file in a table.
 
 
-####### ConstantTable (Inherits from QTableView)
+###### ConstantTable (Inherits from QTableView)
 
 **???????????**
 
-####### DataTable
+###### DataTable
 
 Table widget that display the data content from a netCDF variable in a table.
