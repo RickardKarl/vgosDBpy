@@ -29,4 +29,4 @@ def createSmoothCurve(series, window_size = 19, pol_order = 4):
             raise ValueError('Polynome order is too small, adjust window size')
 
     data = savgol_filter(series, window_size, pol_order)
-    return pd.Series(data, index = series.index)
+    return createLine2D(pd.Series(data, index = series.index))

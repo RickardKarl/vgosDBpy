@@ -275,7 +275,7 @@ class AxesToolBox(QWidget):
 
         if self.check_smooth_curve.isChecked():
             data = self.current_axis.getEditedData()
-            line = createLine2D(createSmoothCurve(data, window_size = int(len(data)/10)))
+            line = createSmoothCurve(data, window_size = int(len(data)/10))
             self.smooth_curve = self.current_axis.addLine(line)
 
         self.canvas.updatePlot()
