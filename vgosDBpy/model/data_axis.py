@@ -28,6 +28,8 @@ class DataAxis:
     def __hash__(self):
         return hash(self._item)*22 + int(self._edited_data.mean()) + int(self._edited_data.median())
 
+    ########## Getters and setters
+
     def getAxis(self):
         return self._axis
 
@@ -46,11 +48,29 @@ class DataAxis:
     def resetEditedData(self):
         self._edited_data = self._data.copy(deep = True)
 
+    def clearMarkedData(self):
+        '''
+        Unselect all marked data points
+        '''
+        self._marked_data = []
+
+    ######### Update methods
+
     def addLine(self, line):
         '''
         line [matplotlib.Line2D]
         '''
         return self._axis.add_line(line)
+
+    def getNewEdit(self):
+        '''
+        Returns an edited pd.Series without the current marked data
+        '''
+        self.removeMarkedData()
+        return self._edited_data
+
+
+    ######### Marked data methods
 
     def updateMarkedData(self, data, remove_existing = False):
         '''
@@ -71,22 +91,9 @@ class DataAxis:
             else:
                 self._marked_data.append(integer_index)
 
-    def clearMarkedData(self):
-        '''
-        Unselect all marked data points
-        '''
-        self._marked_data = []
-
     def removeMarkedData(self):
         '''
         Replaces all marked data from current data with a NaN
         '''
         for index in self._marked_data:
             self._edited_data[index] = np.nan
-
-    def getNewEdit(self):
-        '''
-        Returns an edited pd.Series without the current marked data
-        '''
-        self.removeMarkedData()
-        return self._edited_data
