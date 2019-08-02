@@ -30,3 +30,21 @@ def createSmoothCurve(series, window_size = 19, pol_order = 4):
 
     data = savgol_filter(series, window_size, pol_order)
     return createLine2D(pd.Series(data, index = series.index))
+
+
+
+def createMarkedCurve(series, marked_data):
+    '''
+    Return Line2D with marked data
+
+    '''
+    index_list = []
+    for index in marked_data:
+        index_list.append(index)
+    marked_series = series.take(index_list)
+
+    line = createLine2D(pd.Series(marked_series))
+    line.set_marker('s')
+    line.set_linestyle('None')
+
+    return line
