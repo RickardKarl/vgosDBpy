@@ -19,8 +19,10 @@ class TableModel(QStandardItemModel):
     parent [QWidget]
     '''
 
+    # Decides which one is the standard time-column when displaying data from plot
     time_col = 0
 
+    # Constructor
     def __init__(self, header, parent=None):
         super(TableModel,self).__init__(parent)
         self._header = header
@@ -32,13 +34,7 @@ class TableModel(QStandardItemModel):
         self.dataaxis_to_column_map = {} # DataAxis : Column index
         self.column_to_dataaxis_map = {}
 
-    def getHeader(self):
-        return self._header
-
-    def update_header(self,names):
-        self._header = names
-        self.setHorizontalHeaderLabels(self._header)
-
+    # Set flags
     def flags(self, index):
         '''
         Let us choose if the selected items should be enabled, editable, etc
@@ -51,7 +47,7 @@ class TableModel(QStandardItemModel):
 
         return QtCore.Qt.ItemIsEnabled | QtCore.Qt.ItemIsSelectable #| QtCore.Qt.ItemIsEditable # Uncomment if you want to be able to edit it
 
-
+    # Reset method
     def reset(self):
         '''
         Resets content of the table without removing the header
@@ -60,6 +56,29 @@ class TableModel(QStandardItemModel):
         self.clear()
         self.setHorizontalHeaderLabels(self._header)
 
+
+    def clearTable(self):
+        self._header = []
+        self.reset()
+        self.nbrItems = 0
+        #self._header = []
+        self.setHorizontalHeaderLabels(self._header)
+        #self.data_axis = None # Keep track of the DataAxis that it shows from the plot
+        #self.dataaxis_to_column_map = {} # DataAxis : Column index
+
+
+    ########### Header methods
+    def getHeader(self):
+        return self._header
+
+    def update_header(self,names):
+        self._header = names
+        self.setHorizontalHeaderLabels(self._header)
+
+
+    ########### Update methods ##################################################################
+
+    ########### Used by variable table
 
     def updateVariables(self, item):
         '''
@@ -81,6 +100,8 @@ class TableModel(QStandardItemModel):
                 self.setItem(i,3,Variable(get_dtype_for_var(item.getPath(), var),item))
             #    j=2
                 i += 1
+
+    ############### Used by DataTable
 
     def updateData(self, data, items):
         '''
@@ -115,8 +136,6 @@ class TableModel(QStandardItemModel):
         '''
         names = list(data_new)
         start = self.nbrItems
-        #print('Start:'+str(start))
-        #self.reset()
         for i in range(0,len(data_new[names[0]])):
             for j in range (0,len(names)):
                 if len(names) > 1:
@@ -125,28 +144,11 @@ class TableModel(QStandardItemModel):
                     self.setItem(i, start+j, DataValue(str(data_new[names[j]][i]), item[0]))
         self.nbrItems += len(names)
 
-        #names = list(data)
-        #name = names[-1]
-        #d = data[name]
-        #self.reset()
-        #j= len(names)-1
-        #print(item)
-        #print(data[name][1])
-        #for i in range(0,len(data[name])):
-        #    self.setItem(i,j,DataValue(str(data[names][i]), item))
-
-    def clearTable(self):
-        self._header = []
-        self.reset()
-        self.nbrItems = 0
-        #self._header = []
-        self.setHorizontalHeaderLabels(self._header)
-        #self.data_axis = None # Keep track of the DataAxis that it shows from the plot
-        #self.dataaxis_to_column_map = {} # DataAxis : Column index
-
 
     def updateFromDataAxis(self, data_axis, get_edited_data = True):
         '''
+        USED BY DataTable
+
         Update table model from one/several DataAxis
 
         data_axis [list of DataAxis] is what should be displayed in the table
@@ -226,72 +228,3 @@ class TableModel(QStandardItemModel):
                 value.append(item.value)
 
         return pd.Series(value, index = time_index)
-
-
-"""
-class DataTableModel(QStandardItemModel):
-
-    '''
-    Internal representation of items in a table
-
-    Imports QStandardItemModel
-
-    Constructor needs:
-    header [list of strings] is the header on the top of the table
-    parent [QWidget]
-    '''
-
-    def __init__(self, header, parent=None):
-        super(DataTableModel,self).__init__(parent)
-        self._header = header
-        self.setHorizontalHeaderLabels(self._header)
-
-    def update_header(self,names):
-        self._header = names
-        self.setHorizontalHeaderLabels(self._header)
-
-    def flags(self, index):
-        '''
-        Let us choose if the selected items should be enabled, editable, etc
-
-        index [QModelIndex]
-        '''
-
-        if not index.isValid():
-            return 0
-
-        return QtCore.Qt.ItemIsEnabled | QtCore.Qt.ItemIsSelectable #| QtCore.Qt.ItemIsEditable # Uncomment if you want to be able to edit it
-
-
-    def reset(self):
-        '''
-        Resets content of the table without removing the header
-        (Has to be done since clear otherwise would remove the header)
-        '''
-        self.clear()
-        self.setHorizontalHeaderLabels(self._header)
-
-    def updateData(self, data, items):
-        '''
-        USED BY DataTable
-
-        Resets content and then replaces it with data
-
-        data [dict] which contains data to fill the table with. E.g. {'time': time, "var_data": var_data}
-        item [QStandardItems] contains the item which contains the variable with the data
-        '''
-        names = list(data)
-        self.reset()
-
-        for i in range(0,len(data[names[0]])):
-            for j in range (0,len(names)):
-                self.setItem(i, j, DataValue(str(data[names[j]][i]), items[j%(len(names)-1)]))
-
-
-    def append_data(self, data, items):
-        names = list(data)
-
-        for i in range(0,len(data[names[0]])):
-            for j in range (0,len(names)):
-                self.setItem(i, j, DataValue(str(data[names[j]][i]), items[j%(len(names)-1)]))
-"""

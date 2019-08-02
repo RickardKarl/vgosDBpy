@@ -36,7 +36,6 @@ class CommandLineInterface(argparse.ArgumentParser):
         #self.add_argument('--var', metavar = 'VARIABLE',
         # help = 'Name of the variables that can be displayed: ' + ', '.join(CommandLineInterface.dumpable_variables))
 
-
         # Retrieve arguments
         self.args = self.parse_args()
 
