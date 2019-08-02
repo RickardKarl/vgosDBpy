@@ -6,7 +6,7 @@ import re
 DOES: takes in a string as a path. Then decides what the next version should be called,
 plus checks if that version already exists.
 """
-def newVersionName(path):
+def new_netCDF_name(path):
     path_split= path.split("/")
 
     # Create path to the actual folder by removing last item in path
@@ -41,12 +41,12 @@ def newVersionName(path):
 
     # Checks if the generated name currently exists, if so call method recurvsively
     if os.path.isfile(file_path):
-        return newVersionName(file_path)
+        return new_netCDF_name(file_path)
     # Else return new file name
     else:
         return file_path
 
-def newWrapperPath(wrapper_path):
+def new_wrapper_path(wrapper_path):
     path_splits = wrapper_path.split('/')
     wrapper_name = path_splits[-1]
     root_path = '/'.join(path_splits[0:-1])

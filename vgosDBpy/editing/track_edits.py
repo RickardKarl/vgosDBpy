@@ -1,5 +1,5 @@
-from vgosDBpy.editing.editNetCDF import create_netCDF_file
-from vgosDBpy.editing.createNewWrp import create_new_wrapper
+from vgosDBpy.editing.createNetCDF import create_netCDF_file
+from vgosDBpy.editing.createWrapper import create_new_wrapper
 
 import os
 from datetime import datetime

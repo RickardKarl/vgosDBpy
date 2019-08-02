@@ -1,19 +1,7 @@
 import netCDF4 as nc
 import matplotlib.pyplot as plt
 
-from vgosDBpy.editing.newFileNames import newVersionName
-
-def get_netCDF_variable(file_name_path, variable_name):
-    '''
-    Returns data from one netCDF variables
-
-    file_name_path [string] path to netCDF file of interest
-    variable_name [string] name of variable in netCDF files
-    '''
-    with nc.Dataset(file_name_path) as file:
-        variable = file[variable_name][:]
-
-    return variable
+from vgosDBpy.editing.newFileNames import new_netCDF_name
 
 def update_netCDF_variable(file_name_path, new_file_name_path, variables):
     '''
@@ -60,7 +48,7 @@ def create_netCDF_file(pathToNetCDF, variables):
     file_name_path [string] path to netCDF file which will be rewritten
     variables [dict] {variable name: updated variable}
     '''
-    new_file_path = newVersionName(pathToNetCDF)
+    new_file_path = new_netCDF_name(pathToNetCDF)
     update_netCDF_variable(pathToNetCDF, new_file_path, variables)
     print('Creating new netCDF file with the path', new_file_path)
     return new_file_path
