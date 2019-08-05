@@ -3,8 +3,7 @@ from PySide2 import QtCore
 import pandas as pd
 
 from vgosDBpy.model.standardtree import Variable, DataValue
-from vgosDBpy.data.readNetCDF import get_netCDF_variables, get_dtype_for_var, get_dimension_var, show_in_table
-#from vgosDBpy.data.PathParser import findCorrespondingTime
+from vgosDBpy.data.readNetCDF import get_netCDF_variables, get_dtype_var_str, get_dimension_var, show_in_table
 from vgosDBpy.data.combineYMDHMS import combineYMDHMwithSec,findCorrespondingTime
 from vgosDBpy.data.getRealName import get_unit_to_print
 
@@ -97,7 +96,7 @@ class TableModel(QStandardItemModel):
                 self.setItem(i,0,Variable(var,item))
                 self.setItem(i,1,Variable(get_unit_to_print(item.getPath(), var),item))
                 self.setItem(i,2,Variable(get_dimension_var(item.getPath(), var),item))
-                self.setItem(i,3,Variable(get_dtype_for_var(item.getPath(), var),item))
+                self.setItem(i,3,Variable(get_dtype_var_str(item.getPath(), var),item))
             #    j=2
                 i += 1
 

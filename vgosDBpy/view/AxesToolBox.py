@@ -133,6 +133,9 @@ class AxesToolBox(QWidget):
         if data_axis == self.current_axis:
 
             original_lines = data_axis.getAxis().get_lines()
+            #origional_xlabel = data_axis.get_xlabel()
+            #origional_ylabel = data_axis.get_label()
+            #origional_titel = data_axis.get_title()
             for line in original_lines:
                 line.remove()
 

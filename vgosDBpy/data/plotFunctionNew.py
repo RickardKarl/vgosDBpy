@@ -201,7 +201,7 @@ class Plotfunction_class():
             self.axis[1].set_ylabel(self.y2.get_axis_lable())
             self.axis[1].tick_params(axis=self.y2.getVar(), labelcolor=color)
 
-        plt.title(header_plot(paths[0])+ "\nPlot " +name(self.y1.getPath(),self.y1.getVar()) +  " against " +name(self.x.getPath(), self.x.getVar()))
+        self.axis[0].set_title(header_plot(paths[0])+ "\nPlot " +name(self.y1.getPath(),self.y1.getVar()) +  " against " +name(self.x.getPath(), self.x.getVar()))
         self._append_data()
         return self.axis, self.data
 
