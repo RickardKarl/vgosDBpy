@@ -237,7 +237,7 @@ class AxesToolBox(QWidget):
         else:
             self.canvas.timeInt = 0
 
-        self.canvas.updateTime()
+        self.canvas.timeChanged()
 
 
     #### Methods for editing and saving data
