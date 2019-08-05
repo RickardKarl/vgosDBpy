@@ -130,7 +130,7 @@ class EditTracking:
             str += 'Created the following history file:\n' + hist + '\n \n'
         else:
             str += 'No changes has been made'
-        popUpBoxEdit( str)
+        popUpBoxEdit(str)
 
     def createNewHistFile(self, sort_var_by_file, path_to_file_list, new_file_name_list):
         '''
