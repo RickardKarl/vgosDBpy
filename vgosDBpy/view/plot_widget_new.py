@@ -42,6 +42,9 @@ class PlotFigure(FigureCanvas):
         self.plot_function = Plotfunction_class()
 
 
+    def isPlotting(self):
+        return len(self._ax) > 0
+
     ############### Getters & Setters
 
     def getDataAxis(self):
