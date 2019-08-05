@@ -29,6 +29,7 @@ class PlotFigure(FigureCanvas):
         super(PlotFigure, self).__init__(self.figure)
 
         self.timeInt = 1
+
         # To be initiated
         self._ax = []
         self.draw()
@@ -40,8 +41,34 @@ class PlotFigure(FigureCanvas):
         self.Mult_item_added = False
         self.plot_function = Plotfunction_class()
 
+
+    ############### Getters & Setters
+
+    def getDataAxis(self):
+        '''
+        Returns list of axes that belongs to the figure [list of DataAxis]
+        '''
+        return self._ax
+
+    def getItems(self):
+        '''
+        Returns list of items that belongs to the figure [list of QNodeItems]
+        '''
+        return self.items
+
+    def getFigure(self):
+        '''
+        Returns figure [matplotlib.Figure]
+        '''
+        return self.figure
+
+    ############### Update graphics
+
     def updatePlot(self):
         self.draw()
+
+
+    ################ Add/update axis and figure
 
     def addAxis(self, data_axis):
         '''
@@ -62,24 +89,6 @@ class PlotFigure(FigureCanvas):
         self._ax.remove(data_axis)
         self._ax.clear()
 
-    def getDataAxis(self):
-        '''
-        Returns list of axes that belongs to the figure [list of DataAxis]
-        '''
-        return self._ax
-
-    def getItems(self):
-        '''
-        Returns list of items that belongs to the figure [list of QNodeItems]
-        '''
-        return self.items
-
-    def getFigure(self):
-        '''
-        Returns figure [matplotlib.Figure]
-        '''
-        return self.figure
-
     def updateFigure(self, items, timeUpdated = False):
 
         '''
@@ -89,7 +98,7 @@ class PlotFigure(FigureCanvas):
         '''
         if len(items) > 0:
             # Discards the old graph
-            self.resetFigure()
+            self.clearAxes()
 
             if timeUpdated is False:
                 self.paths = []
@@ -100,10 +109,6 @@ class PlotFigure(FigureCanvas):
                     self.paths.append(itm.getPath())
                     self.vars.append(itm.labels)
                     self.items.append(itm)
-
-            #for i in range(0,len(self.paths)):
-                #print('paths: ' +  self.paths[i])
-                #print('vars: ' + self.vars[i])
 
             if not_S1(self.paths, self.vars):
                 axis, data = self.plot_function.plotFunction(self.paths, self.vars, self.figure, self.timeInt)
@@ -120,24 +125,14 @@ class PlotFigure(FigureCanvas):
                 # Refresh canvas
                 self.updatePlot()
             else:
-                print('Trying to plot a string')
-
-    def resetFigure(self):
-        self.figure.clear()
-        for ax in self._ax:
-            self.removeAxis(ax)
-        self._ax = []
-
-    def updateTime(self):
-        self.updateFigure(self.items, timeUpdated = True)
-        self.parentWidget().getPlotToolBar().updateDataAxis(self._ax)
+                raise ValueError('Can not plot a string')
 
     def append_plot(self, item):
         #add new item
         self.paths.append(item.getPath())
         self.vars.append(item.labels)
         self.items.append(item)
-        self.resetFigure()
+        self.clearAxes()
         if not_S1(self.paths,self.vars):
             axis, data = self.plot_function.plotFunction(self.paths, self.vars, self.figure, self.timeInt)
             for i in range(len(axis)):
@@ -146,7 +141,14 @@ class PlotFigure(FigureCanvas):
             # Refresh canvas
             self.updatePlot()
         else:
-            print('Trying to plot a string')
+            raise ValueError('Can not plot a string')
+
+
+    def timeChanged(self):
+        self.updateFigure(self.items, timeUpdated = True)
+        self.parentWidget().getPlotToolBar().updateDataAxis(self._ax)
+
+    ###### Resetting methods
 
     def clearFigure(self):
         self.paths = []
@@ -154,8 +156,18 @@ class PlotFigure(FigureCanvas):
         self.items = []
         self.Mult_item_added = False
 
-        self.resetFigure()
+        self.clearAxes()
         self.updatePlot()
+
+
+    def clearAxes(self):
+        self.figure.clear()
+        for ax in self._ax:
+            self.removeAxis(ax)
+        self._ax = []
+
+
+    ######## Methods for saving figure as image
 
     def saveCanvas(self, file_name):
         '''

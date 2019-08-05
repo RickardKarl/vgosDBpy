@@ -16,6 +16,8 @@ class EditTracking:
         self._edited_data = {}
         self._wrapper = wrapper
 
+    ############# Getters & setters
+
     def getEditedData(self):
         return self._edited_data
 
@@ -37,7 +39,6 @@ class EditTracking:
         for var in self._edited_variables:
             print(var.getPath())
 
-
     def removeEdit(self, variable):
         '''
         variable [model.standardtree.Variable]
@@ -47,6 +48,12 @@ class EditTracking:
             self._edited_variables.pop(variable)
         else:
             raise ValueError('Variable is not listed in the object:', self)
+
+    def reset(self):
+        self._edited_variables = []
+        self._edited_data = {}
+
+    ########### Methods for saving edits
 
     def saveEdit(self):
         '''

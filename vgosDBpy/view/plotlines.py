@@ -11,7 +11,7 @@ def createLine2D(series, marker = None):
     '''
     return Line2D(series.index, series[:], marker = marker)
 
-def createSmoothCurve(series, window_size = 19, pol_order = 4):
+def createSmoothCurve(series, window_size = 19, pol_order = 4, return_data = False):
     '''
     Return a time series [pd.Datafram] that is more smooth
 
@@ -29,4 +29,27 @@ def createSmoothCurve(series, window_size = 19, pol_order = 4):
             raise ValueError('Polynome order is too small, adjust window size')
 
     data = savgol_filter(series, window_size, pol_order)
-    return createLine2D(pd.Series(data, index = series.index))
+    if return_data:
+        return pd.Series(data, index = series.index)
+    else:
+        return createLine2D(pd.Series(data, index = series.index))
+
+
+def createMarkedCurve(series, marked_data, return_data = False):
+    '''
+    Return Line2D with marked data
+
+    '''
+    index_list = []
+    for index in marked_data:
+        index_list.append(index)
+    marked_series = series.take(index_list)
+
+    line = createLine2D(pd.Series(marked_series))
+    line.set_marker('s')
+    line.set_linestyle('None')
+
+    if return_data:
+        return marked_series
+    else:
+        return line
