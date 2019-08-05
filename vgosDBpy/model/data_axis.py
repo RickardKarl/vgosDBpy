@@ -91,7 +91,7 @@ class DataAxis:
 
     def displayMarkers(self, bool):
         if bool == True:
-            self.main_curve.set_marker('o')
+            self.main_curve.set_marker('None')
         else:
             self.main_curve.set_marker('None')
 

@@ -105,6 +105,8 @@ class DataModel(TableModel):
     # Decides which one is the standard time-column when displaying data from plot
     time_col = 0
 
+    dataChanged_customSignal = QtCore.Signal()
+
     def __init__(self, header, parent=None):
             super(DataModel,self).__init__(header, parent)
 
@@ -112,6 +114,8 @@ class DataModel(TableModel):
             self.data_axis = None # Keep track of the DataAxis that it shows from the plot
             self.dataaxis_to_column_map = {} # DataAxis : Column index
             self.column_to_dataaxis_map = {}
+
+
 
     # Set flags
     def flags(self, index):
@@ -169,9 +173,9 @@ class DataModel(TableModel):
         for i in range(0,len(data[names[0]])):
             for j in range (0,len(names)):
                 if len(names) > 1:
-                    self.setItem(i, j, DataValue(str(data[names[j]][i]), items[j%(len(names)-1)]))
+                    self.setItem(i, j, DataValue(str(data[names[j]][i]), items[j%(len(names)-1)], signal = self.dataChanged_customSignal))
                 else:
-                    self.setItem(i, j, DataValue(str(data[names[j]][i]), items[0]))
+                    self.setItem(i, j, DataValue(str(data[names[j]][i]), items[0], signal = self.dataChanged_customSignal))
 
         self.nbrItems = len(names)
 
@@ -188,9 +192,9 @@ class DataModel(TableModel):
         for i in range(0,len(data_new[names[0]])):
             for j in range (0,len(names)):
                 if len(names) > 1:
-                    self.setItem(i, start+j, DataValue(str(data_new[names[j]][i]), item[j%(len(names)-1)]))
+                    self.setItem(i, start+j, DataValue(str(data_new[names[j]][i]), item[j%(len(names)-1)], signal = self.dataChanged_customSignal))
                 else:
-                    self.setItem(i, start+j, DataValue(str(data_new[names[j]][i]), item[0]))
+                    self.setItem(i, start+j, DataValue(str(data_new[names[j]][i]), item[0], signal = self.dataChanged_customSignal))
         self.nbrItems += len(names)
 
 
@@ -217,7 +221,7 @@ class DataModel(TableModel):
             if len(data_axis) != len(items):
                 raise ValueError('data_axis and items do no have the same length')
             for i in range(len(time_index)):
-                self.setItem(i, DataModel.time_col, DataValue(time_index[i], node = None))
+                self.setItem(i, DataModel.time_col, DataValue(time_index[i], node = None, signal = self.dataChanged_customSignal))
 
             col_index = 0
             for j in range(len(data_axis)):
@@ -238,7 +242,7 @@ class DataModel(TableModel):
                     raise ValueError('DataAxis', data_axis[j], 'do not have the same time indices as', data_axis[0])
 
                 for i in range(len(data)):
-                    self.setItem(i, col_index, DataValue(str(data[i]), items[j]))
+                    self.setItem(i, col_index, DataValue(str(data[i]), items[j], signal = self.dataChanged_customSignal))
 
                 self.dataaxis_to_column_map[data_axis[j]] = col_index
                 self.column_to_dataaxis_map[col_index] = data_axis[j]
@@ -287,15 +291,18 @@ class DataModel(TableModel):
             else:
                 current_data_axis = self.column_to_dataaxis_map.get(column_index)
 
+                if current_data_axis == None:
+                    continue
+
                 time_index = []
                 data = []
 
                 for row_index in range(self.rowCount()):
 
-                    data.append(self.item(row_index, column_index).value)
+                    value = self.item(row_index, column_index).value
+                    data.append(float(value))
 
                     time_index.append(self.item(row_index, DataModel.time_col).value)
 
                 edited_series = pd.Series(data, index = time_index)
-                print(edited_series)
                 current_data_axis.setEditedData(edited_series)

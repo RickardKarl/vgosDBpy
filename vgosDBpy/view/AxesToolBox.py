@@ -43,10 +43,6 @@ class AxesToolBox(QWidget):
         # Track edits
         self.track_edits = self.parentWidget().track_edits
 
-        ### Listen to changes of selection in table_widget
-        self.table_widget.getSignal().connect(self._selection_changed_callback_table)
-        self.table_widget.getModel().dataChanged.connect(self._tableDataChanged)
-
         # Control, appearance and data variables
         self.selector = None
         self.data_axis = canvas.getDataAxis()
@@ -101,6 +97,11 @@ class AxesToolBox(QWidget):
 
         self.saveEdit.clicked.connect(self._saveEdit)
         self.printTable.clicked.connect(self._printTable)
+
+        ######### Listen to changes of selection in table_widget
+
+        self.table_widget.custom_mouse_release.connect(self._selection_changed_callback_table)
+        self.table_widget.getModel().dataChanged_customSignal.connect(self._tableDataChanged)
 
 
     ######## Methods for updating the DataAxis of the tool box
@@ -194,9 +195,7 @@ class AxesToolBox(QWidget):
     def _tableDataChanged(self):
 
         self.table_widget.getModel().updateDataAxisfromTable()
-        self.table_widget.getModel().blockSignals(True)
-        self._updateDisplayedData()
-        self.table_widget.getModel().blockSignals(False)
+        self._updateDisplayedData(update_plot_only = True)
 
 
     ############# Used by both plot canvas and data table
@@ -214,9 +213,13 @@ class AxesToolBox(QWidget):
         #self.table_widget.getSignal().disconnect(self._selection_changed_callback_table)
         self.table_widget.updateMarkedRows(self.data_axis)
 
-    def _updateDisplayedData(self):
+    def _updateDisplayedData(self, update_plot_only = False):
+
+        if update_plot_only is False:
+            self.table_widget.updateFromDataAxis(self.data_axis)
+
+        self.current_axis.updateLines()
         self.canvas.updatePlot()
-        self.table_widget.updateFromDataAxis(self.data_axis)
         self._showLine()
         self._showMarkers()
         self._showSmoothCurve()

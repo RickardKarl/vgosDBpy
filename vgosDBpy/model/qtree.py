@@ -204,9 +204,15 @@ class DataValue(QNodeItem):
 
     _type = 1113
 
-    def __init__(self, value, node = None):
+
+
+    def __init__(self, value, node = None, signal = None):
         super(DataValue, self).__init__(node)
         self.value = value
+
+
+        self.signal = signal
+        self.custom_signal_bool = (signal != None)
 
     def type(self):
         NetCDFItem._type
@@ -231,7 +237,11 @@ class DataValue(QNodeItem):
         else:
             return False
 
-        self.emitDataChanged()
+        if self.custom_signal_bool is True:
+            self.signal.emit()
+        else:
+            self.emitDataChanged()
+
         return True
 
     def __str__(self):

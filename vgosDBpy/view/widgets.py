@@ -104,7 +104,7 @@ class DataTable(QTableView):
     '''
 
     # SIGNAL
-    _custom_mouse_release = Signal(str)
+    custom_mouse_release = Signal()
 
     def __init__(self, parent = None):
         super(DataTable, self).__init__(parent)
@@ -127,13 +127,10 @@ class DataTable(QTableView):
 
     def mouseReleaseEvent(self, e):
         super(DataTable, self).mouseReleaseEvent(e)
-        self._custom_mouse_release.emit('Custom mouse release')
+        self.custom_mouse_release.emit()
 
     def selectionChanged(self, selected, deselected):
         super(DataTable, self).selectionChanged(selected, deselected)
-
-    def getSignal(self):
-        return self._custom_mouse_release
 
     ######### Update methods
 
@@ -257,8 +254,11 @@ class DataTable(QTableView):
         self.selection.clear()
 
         for ax in data_axis:
-
             col_index = self._model.dataaxis_to_column_map.get(ax)
+            
+            if col_index == None:
+                continue
+
             selected_data = ax.getMarkedData()
 
             for row_index in selected_data:
