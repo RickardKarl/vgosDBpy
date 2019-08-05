@@ -90,12 +90,6 @@ class VariableTable(QTableView):
         for i in range(self._model.columnCount()):
             self.resizeColumnToContents(i)
 
-class ConstantTable(QTableView):
-    def __init__(self, parent=None):
-        super(DataTable,self).__init__(parent)
-        self._model = TableModel(' ', parent)
-        self.setModel(self._model)
-
 class DataTable(QTableView):
     '''
     Displays data from DataModel which has values from a variable together with timestamp
@@ -255,7 +249,7 @@ class DataTable(QTableView):
 
         for ax in data_axis:
             col_index = self._model.dataaxis_to_column_map.get(ax)
-            
+
             if col_index == None:
                 continue
 
