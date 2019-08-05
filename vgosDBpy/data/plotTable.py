@@ -7,7 +7,7 @@ import pandas as pd
 
 from vgosDBpy.data.combineYMDHMS import combineYMDHMwithSec, findCorrespondingTime
 from vgosDBpy.data.readNetCDF import get_data_to_table
-from vgosDBpy.data.getRealName import get_name_to_print as name, get_unit_to_print as unit
+from vgosDBpy.data.getName import get_name_to_print as name, get_unit_to_print as unit
 
 
 class Tablefunction():

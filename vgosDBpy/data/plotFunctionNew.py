@@ -8,7 +8,7 @@ from netCDF4 import Dataset
 #from vgosDBpy.data.PathParser import findCorrespondingTime
 from vgosDBpy.data.combineYMDHMS import combineYMDHMwithSec, checkIfTimeAvailable, default_time,findCorrespondingTime
 from vgosDBpy.data.readNetCDF import header_plot,get_data_to_plot
-from vgosDBpy.data.getRealName import get_name_to_print as name, get_unit_to_print as unit
+from vgosDBpy.data.getName import get_name_to_print as name, get_unit_to_print as unit
 
 import os
 from datetime import datetime

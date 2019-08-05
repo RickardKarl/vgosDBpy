@@ -5,7 +5,7 @@ import pandas as pd
 from vgosDBpy.model.qtree import Variable, DataValue
 from vgosDBpy.data.readNetCDF import get_netCDF_variables, get_dtype_var_str, get_dimension_var, show_in_table
 from vgosDBpy.data.combineYMDHMS import combineYMDHMwithSec,findCorrespondingTime
-from vgosDBpy.data.getRealName import get_unit_to_print
+from vgosDBpy.data.getName import get_unit_to_print
 
 class TableModel(QStandardItemModel):
     '''
