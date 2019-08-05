@@ -9,8 +9,6 @@ from vgosDBpy.view.plotlines import createLine2D, createSmoothCurve
 from vgosDBpy.data.tableToASCII import convertToAscii, write_ascii_file
 from vgosDBpy.model.data_axis import DataAxis
 
-import time
-
 class AxesToolBox(QWidget):
     '''
     A class that controls the PlotFigure and DataTable
@@ -41,6 +39,9 @@ class AxesToolBox(QWidget):
         # Widgets
         self.canvas = canvas
         self.table_widget = table_widget
+
+        # Track edits
+        self.track_edits = self.parentWidget().track_edits
 
         ### Listen to changes of selection in table_widget
         self.table_widget.getSignal().connect(self._selection_changed_callback_table)
@@ -140,6 +141,14 @@ class AxesToolBox(QWidget):
         self.selector = None
         self.data_axis = []
 
+    def setCurrentAxis(self, data_axis):
+        if data_axis in self.data_axis:
+            self.current_axis = data_axis
+            self.updateSelector(data_axis)
+
+        else:
+            raise ValueError('Invalid choice of DataAxis, does not exist in figure.', data_axis)
+
 
     ######## Selector methods
 
@@ -211,7 +220,7 @@ class AxesToolBox(QWidget):
         '''
         Method that displays/hide the markers in the data
         '''
-        self.current_axis.displayMarkedCurve(self.check_marker.isChecked())
+        self.current_axis.displayMarkers(self.check_marker.isChecked())
         self.canvas.updatePlot()
 
 
@@ -244,7 +253,7 @@ class AxesToolBox(QWidget):
     def _trackEdit(self):
 
         edited_data = self.current_axis.getNewEdit()
-        self.parentWidget().track_edits.addEdit(self.current_axis.getItem(), edited_data.values)
+        self.track_edits.addEdit(self.current_axis.getItem(), edited_data.values)
         self._clearMarkedData()
         self._updateDisplayedData()
 
@@ -254,7 +263,7 @@ class AxesToolBox(QWidget):
         self._updateDisplayedData()
 
     def _saveEdit(self):
-        self.parentWidget().track_edits.saveEdit()
+        self.track_edits.saveEdit()
 
     def _printTable(self):
         ptable = convertToAscii(self.table_widget)
