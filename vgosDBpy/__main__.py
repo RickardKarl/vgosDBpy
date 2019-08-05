@@ -7,7 +7,7 @@ from vgosDBpy.read_log.plotter import plotSeries
 from vgosDBpy.script_driven.argparser import CommandLineInterface
 
 #Hanna
-from vgosDBpy.data.netCDFdebug import print_name_dtype_dim_length, find_dimensions
+from vgosDBpy.data.netCDFdebug import print_name_dtype_dim_length, get_dimensions
 #sfrom vgosDBpy.data.readNetCDF import #getDataFromVar_multDim,#get_dataBaseline
 from vgosDBpy.editing.createWrapper import test
 

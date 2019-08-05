@@ -7,7 +7,7 @@ from netCDF4 import Dataset
 
 #from vgosDBpy.data.PathParser import findCorrespondingTime
 from vgosDBpy.data.combineYMDHMS import combineYMDHMwithSec, checkIfTimeAvailable, default_time,findCorrespondingTime
-from vgosDBpy.data.readNetCDF import header_info_to_plot,get_data_to_plot
+from vgosDBpy.data.readNetCDF import header_plot,get_data_to_plot
 from vgosDBpy.data.getRealName import get_name_to_print as name, get_unit_to_print as unit
 
 import os
@@ -201,7 +201,7 @@ class Plotfunction_class():
             self.axis[1].set_ylabel(self.y2.get_axis_lable())
             self.axis[1].tick_params(axis=self.y2.getVar(), labelcolor=color)
 
-        plt.title(header_info_to_plot(paths[0])+ "\nPlot " +name(self.y1.getPath(),self.y1.getVar()) +  " against " +name(self.x.getPath(), self.x.getVar()))
+        plt.title(header_plot(paths[0])+ "\nPlot " +name(self.y1.getPath(),self.y1.getVar()) +  " against " +name(self.x.getPath(), self.x.getVar()))
         self._append_data()
         return self.axis, self.data
 

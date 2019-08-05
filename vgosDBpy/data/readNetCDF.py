@@ -19,22 +19,22 @@ Returns a header to a plot on the format: Station_name + Date
 internal calls:
                 read_var_content_S1(seekedData, path)
 """
-def header_info_to_plot(path):
+def header_plot(path):
     #get date of session
     timePath = findCorrespondingTime(path)
     if timePath != '':
         time = combineYMDHMwithSec(timePath)
         date = time[1].date()
-        station = read_var_content_S1("Station", path) # Station is name of data that one seeks.
+        station = get_var_content_S1("Station", path) # Station is name of data that one seeks.
         return ( station + "   " + str(date) )
     else:
         return ('')
 
 """
 Takes in: Path to NetCDF file
-returns: an array containing all the variabls names for an netCDF file
+returns: an array containing all the variabls names for the netCDF file
 """
-def read_netCDF_variables(pathToNetCDF):
+def get_netCDF_variables(pathToNetCDF):
     with Dataset(pathToNetCDF, "r", format="NETCDF4_CLASSIC") as nc:
         vars= nc.variables
         variables= []
@@ -58,6 +58,7 @@ internal calls:
 #        if dimension.strip() == "NumScans" or dimension.strip() == 'NumObs' and data_type != "S1"  :
 #            return True
 #    return False
+
 
 def is_multdim_var_list(paths, vars):
     for i in range(0,len(paths)):
@@ -151,17 +152,17 @@ internal Calls:
             find_dtype(path)
             read_var_content_S1(var, path)
 """
-def read_netCDF_vars_info(pathToNetCDF):
+def get_netCDF_vars_info(pathToNetCDF):
     info = ""
-    vars = read_netCDF_variables(pathToNetCDF)
-    dtypes = find_dtype_netCDF(pathToNetCDF)
+    vars =get_netCDF_variables(pathToNetCDF)
+    dtypes = get_dtype_netCDF(pathToNetCDF)
     for i in range(len(vars)):
         if not is_numScan_or_NumObs(pathToNetCDF, vars[i]):
             if dtypes[i] == 'S1' :
                 #if not is_numScan_or_NumObs(pathToNetCDF, vars[i]):
-                info += vars[i] +':'+  read_var_content_S1(vars[i], pathToNetCDF) + "\n \n"
+                info += vars[i] +':'+  get_var_content_S1(vars[i], pathToNetCDF) + "\n \n"
             else:
-                info += read_var_content_constant(pathToNetCDF, vars[i]) + '\n \n '
+                info += get_var_content_constant(pathToNetCDF, vars[i]) + '\n \n '
 
     return info
 
@@ -173,7 +174,7 @@ def not_S1(paths, vars):
                 return False
     return True
 
-def find_dtype_netCDF(pathToNetCDF):
+def get_dtype_netCDF(pathToNetCDF):
     with Dataset(pathToNetCDF, "r", format="NETCDF4_CLASSIC") as nc:
         vars= nc.variables
         dtype= []
@@ -181,7 +182,7 @@ def find_dtype_netCDF(pathToNetCDF):
             dtype.append(nc.variables[var].dtype)
     return dtype
 
-def find_dtype_var(path, var):
+def get_dtype_var(path, var):
     with Dataset(path,'r', format = 'NETCDF4_CLASSIC') as nc:
         return str(nc.variables[var].dtype)
 
@@ -193,7 +194,7 @@ Retuns the header of a netCDF file, meaning all the S1 vars as a long string.
 Internal Calls:
                 non
 """
-def read_var_content_S1(seekedData,pathToNetCDF):
+def get_var_content_S1(seekedData,pathToNetCDF):
     with Dataset(pathToNetCDF, "r", format= "NETCDF4_CLASSIC") as nc:
 
         dimensions = nc.variables[seekedData].get_dims()
@@ -225,7 +226,7 @@ def read_var_content_S1(seekedData,pathToNetCDF):
                 head += letter
         return head
 
-def read_var_content_constant(pathToNetCDF, var):
+def get_var_content_constant(pathToNetCDF, var):
     name = var
     with Dataset(pathToNetCDF, 'r', format = 'NETCDF4_CLASSIC') as nc:
         data= nc.variables[var][:]
@@ -240,7 +241,7 @@ def read_var_content_constant(pathToNetCDF, var):
 Takes in: path to netCDF file and name of specifik variable in netCDF file
 returns: that vairbales dimemsions name
 """
-def find_dimension_var(pathToNetCDF, var):
+def get_dimension_var(pathToNetCDF, var):
     with Dataset(pathToNetCDF, "r", format="NETCDF4_CLASSIC") as nc:
         dimension = nc.variables[var].get_dims()[0].name
     return dimension
@@ -265,7 +266,7 @@ def get_data_to_plot(pathToNetCDF,var):
 def get_data_to_table(pathToNetCDF, var):
     dtype = get_dtype_for_var(pathToNetCDF, var)
     dims_len = _get_len_dims(pathToNetCDF, var)
-    dim = find_dimension_var(pathToNetCDF,var)
+    dim = get_dimension_var(pathToNetCDF,var)
     if var.strip() == 'Baseline':
         #print('enter 1')
         y = _get_dataBaseline(pathToNetCDF)
