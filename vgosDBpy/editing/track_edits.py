@@ -3,7 +3,7 @@ from vgosDBpy.editing.createWrapper import create_new_wrapper
 
 import os
 from datetime import datetime
-
+from vgosDBpy.model.popUpWindows import popUpBoxEdit
 class EditTracking:
 
     '''
@@ -61,6 +61,7 @@ class EditTracking:
         Creates new netCDF files and a wrapper that points to the new file(s)
         Also creates a new history file
         '''
+        edited = False
         sort_by_parent = {}
         for variable in self._edited_variables:
             # Get parent of variable and check if it is a netCDF file
@@ -86,6 +87,8 @@ class EditTracking:
             # Add these variables to the dict
             for var_item in var_list:
                 edited_variables[str(var_item)] = self._edited_data.get(var_item)
+                if edited_variables[str(var_item)] is not []:
+                    edited = True
 
             # Get netCDF path of the parent (which is a netCDF file, it has been checked)
             netCDF_path = parent_key.getPath()
@@ -96,21 +99,38 @@ class EditTracking:
             path_to_file_list.append(parent_key.getPath())
             new_file_name_list.append(new_file_name)
 
-        print(path_to_file_list)
-        print('Created the following files:', new_file_name_list)
+        #print(path_to_file_list)
 
-        # Create new history file and add it to the wrapper changes
-        new_hist_path, timestamp = self.createNewHistFile(sort_by_parent, path_to_file_list, new_file_name_list)
-        hist_file_name = new_hist_path.split('/')[-1]
+        if edited == True:
+            #print('Created the following files:', new_file_name_list)
 
-        # Create new wrapper
-        new_wrp_path = create_new_wrapper(path_to_file_list, new_file_name_list, self._wrapper.wrapper_path,
-                            hist_file_name, timestamp)
+            # Create new history file and add it to the wrapper changes
+            new_hist_path, timestamp = self.createNewHistFile(sort_by_parent, path_to_file_list, new_file_name_list)
+            hist_file_name = new_hist_path.split('/')[-1]
 
-        print('Created the following wrapper:', new_wrp_path)
-        print('Created the following history file:', new_hist_path)
+            # Create new wrapper
+            new_wrp_path = create_new_wrapper(path_to_file_list, new_file_name_list, self._wrapper.wrapper_path,
+                                hist_file_name, timestamp)
 
+            #print('Created the following wrapper:', new_wrp_path)
+            #print('Created the following history file:', new_hist_path)
 
+            self.msg_box(new_file_name_list, new_wrp_path, new_hist_path)
+        else:
+            self.msg_box()
+
+    def msg_box(self,files= 'non',wrp='non',hist='non'):
+        str = ''
+        if files is not 'non':
+            str += 'Created the following files:\n'
+            for itm in files:
+                str +=  itm + '\n'
+            str += '\n'
+            str += 'Created the following wrapper:\n' + wrp + '\n\n'
+            str += 'Created the following history file:\n' + hist + '\n \n'
+        else:
+            str += 'No changes has been made'
+        popUpBoxEdit( str)
 
     def createNewHistFile(self, sort_var_by_file, path_to_file_list, new_file_name_list):
         '''

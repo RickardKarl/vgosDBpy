@@ -8,6 +8,8 @@ from vgosDBpy.editing.select_data import getData
 from vgosDBpy.view.plotlines import createLine2D, createSmoothCurve
 from vgosDBpy.data.tableToASCII import convertToAscii, write_ascii_file
 from vgosDBpy.model.data_axis import DataAxis
+from vgosDBpy.model.popUpWindows import popUpBoxTable
+
 
 class AxesToolBox(QWidget):
     '''
@@ -265,6 +267,7 @@ class AxesToolBox(QWidget):
     def _saveEdit(self):
         self.track_edits.saveEdit()
 
+
     def _printTable(self):
         ptable = convertToAscii(self.table_widget)
         session_name = self.parentWidget().treeview.getWrapper().session_name
@@ -278,3 +281,4 @@ class AxesToolBox(QWidget):
 
         path = session_name + file_name + '.txt'
         write_ascii_file(ptable, info, path)
+        popUpBoxTable('The table has been saved to the following file:\n '+ path)
