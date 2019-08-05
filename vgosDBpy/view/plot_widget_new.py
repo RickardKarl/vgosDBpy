@@ -5,11 +5,10 @@ from matplotlib.backends.backend_qt5agg import NavigationToolbar2QT as Navigatio
 from matplotlib.backends.backend_pdf import PdfPages
 from matplotlib.figure import Figure
 
-#from vgosDBpy.data.plotFunction import is_multdim_var#plot_generall,
 from vgosDBpy.data.plotFunctionNew import Plotfunction_class
 from vgosDBpy.model.data_axis import DataAxis
 from vgosDBpy.view.plotlines import createLine2D, createSmoothCurve
-from vgosDBpy.data.readNetCDF import not_S1, is_multdim_var
+from vgosDBpy.data.readNetCDF import not_S1, is_multdim_var_list
 from vgosDBpy.view.AxesToolBox import AxesToolBox
 
 class PlotFigure(FigureCanvas):
@@ -113,12 +112,14 @@ class PlotFigure(FigureCanvas):
 
             if not_S1(self.paths, self.vars):
                 axis, data = self.plot_function.plotFunction(self.paths, self.vars, self.figure, self.timeInt)
-                is_mult = is_multdim_var(self.paths, self.vars)
+                is_mult = is_multdim_var_list(self.paths, self.vars)
 
-                if is_mult!= -1 and timeUpdated == False:
+                if is_mult!= -1:# and timeUpdated == False:
                     items.append(items[is_mult])
-
+                print(len(data[0]))
+                #for j in range(len(data[0])):
                 for i in range(len(axis)):
+                    #print(data[i][j])
                     self.addAxis(DataAxis(axis[i], data[i], items[i]))
 
                 # Refresh canvas

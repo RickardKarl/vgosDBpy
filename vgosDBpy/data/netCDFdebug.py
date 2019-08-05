@@ -1,11 +1,8 @@
-from vgosDBpy.data.readNetCDF import read_netCDF_variables, find_dtype, getDataFromVar
+from vgosDBpy.data.readNetCDF import get_netCDF_variables, get_dtype_netCDF, getDataFromVar
 from netCDF4 import Dataset
 
 
-
-
-
-def find_dimensions(pathToNetCDF):
+def get_dimensions(pathToNetCDF):
     with Dataset(pathToNetCDF, "r", format="NETCDF4_CLASSIC") as nc:
         vars= nc.variables
         dims= []
@@ -17,7 +14,7 @@ def find_dimensions(pathToNetCDF):
             dims.append(nc.variables[var].get_dims()[0].name)
     return dims
 
-def find_length(pathToNetCDF):
+def get_length(pathToNetCDF):
     with Dataset(pathToNetCDF, "r", format="NETCDF4_CLASSIC") as nc:
         vars= nc.variables
         lengths= []
@@ -27,7 +24,7 @@ def find_length(pathToNetCDF):
             lengths.append(len(nc.variables[var][:]))
     return lengths
 
-def find_content(pathToNetCDF):
+def get_content(pathToNetCDF):
     with Dataset(pathToNetCDF, "r", format="NETCDF4_CLASSIC") as nc:
         vars= nc.variables
         content= []
@@ -38,11 +35,11 @@ def find_content(pathToNetCDF):
     return content
 
 def print_name_dtype_dim_length(pathToNetCDF):
-    vars = read_netCDF_variables(pathToNetCDF)
-    dtypes = find_dtype(pathToNetCDF)
-    dims = find_dimensions(pathToNetCDF)
-    lengths = find_length(pathToNetCDF)
-    content = find_content(pathToNetCDF)
+    vars = get_netCDF_variables(pathToNetCDF)
+    dtypes = get_dtype_netCDF(pathToNetCDF)
+    dims = get_dimensions(pathToNetCDF)
+    lengths =get_length(pathToNetCDF)
+    content = get_content(pathToNetCDF)
     U = []
     print(len(vars)+ len(dims)+ len(dtypes) + len(lengths))
     #with Dataset(pathToNetCDF, 'r', format='NETCDF4_CLASSIC') as nc:
