@@ -3,7 +3,7 @@ from PySide2.QtWidgets import QTreeView, QTableView, QAbstractItemView
 from PySide2.QtCore import QItemSelectionModel, Signal
 
 from vgosDBpy.model.qtree import TreeModel
-from vgosDBpy.model.table import TableModel
+from vgosDBpy.model.table import VariableModel, DataModel
 from vgosDBpy.data.plotTable import Tablefunction as TF
 
 from datetime import datetime
@@ -50,7 +50,7 @@ class VariableTable(QTableView):
     Widget that inherits from QTableView
     Visual representation of the items in a table
 
-    Imports TableModel
+    Imports VariableModel
 
     Constructor needs:
     parent [QWidget]
@@ -60,7 +60,7 @@ class VariableTable(QTableView):
         super(VariableTable, self).__init__(parent)
 
         # Setup model
-        self._model = TableModel(['Name', 'Unit', 'Dimension', 'Dtype'], parent)
+        self._model = VariableModel(['Name', 'Unit', 'Dimension', 'Dtype'], parent)
         self.setModel(self._model)
 
         # Selection of items
@@ -98,7 +98,7 @@ class ConstantTable(QTableView):
 
 class DataTable(QTableView):
     '''
-    Displays data from TableModel which has values from a variable together with timestamp
+    Displays data from DataModel which has values from a variable together with timestamp
 
     parent [QWidget] is the parent widget
     '''
@@ -110,7 +110,7 @@ class DataTable(QTableView):
         super(DataTable, self).__init__(parent)
 
         # Setup model
-        self._model = TableModel('', parent) # just use the two functions get_name_to_print and get_unit_to_print istead of 'Value'
+        self._model = DataModel('', parent) # just use the two functions get_name_to_print and get_unit_to_print istead of 'Value'
         self.setModel(self._model)
         self.tabfunc = TF()
         # Selection of items
@@ -242,7 +242,7 @@ class DataTable(QTableView):
                 var.append(itm.labels)
             data = self.tabfunc.tableFunctionGeneral(path,var)
             header_labels = self.tabfunc.return_header_names(path,var)
-            header_labels.insert(TableModel.time_col, TF.time_label)
+            header_labels.insert(DataModel.time_col, TF.time_label)
             self._model.update_header(self.tabfunc.return_header_names(path,var))
 
         # Updates size of column when content is changed

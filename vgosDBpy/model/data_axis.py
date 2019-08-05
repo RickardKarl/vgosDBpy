@@ -60,6 +60,9 @@ class DataAxis:
     def getEditedData(self):
         return self._edited_data
 
+    def setEditedData(self, edited_data):
+        self._edited_data = edited_data
+
     def getMarkedData(self):
         return self._marked_data
 
@@ -79,7 +82,6 @@ class DataAxis:
         self.main_curve.set_markersize(marker_size)
         self.smooth_curve.set_markersize(marker_size)
         self.marked_data_curve.set_markersize(marker_size*1.2)
-
 
     def displayMainCurve(self, bool):
         if bool == True:

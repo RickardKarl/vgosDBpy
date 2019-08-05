@@ -45,6 +45,7 @@ class AxesToolBox(QWidget):
 
         ### Listen to changes of selection in table_widget
         self.table_widget.getSignal().connect(self._selection_changed_callback_table)
+        self.table_widget.getModel().dataChanged.connect(self._tableDataChanged)
 
         # Control, appearance and data variables
         self.selector = None
@@ -150,7 +151,9 @@ class AxesToolBox(QWidget):
             raise ValueError('Invalid choice of DataAxis, does not exist in figure.', data_axis)
 
 
-    ######## Selector methods
+    ############## Selector methods #########
+
+    ###### Used by plot canvas
 
     def updateSelector(self, data_axis):
         '''
@@ -176,6 +179,8 @@ class AxesToolBox(QWidget):
         # Update appearance of plot and table
         self._updateSelectionWidgets()
 
+    ####### Used by data table
+
     def _selection_changed_callback_table(self):
         # Get marked data
         marked_data = self.table_widget.getModel().getDataFromSelected(self.table_widget.selection.selectedIndexes(), self.current_axis)
@@ -185,6 +190,16 @@ class AxesToolBox(QWidget):
 
         # Update appearance of plot and table
         self._updateSelectionWidgets()
+
+    def _tableDataChanged(self):
+
+        self.table_widget.getModel().updateDataAxisfromTable()
+        self.table_widget.getModel().blockSignals(True)
+        self._updateDisplayedData()
+        self.table_widget.getModel().blockSignals(False)
+
+
+    ############# Used by both plot canvas and data table
 
     def _updateSelectionWidgets(self):
         '''

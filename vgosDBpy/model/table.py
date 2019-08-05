@@ -19,8 +19,6 @@ class TableModel(QStandardItemModel):
     parent [QWidget]
     '''
 
-    # Decides which one is the standard time-column when displaying data from plot
-    time_col = 0
 
     # Constructor
     def __init__(self, header, parent=None):
@@ -28,11 +26,6 @@ class TableModel(QStandardItemModel):
         self._header = header
         self.setHorizontalHeaderLabels(self._header)
         self.nbrItems = 0
-
-        # Map to keep track of which column that belongs to each DataAxis
-        self.data_axis = None # Keep track of the DataAxis that it shows from the plot
-        self.dataaxis_to_column_map = {} # DataAxis : Column index
-        self.column_to_dataaxis_map = {}
 
     # Set flags
     def flags(self, index):
@@ -76,9 +69,12 @@ class TableModel(QStandardItemModel):
         self.setHorizontalHeaderLabels(self._header)
 
 
-    ########### Update methods ##################################################################
+class VariableModel(TableModel):
 
-    ########### Used by variable table
+    def __init__(self, header, parent=None):
+            super(VariableModel,self).__init__(header, parent)
+
+    ########### Update methods ############
 
     def updateVariables(self, item):
         '''
@@ -98,15 +94,69 @@ class TableModel(QStandardItemModel):
                 self.setItem(i,1,Variable(get_unit_to_print(item.getPath(), var),item))
                 self.setItem(i,2,Variable(get_dimension_var(item.getPath(), var),item))
                 self.setItem(i,3,Variable(get_dtype_for_var(item.getPath(), var),item))
-            #    j=2
                 i += 1
 
-    ############### Used by DataTable
+
+
+
+
+class DataModel(TableModel):
+
+    # Decides which one is the standard time-column when displaying data from plot
+    time_col = 0
+
+    def __init__(self, header, parent=None):
+            super(DataModel,self).__init__(header, parent)
+
+            # Map to keep track of which column that belongs to each DataAxis (USED BY DataTable)
+            self.data_axis = None # Keep track of the DataAxis that it shows from the plot
+            self.dataaxis_to_column_map = {} # DataAxis : Column index
+            self.column_to_dataaxis_map = {}
+
+    # Set flags
+    def flags(self, index):
+        '''
+        Let us choose if the selected items should be enabled, editable, etc
+
+        index [QModelIndex]
+        '''
+
+        if not index.isValid():
+            return 0
+
+        return QtCore.Qt.ItemIsEnabled | QtCore.Qt.ItemIsSelectable | QtCore.Qt.ItemIsEditable
+
+
+    ############# Getter method
+
+    def getData(self, column_index, data_axis = None, get_time = False):
+
+        # List to append data to
+        data = []
+        if get_time == True:
+            time_index = []
+
+        # Get column if a DataAxis is given
+        if data_axis != None:
+            column_index = self.column_to_dataaxis_map.get(data_axis)
+
+        # Loop through rows of the data table
+        for row_index in range(self.rowCount()):
+
+            data.append(self.item(row_index, column_index).value)
+
+            if get_time == True:
+                time_index.append(self.item(row_index, DataModel.time_col).value)
+
+        if get_time == True:
+            return pd.Series(data, index = time_index)
+        else:
+            return pd.Series(data)
+
+    ########### Update methods ############
 
     def updateData(self, data, items):
         '''
-        USED BY DataTable
-
         Resets content and then replaces it with data
 
         data [dict] which contains data to fill the table with. E.g. {'time': time, "var_data": var_data}
@@ -127,7 +177,6 @@ class TableModel(QStandardItemModel):
 
     def appendData(self, data_new, item):
         '''
-        USED BY DataTable
 
         Resets content and then replaces it with data
 
@@ -147,13 +196,11 @@ class TableModel(QStandardItemModel):
 
     def updateFromDataAxis(self, data_axis, get_edited_data = True):
         '''
-        USED BY DataTable
 
         Update table model from one/several DataAxis
 
         data_axis [list of DataAxis] is what should be displayed in the table
         '''
-
 
         if len(data_axis) > 0:
             items = []
@@ -170,13 +217,13 @@ class TableModel(QStandardItemModel):
             if len(data_axis) != len(items):
                 raise ValueError('data_axis and items do no have the same length')
             for i in range(len(time_index)):
-                self.setItem(i, TableModel.time_col, DataValue(time_index[i], node = None))
+                self.setItem(i, DataModel.time_col, DataValue(time_index[i], node = None))
 
             col_index = 0
             for j in range(len(data_axis)):
 
                 # Checks so it does not write in same col as time
-                if col_index == TableModel.time_col:
+                if col_index == DataModel.time_col:
                     col_index += 1
 
                 # Retrieve pd.Series stored in DataAxis
@@ -218,13 +265,37 @@ class TableModel(QStandardItemModel):
 
             item = self.itemFromIndex(index)
 
-            if item_col != TableModel.time_col and item_col == current_col:
+            if item_col != DataModel.time_col and item_col == current_col:
 
                 # Get timestamp
-                timestamp = self.item(item_row, TableModel.time_col).value
+                timestamp = self.item(item_row, DataModel.time_col).value
                 time_index.append(timestamp)
 
                 # Get value
                 value.append(item.value)
 
         return pd.Series(value, index = time_index)
+
+
+    def updateDataAxisfromTable(self):
+
+        for column_index in range(self.columnCount()):
+
+            if column_index == DataModel.time_col:
+                continue
+
+            else:
+                current_data_axis = self.column_to_dataaxis_map.get(column_index)
+
+                time_index = []
+                data = []
+
+                for row_index in range(self.rowCount()):
+
+                    data.append(self.item(row_index, column_index).value)
+
+                    time_index.append(self.item(row_index, DataModel.time_col).value)
+
+                edited_series = pd.Series(data, index = time_index)
+                print(edited_series)
+                current_data_axis.setEditedData(edited_series)
