@@ -2,7 +2,7 @@
 from PySide2.QtWidgets import QTreeView, QTableView, QAbstractItemView
 from PySide2.QtCore import QItemSelectionModel, Signal
 
-from vgosDBpy.model.standardtree import TreeModel
+from vgosDBpy.model.qtree import TreeModel
 from vgosDBpy.model.table import TableModel
 from vgosDBpy.data.plotTable import Tablefunction as TF
 
