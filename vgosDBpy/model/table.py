@@ -2,7 +2,7 @@ from PySide2.QtGui import QStandardItemModel
 from PySide2 import QtCore
 import pandas as pd
 
-from vgosDBpy.model.standardtree import Variable, DataValue
+from vgosDBpy.model.qtree import Variable, DataValue
 from vgosDBpy.data.readNetCDF import get_netCDF_variables, get_dtype_var_str, get_dimension_var, show_in_table
 from vgosDBpy.data.combineYMDHMS import combineYMDHMwithSec,findCorrespondingTime
 from vgosDBpy.data.getRealName import get_unit_to_print
