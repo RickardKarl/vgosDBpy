@@ -12,7 +12,6 @@ import os
 def create_new_wrapper(list_changed_files, new_file_names, path_to_old_wrp, hist_file_name, timestamp):
 
     path_to_new_wrp = new_wrapper_path(path_to_old_wrp)
-    #print('Creating wrapper with path:', path_to_new_wrp)
 
     while os.path.isfile(path_to_new_wrp):
         path_to_new_wrp = new_wrapper_path(path_to_new_wrp)
@@ -90,6 +89,8 @@ def create_new_wrapper(list_changed_files, new_file_names, path_to_old_wrp, hist
 
         new_wrapper.close()
     old_wrapper.close()
+
+    print('Created wrapper with path:', path_to_new_wrp)
 
     return path_to_new_wrp
 
