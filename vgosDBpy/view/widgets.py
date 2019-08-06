@@ -107,6 +107,7 @@ class DataTable(QTableView):
         self._model = DataModel('', parent) # just use the two functions get_name_to_print and get_unit_to_print istead of 'Value'
         self.setModel(self._model)
         self.tabfunc = TF()
+        
         # Selection of items
         self.setSelectionMode(QAbstractItemView.ExtendedSelection)
         #self.setSelectionBehavior(QAbstractItemView.SelectionBehavior.SelectRow)
@@ -122,9 +123,6 @@ class DataTable(QTableView):
     def mouseReleaseEvent(self, e):
         super(DataTable, self).mouseReleaseEvent(e)
         self.custom_mouse_release.emit()
-
-    def selectionChanged(self, selected, deselected):
-        super(DataTable, self).selectionChanged(selected, deselected)
 
     ######### Update methods
 

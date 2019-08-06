@@ -195,11 +195,25 @@ class AxesToolBox(QWidget):
         # Update appearance of plot and table
         self._updateSelectionWidgets()
 
-    def _tableDataChanged(self):
+    @QtCore.Slot(int)
+    def _tableDataChanged(self, int):
+        '''
+        int is the column index of the edited cell in the table
+        '''
 
+        # Update table
         self.table_widget.getModel().updateDataAxisfromTable()
+
+        # Track changes
+        edited_data_axis = self.table_widget.getModel().getDataAxis(int)
+        edited_data = edited_data_axis.getEditedData()
+        self.track_edits.addEdit(edited_data_axis.getItem(), edited_data.values)
+
+        # Update plot
         if self.canvas.isPlotting():
             self._updateDisplayedData(update_plot_only = True)
+
+
 
 
     ############# Used by both plot canvas and data table

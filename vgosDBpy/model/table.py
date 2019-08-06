@@ -104,7 +104,7 @@ class DataModel(TableModel):
     # Decides which one is the standard time-column when displaying data from plot
     time_col = 0
 
-    dataChanged_customSignal = QtCore.Signal()
+    dataChanged_customSignal = QtCore.Signal(int)
 
     def __init__(self, header, parent=None):
             super(DataModel,self).__init__(header, parent)
@@ -131,6 +131,12 @@ class DataModel(TableModel):
 
 
     ############# Getter method
+
+    def getDataAxis(self, column):
+        return self.column_to_dataaxis_map.get(column)
+
+    def getColumn(self, data_axis):
+        return self.dataaxis_to_column_map.get(data_axis)
 
     def getData(self, column_index, data_axis = None, get_time = False):
 

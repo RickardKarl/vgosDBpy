@@ -238,7 +238,7 @@ class DataValue(QNodeItem):
             return False
 
         if self.custom_signal_bool is True:
-            self.signal.emit()
+            self.signal.emit(self.column())
         else:
             self.emitDataChanged()
 
