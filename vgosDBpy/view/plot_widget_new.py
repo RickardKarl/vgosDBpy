@@ -178,14 +178,14 @@ class PlotFigure(FigureCanvas):
 
     ######## Methods for saving figure as image
 
-    def saveCanvas(self, file_name):
-        '''
-        Saves current figure as a pdf
+def saveCanvas(file_name, fig):
+    '''
+    Saves current figure as a pdf
 
-        file_name [str]
-        '''
-        with PdfPages(file_name) as pdf:
-            pdf.savefig(self.figure)
+    file_name [str]
+    '''
+    with PdfPages(file_name) as pdf:
+        pdf.savefig(fig)
 
 
 class PlotWidget(QWidget):
