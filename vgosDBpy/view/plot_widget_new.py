@@ -127,6 +127,15 @@ class PlotFigure(FigureCanvas):
             else:
                 raise ValueError('Can not plot a string')
 
+
+    def plot_script(self,paths,vars,figure, time):
+        self.clearAxes()
+
+        axis, data = self.plot_function.plotFunction(paths, vars, figure, -1)
+        for i in range(len(axis)):
+            self.addAxis(DataAxis(axis[i], data[i], items[i]))
+        self.updatePlot()
+
     def append_plot(self, item):
         #add new item
         self.paths.append(item.getPath())

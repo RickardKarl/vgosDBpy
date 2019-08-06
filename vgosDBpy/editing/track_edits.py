@@ -112,7 +112,7 @@ class EditTracking:
             new_wrp_path = create_new_wrapper(path_to_file_list, new_file_name_list, self._wrapper.wrapper_path,
                                 hist_file_name, timestamp)
 
-            #print('Created the following wrapper:', new_wrp_path)
+            #print('Created the following wrapper: new_wrp_path)
             #print('Created the following history file:', new_hist_path)
 
             self.msg_box(new_file_name_list, new_wrp_path, new_hist_path)
