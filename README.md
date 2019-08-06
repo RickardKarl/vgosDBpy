@@ -14,3 +14,6 @@ This project was developed during an internship at NVI Inc. @ NASA GSFC
 3. Enter 'python -m vgosDBpy -h' for more information.
 
 
+Note: <.wrp-file> is the wrapper file in a vgosDB session folder.
+
+
