@@ -285,8 +285,10 @@ class AxesToolBox(QWidget):
 
     def _restoreChanges(self):
         self.current_axis.resetEditedData()
+        self.track_edits.removeEdit(self.current_axis.getItem())
         self._clearMarkedData()
         self._updateDisplayedData()
+
 
     def _saveEdit(self):
         msg = self.track_edits.getTextInfo()
