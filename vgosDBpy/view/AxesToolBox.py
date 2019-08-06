@@ -1,4 +1,4 @@
-from PySide2.QtWidgets import QGridLayout, QWidget, QCheckBox, QRadioButton, QPushButton
+from PySide2.QtWidgets import QGridLayout, QWidget, QCheckBox, QRadioButton, QPushButton, QMessageBox
 from PySide2 import QtCore
 from PySide2.QtGui import QMouseEvent
 from matplotlib.widgets import RectangleSelector
@@ -8,6 +8,8 @@ from vgosDBpy.editing.select_data import getData
 from vgosDBpy.view.plotlines import createLine2D, createSmoothCurve
 from vgosDBpy.data.tableToASCII import convertToAscii, write_ascii_file
 from vgosDBpy.model.data_axis import DataAxis
+from vgosDBpy.view.popUpWindows import popUpBoxTable,popUpBoxEdit
+
 
 class AxesToolBox(QWidget):
     '''
@@ -226,6 +228,10 @@ class AxesToolBox(QWidget):
         self._showMarkers()
         self._showSmoothCurve()
 
+        # Update table
+        self.table_widget.updateFromDataAxis(self.data_axis)
+
+
 
     ######## Button methods that control appearance
 
@@ -283,13 +289,22 @@ class AxesToolBox(QWidget):
         self._updateDisplayedData()
 
     def _saveEdit(self):
-        self.track_edits.saveEdit()
+        msg = self.track_edits.getTextInfo()
+        button_pressed = popUpBoxEdit(msg)
+
+        if button_pressed == QMessageBox.AcceptRole:
+            self.track_edits.saveEdit()
+        elif button_pressed == QMessageBox.ResetRole:
+            self.track_edits.reset()
+            for ax in self.data_axis:
+                ax.resetEditedData()
+            self._updateDisplayedData()
+
 
     def _printTable(self):
         ptable = convertToAscii(self.table_widget)
         session_name = self.parentWidget().treeview.getWrapper().session_name
         info = 'Session: ' + session_name
-
         file_name = ''
         for head in ptable.field_names:
             if len(head) > 3:
@@ -297,4 +312,9 @@ class AxesToolBox(QWidget):
             file_name = file_name + '_' + head
 
         path = session_name + file_name + '.txt'
-        write_ascii_file(ptable, info, path)
+
+        button_pressed = popUpBoxTable(path)
+
+        # Save file to ASCII
+        if button_pressed == QMessageBox.AcceptRole:
+            write_ascii_file(ptable, info, path)

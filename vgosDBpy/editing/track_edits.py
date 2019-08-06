@@ -35,10 +35,6 @@ class EditTracking:
             self._edited_variables.append(variable)
         self._edited_data[variable] = data_array
 
-        print('Current changes:')
-        for var in self._edited_variables:
-            print(var.getPath())
-
     def removeEdit(self, variable):
         '''
         variable [model.standardtree.Variable]
@@ -61,6 +57,8 @@ class EditTracking:
         Creates new netCDF files and a wrapper that points to the new file(s)
         Also creates a new history file
         '''
+
+
         sort_by_parent = {}
         for variable in self._edited_variables:
             # Get parent of variable and check if it is a netCDF file
@@ -96,21 +94,30 @@ class EditTracking:
             path_to_file_list.append(parent_key.getPath())
             new_file_name_list.append(new_file_name)
 
-        print(path_to_file_list)
-        print('Created the following files:', new_file_name_list)
+            # Create new history file and add it to the wrapper changes
+            new_hist_path, timestamp = self.createNewHistFile(sort_by_parent, path_to_file_list, new_file_name_list)
+            hist_file_name = new_hist_path.split('/')[-1]
 
-        # Create new history file and add it to the wrapper changes
-        new_hist_path, timestamp = self.createNewHistFile(sort_by_parent, path_to_file_list, new_file_name_list)
-        hist_file_name = new_hist_path.split('/')[-1]
-
-        # Create new wrapper
-        new_wrp_path = create_new_wrapper(path_to_file_list, new_file_name_list, self._wrapper.wrapper_path,
-                            hist_file_name, timestamp)
-
-        print('Created the following wrapper:', new_wrp_path)
-        print('Created the following history file:', new_hist_path)
+            # Create new wrapper
+            new_wrp_path = create_new_wrapper(path_to_file_list, new_file_name_list, self._wrapper.wrapper_path,
+                                hist_file_name, timestamp)
 
 
+
+    def getTextInfo(self):
+        '''
+        Returns string with information about currently tracked edits
+        '''
+        text = ''
+        if self._edited_data != [] and self._edited_variables != {}:
+            text += 'The following files will be modified:\n'
+            for itm in self._edited_data:
+                parent = itm.getNode()
+                parent_folder = itm.getNode().getNode().getParent()
+                text +=  str(itm) + ' in ' +  str(parent_folder) + '/' + str(parent) + '\n'
+        else:
+            text += 'No changes has been made'
+        return text
 
     def createNewHistFile(self, sort_var_by_file, path_to_file_list, new_file_name_list):
         '''
