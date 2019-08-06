@@ -92,7 +92,7 @@ class VariableModel(TableModel):
                 self.setItem(i,0,Variable(var,item))
                 self.setItem(i,1,Variable(get_unit_to_print(item.getPath(), var),item))
                 self.setItem(i,2,Variable(get_dimension_var(item.getPath(), var),item))
-                self.setItem(i,3,Variable(get_dtype_for_var(item.getPath(), var),item))
+                self.setItem(i,3,Variable(get_dtype_var_str(item.getPath(), var),item))
                 i += 1
 
 
