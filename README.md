@@ -11,7 +11,7 @@ This project was developed during an internship at NVI Inc. @ NASA GSFC
     - Qt 
     - Python packages given in the *requirements.txt* file (write 'pip install -r requirements.txt')
 2. Launch vgosDBpy by entering 'python -m vgosDBpy <.wrp-file> -g' while in this repository folder
-3. Enter 'python -m vgosDBpy -h' for more information.
+3. Enter 'python -m vgosDBpy -h' for more information
 
 
 Note: <.wrp-file> is the wrapper file in a vgosDB session folder.
