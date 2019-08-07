@@ -1,7 +1,7 @@
 # How to copy a file
 from vgosDBpy.wrapper.parser import Parser
 from vgosDBpy.data.PathParser import PathParser
-from vgosDBpy.editing.newFileNames import new_netCDF_name, new_wrapper_path
+from vgosDBpy.editing.newFileNames import newVersionName, newWrapperPath
 from vgosDBpy.wrapper.equalWrapper import equal
 import os
 
@@ -11,10 +11,10 @@ import os
 
 def create_new_wrapper(list_changed_files, new_file_names, path_to_old_wrp, hist_file_name, timestamp):
 
-    path_to_new_wrp = new_wrapper_path(path_to_old_wrp)
+    path_to_new_wrp = newWrapperPath(path_to_old_wrp)
 
     while os.path.isfile(path_to_new_wrp):
-        path_to_new_wrp = new_wrapper_path(path_to_new_wrp)
+        path_to_new_wrp = newWrapperPath(path_to_new_wrp)
 
     parser = Parser(path_to_old_wrp)
 
@@ -89,8 +89,6 @@ def create_new_wrapper(list_changed_files, new_file_names, path_to_old_wrp, hist
 
         new_wrapper.close()
     old_wrapper.close()
-
-    print('Created wrapper with path:', path_to_new_wrp)
 
     return path_to_new_wrp
 

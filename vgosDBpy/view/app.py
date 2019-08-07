@@ -122,9 +122,7 @@ class App(QWidget):
             item = self.treeview.getModel().itemFromIndex(index[0])
             if item.isNetCDF():
                 text = get_netCDF_vars_info(item.getPath())
-                #text_data =read_netCDF_data_info(item.getPath())
-                text_total = text #+ text_data
-                self.info_text.setPlainText(str(text_total))
+                self.info_text.setPlainText(str(text))
                 self.var_table.updateVariables(item)
 
             elif item.isHistFile():

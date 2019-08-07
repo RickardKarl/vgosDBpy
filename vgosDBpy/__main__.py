@@ -58,7 +58,11 @@ if __name__ == '__main__':
                 txt.write('begin table\n')
                 txt.write('./../../Files/10JAN04XK/TSUKUB32/Met.nc -- AtmPres\n')
                 txt.write('./../../Files/10JAN04XK/TSUKUB32/Met.nc -- TempC\n')
-                txt.write('end table')
+                txt.write('end table\n')
+                txt.write('begin plot\n')
+                txt.write('./../../Files/10JAN04XK/TSUKUB32/Met.nc -- AtmPres\n')
+                txt.write('./../../Files/10JAN04XK/TSUKUB32/Met.nc -- TempC\n')
+                txt.write('end plot')
             script(path)
             """
             print_name_dtype_dim_length(path2)

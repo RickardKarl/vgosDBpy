@@ -8,6 +8,9 @@ from vgosDBpy.wrapper.parser import Parser
 from vgosDBpy.read_log.parser import LogInfo
 from vgosDBpy.read_log.plotter import plotSeries
 
+# Script-driven
+from vgosDBpy.script_driven.script_main import script
+
 
 import argparse
 import sys
@@ -29,7 +32,7 @@ class CommandLineInterface(argparse.ArgumentParser):
         super(CommandLineInterface,self).__init__(prog = 'vgosDBpy')
 
         # Adding arguments
-        self.add_argument('file', help = 'Read a file (*.wrp)')
+        self.add_argument('file', help = 'Read a file (*.wrp or *.txt)')
         self.add_argument('-g','--graphic', help = 'Activate graphical user interface when reading wrapper',
                         action="store_true")
 
@@ -62,6 +65,10 @@ class CommandLineInterface(argparse.ArgumentParser):
                 parser = Parser(self.args.file)
                 wrapper = parser.parseWrapper(self.args.file)
                 print(wrapper)
+
+        elif self.args.file.endswith('.txt'):
+            script(self.args.file)
+
         '''
         elif self.args.file.endswith('.log'):
             if self.args.var != None:
@@ -71,6 +78,9 @@ class CommandLineInterface(argparse.ArgumentParser):
                 read_log = LogInfo(self.args.file)
                 read_log.plotVar(self.args.var)
         '''
+
+
+
         #else:
         #    raise ValueError('Wrong file given, does not end with .wrp or .log', self.args.file)
 

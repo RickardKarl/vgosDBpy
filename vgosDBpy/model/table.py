@@ -194,6 +194,7 @@ class DataModel(TableModel):
 
         # Update
         names = list(data)
+        self.reset()
         for i in range(0,len(data[names[0]])):
             for j in range (0,len(names)):
                 if len(names) > 1:
@@ -314,7 +315,6 @@ class DataModel(TableModel):
                     data = data_axis[j].getData()
 
                 # Check that the time indices are the same
-                # np.array_equal(a1, a2)
                 if not data.index.equals(time_index):
                     raise ValueError('DataAxis', data_axis[j], 'do not have the same time indices as', data_axis[0])
 

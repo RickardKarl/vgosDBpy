@@ -2,8 +2,8 @@
 reads in a path and get information from it
 """
 
-"./../../../../Files/10JAN04XU/TimeUTC.nc"
 import os
+
 class PathParser():
     path = ""
     parts =[]
@@ -40,15 +40,3 @@ class PathParser():
 
     def get_parts(self):
         return self.parts
-"""
-def findCorrespondingTime(path):
-    time_path = ""
-    if os.path.isfile(path):
-        parts = path.split("/")
-        parts[-1] = 'TimeUTC.nc'
-        time_path = '/'.join(parts)
-        if os.path.isfile(time_path):
-            return time_path
-        else:
-             return ''
-"""

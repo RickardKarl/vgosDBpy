@@ -5,7 +5,7 @@ from matplotlib.backends.backend_qt5agg import NavigationToolbar2QT as Navigatio
 from matplotlib.backends.backend_pdf import PdfPages
 from matplotlib.figure import Figure
 
-from vgosDBpy.data.plotFunctionNew import Plotfunction_class
+from vgosDBpy.data.plotFunction import Plotfunction_class
 from vgosDBpy.model.data_axis import DataAxis
 from vgosDBpy.view.plotlines import createLine2D, createSmoothCurve
 from vgosDBpy.data.readNetCDF import not_S1, is_multdim_var_list

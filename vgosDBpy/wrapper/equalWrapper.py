@@ -48,12 +48,3 @@ def equal(path_1, path_2):
                 c = c+1
                 if line.strip() != line_1.strip():
                     print(line + "differs from" + line_1)
-
-
-
-
-#path1='./../../../../Files/10JAN04XK/10JAN04XK_V005_iGSFC_kall.wrp'
-
-#path2='./../../../../Files/10JAN04XK/10JAN04XK_V005_iGSFC_kngs.wrp'
-
-#equal(path1, path2)

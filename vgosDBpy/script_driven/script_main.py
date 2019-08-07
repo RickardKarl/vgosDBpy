@@ -1,5 +1,5 @@
 """
-EX:
+FORMAT FOR .TXT FILE INPUT:
 begin plot
 pathToNetCDF -- var
 pathToNetCDF --  var
@@ -13,7 +13,7 @@ end table
 
 from matplotlib.figure import Figure
 import matplotlib.pyplot as plt
-from vgosDBpy.data.plotFunctionNew import Plotfunction_class
+from vgosDBpy.data.plotFunction import Plotfunction_class
 
 
 from vgosDBpy.data.plotTable import Tablefunction
@@ -21,18 +21,18 @@ from vgosDBpy.data.tableToASCII import convertToAscii_script
 
 from vgosDBpy.editing.newFileNames import new_netCDF_name
 
-
+# function that is called from outisde, takes in a path to a txt file with info of what to do.
 def script(path):
 
-    plot_list, table_list = parse_script(path)
+    plot_list, table_list = _parse_script(path)
 
     for plot in plot_list:
-        script_plot(plot)
+        _script_plot(plot)
     for table in table_list:
-        script_table(table)
+        _script_table(table)
 
-
-def parse_script(path):
+# private function that parses the .txt file and creates a list of things to plot and put in tables
+def _parse_script(path):
 
     plot_list = []
     table_list = []
@@ -60,9 +60,11 @@ def parse_script(path):
             elif table == True:
                 temp_table_list.append(line)
     return plot_list, table_list
-    # call on functions to create plots and tables
 
-def script_plot(list):
+
+# private function that takes in a list of strings in the form 'path' -- 'var', loopse though the list and creates and saves the
+#plots
+def _script_plot(list):
 
     plt_function = Plotfunction_class()
 
@@ -76,13 +78,16 @@ def script_plot(list):
         paths.append(path.strip())
         vars.append(var.strip())
 
-    ex_name = './plot'
+    ex_name = './plot.png'
     new_name = new_netCDF_name(ex_name)
 
     axis, data = plt_function.plotFunction(paths,vars,fig,-1)
     plt.savefig(new_name)
 
-def script_table(list):
+## private function that takes in a list of strings in the form 'path' -- 'var',
+# loopse though the list and creates and saves the
+# tables with the content of the varibales
+def _script_table(list):
     table_function = Tablefunction()
 
     paths = []
