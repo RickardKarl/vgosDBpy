@@ -13,9 +13,10 @@ from vgosDBpy.data.getName import get_name_to_print as name, get_unit_to_print a
 class Tablefunction():
     time_label = 'Time [Y-M-D H:M:S]'
     def __init__(self):
-        self.data = {}
-        self.header = []
+        self.data = {} # key = name of variable, value = array of data
+        self.header = [] # Arrat of names of varibles
 
+    # function that is called from other files
     def tableFunctionGeneral(self,paths,vars):
         self.data_reset()
         timePath = findCorrespondingTime(paths[0])
@@ -33,6 +34,7 @@ class Tablefunction():
             c = c + 1
         return self.data
 
+    # function that is called from other files
     def append_table(self, paths, vars):
         y = get_data_to_table(paths[-1],vars[-1])
         new_data = {}

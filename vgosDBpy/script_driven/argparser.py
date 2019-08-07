@@ -65,6 +65,9 @@ class CommandLineInterface(argparse.ArgumentParser):
                 parser = Parser(self.args.file)
                 wrapper = parser.parseWrapper(self.args.file)
                 print(wrapper)
+
+        elif self.args.file.endswith('.txt'):
+            script(self.args.file)
         '''
         elif self.args.file.endswith('.log'):
             if self.args.var != None:
@@ -75,8 +78,8 @@ class CommandLineInterface(argparse.ArgumentParser):
                 read_log.plotVar(self.args.var)
         '''
 
-            elif self.args.file.endswith('.txt'):
-                script(file)
+            #elif self.args.file.endswith('.txt'):
+            #    script(file)
 
         #else:
         #    raise ValueError('Wrong file given, does not end with .wrp or .log', self.args.file)

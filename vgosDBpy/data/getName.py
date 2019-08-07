@@ -3,15 +3,16 @@ contains methods to get name of variables to print
 """
 from netCDF4 import Dataset
 
+# returns the name to print instead of the shortname that is the variable name
 def get_name_to_print(path, var):
         if var == 'AtmPres':
-            return "Pressure "
+            return "Pressure"
         elif var == 'TempC':
             return "Temperature "
         elif var == 'RelHum':
             return "Humidity "
         elif var == 'Cal-Cabel':
-            return "Cal-Cabel  "
+            return "Cal-Cabel "
         elif var == 'Time':
             return 'Time'
         else:
