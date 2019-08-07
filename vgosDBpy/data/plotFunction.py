@@ -193,9 +193,12 @@ class Plotfunction_class():
             self.axis[1].set_ylabel(self.y2.get_axis_lable(),color=color)
             self.axis[1].tick_params(axis=self.y2.getVar(), labelcolor=color)
 
-        # set titel to entire plot
-        self.axis[0].set_title(header_plot(paths[0])+ "\nPlot " +name(self.y1.getPath(),self.y1.getVar()) +  " against " +name(self.x.getPath(), self.x.getVar()))
-
+        # set titel to entire plot handeling all diferent cases
+        if self.y2.isEmpty == True:
+            self.axis[0].set_title(header_plot(paths[0])+ "\n Plot " +name(self.y1.getPath(),self.y1.getVar()) +  " against " +name(self.x.getPath(), self.x.getVar()))
+        elif self.y2.isEmpty == False:
+            self.axis[0].set_title(header_plot(paths[0])+ "\n Plot " +name(self.y1.getPath(),self.y1.getVar()) + ' and ' + name(self.y2.getPath(),self.y2.getVar()) + " against " +name(self.x.getPath(), self.x.getVar()))
+        #elis self.y2
         self._append_data()
         return self.axis, self.data
 

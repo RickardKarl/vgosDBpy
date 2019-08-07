@@ -13,7 +13,7 @@ end table
 
 from matplotlib.figure import Figure
 import matplotlib.pyplot as plt
-from vgosDBpy.data.plotFunctionNew import Plotfunction_class
+from vgosDBpy.data.plotFunction import Plotfunction_class
 
 
 from vgosDBpy.data.plotTable import Tablefunction
