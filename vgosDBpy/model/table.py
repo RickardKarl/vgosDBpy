@@ -6,6 +6,7 @@ from vgosDBpy.model.qtree import Variable, DataValue
 from vgosDBpy.data.readNetCDF import get_netCDF_variables, get_dtype_var_str, get_dimension_var, show_in_table
 from vgosDBpy.data.combineYMDHMS import combineYMDHMwithSec,findCorrespondingTime
 from vgosDBpy.data.getName import get_unit_to_print
+from vgosDBpy.data.plotTable import Tablefunction as TF
 
 class TableModel(QStandardItemModel):
     '''
@@ -40,23 +41,16 @@ class TableModel(QStandardItemModel):
         return QtCore.Qt.ItemIsEnabled | QtCore.Qt.ItemIsSelectable #| QtCore.Qt.ItemIsEditable # Uncomment if you want to be able to edit it
 
     # Reset method
-    def reset(self):
+    def resetModel(self, reset_header = False):
         '''
         Resets content of the table without removing the header
         (Has to be done since clear otherwise would remove the header)
         '''
         self.clear()
-        self.setHorizontalHeaderLabels(self._header)
-
-
-    def clearTable(self):
-        self._header = []
-        self.reset()
         self.nbrItems = 0
-        #self._header = []
+        if reset_header:
+            self._header = []
         self.setHorizontalHeaderLabels(self._header)
-        #self.data_axis = None # Keep track of the DataAxis that it shows from the plot
-        #self.dataaxis_to_column_map = {} # DataAxis : Column index
 
 
     ########### Header methods
@@ -83,7 +77,7 @@ class VariableModel(TableModel):
 
         item [QStandardItems] contains the item which replaces previous content
         '''
-        self.reset()
+        self.resetModel()
         var_list = get_netCDF_variables(item.getPath())
         i = 0
         # Puts variable in first column and associated dimension in another
@@ -96,9 +90,6 @@ class VariableModel(TableModel):
                 i += 1
 
 
-
-
-
 class DataModel(TableModel):
 
     # Decides which one is the standard time-column when displaying data from plot
@@ -108,6 +99,9 @@ class DataModel(TableModel):
 
     def __init__(self, header, parent=None):
             super(DataModel,self).__init__(header, parent)
+
+            # Hanna
+            self.tabfunc = TF()
 
             # Map to keep track of which column that belongs to each DataAxis (USED BY DataTable)
             self.data_axis = None # Keep track of the DataAxis that it shows from the plot
@@ -130,7 +124,12 @@ class DataModel(TableModel):
         return QtCore.Qt.ItemIsEnabled | QtCore.Qt.ItemIsSelectable | QtCore.Qt.ItemIsEditable
 
 
-    ############# Getter method
+    ############# Getter method & setters
+
+    def resetModel(self, reset_header = False):
+        super(DataModel,self).resetModel(reset_header = reset_header)
+        self.tabfunc.data_reset()
+        self.tabfunc.header_reset()
 
     def getDataAxis(self, column):
         return self.column_to_dataaxis_map.get(column)
@@ -164,7 +163,7 @@ class DataModel(TableModel):
 
     ########### Update methods ############
 
-    def updateData(self, data, items):
+    def updateData(self, items):
         '''
         Resets content and then replaces it with data
 
@@ -172,9 +171,28 @@ class DataModel(TableModel):
         item [QStandardItems] contains the item which contains the variable with the data
         data_axis [DataAxis] contains a list of DataAxis that corresponds to the data being plotted
         '''
+        self.resetModel()
+
+        # Retrieve data from items
+        path = []
+        var = []
+        if len(items) > 0:
+            for itm in items:
+                path.append(itm.getPath())
+                var.append(itm.labels)
+            data = self.tabfunc.tableFunctionGeneral(path, var)
+
+        else:
+            raise ValueError('Argument items can not be empty.')
+
+        # Update header
+        self.update_header(self.tabfunc.return_header_names(path,var))
+
+        # Update items (HANNA WHAT THIS DOES)
+        items = DataModel.updateItems(data, items)
+
+        # Update
         names = list(data)
-        self.reset()
-        #self.clearTable()
         for i in range(0,len(data[names[0]])):
             for j in range (0,len(names)):
                 if len(names) > 1:
@@ -184,7 +202,7 @@ class DataModel(TableModel):
 
         self.nbrItems = len(names)
 
-    def appendData(self, data_new, item):
+    def appendData(self, item):
         '''
 
         Resets content and then replaces it with data
@@ -192,6 +210,26 @@ class DataModel(TableModel):
         data [dict] which contains data to fill the table with. E.g. {'time': time, "var_data": var_data}
         item [QStandardItems] contains the item which contains the variable with the data
         '''
+
+
+        # Retrieve data from items
+        path = []
+        var = []
+        if len(items) > 0:
+            for itm in items:  #tm in items:
+                path.append(itm.getPath())
+                var.append(itm.labels)
+            data_new = self.tabfunc.append_table(path, var)
+            data_all = self.tabfunc.get_table()
+            self.update_header(self.tabfunc.append_header(path,var))
+        else:
+            raise ValueError('Argument items contains wrong number of items, should be one or two.')
+
+        # Hanna
+        items = DataModel.updateItems(data, items)
+
+
+        # Update table
         names = list(data_new)
         start = self.nbrItems
         for i in range(0,len(data_new[names[0]])):
@@ -201,6 +239,22 @@ class DataModel(TableModel):
                 else:
                     self.setItem(i, start+j, DataValue(str(data_new[names[j]][i]), item[0], signal = self.dataChanged_customSignal))
         self.nbrItems += len(names)
+
+
+    def updateItems(data, items):
+        names = list(data)
+        prev = names[0]
+        i = 1
+        for j in range(0,len(names)-1):
+            prev = prev.split('#')[0]
+            name = names[i].split('#')[0]
+            if prev == name:
+                items.insert(j, items[j-1] )
+            prev = names[i]
+            i +=  1
+        return items
+
+    ######## DataAxis related methods
 
 
     def updateFromDataAxis(self, data_axis, get_edited_data = True):
@@ -216,6 +270,19 @@ class DataModel(TableModel):
             for ax in data_axis:
                 items.append(ax.getItem())
 
+            ###### Updates header
+            path = []
+            var = []
+            for itm in items:  #tm in items:
+                path.append(itm.getPath())
+                var.append(itm.labels)
+
+            header_labels = self.tabfunc.return_header_names(path,var)
+            header_labels.insert(DataModel.time_col, self.tabfunc.time_label)
+            self.update_header(self.tabfunc.return_header_names(path,var))
+
+            ###### Update data in table
+
             # Get a time index of the series,
             # all axes should have same time indices
             if get_edited_data:
@@ -225,6 +292,7 @@ class DataModel(TableModel):
 
             if len(data_axis) != len(items):
                 raise ValueError('data_axis and items do no have the same length')
+                
             for i in range(len(time_index)):
                 self.setItem(i, DataModel.time_col, DataValue(time_index[i], node = None, signal = self.dataChanged_customSignal))
 

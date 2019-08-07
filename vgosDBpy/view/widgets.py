@@ -4,10 +4,9 @@ from PySide2.QtCore import QItemSelectionModel, Signal
 
 from vgosDBpy.model.qtree import TreeModel
 from vgosDBpy.model.table import VariableModel, DataModel
-from vgosDBpy.data.plotTable import Tablefunction as TF
+
 
 from datetime import datetime
-import time
 
 class QWrapper(QTreeView):
     '''
@@ -106,17 +105,24 @@ class DataTable(QTableView):
         # Setup model
         self._model = DataModel('', parent) # just use the two functions get_name_to_print and get_unit_to_print istead of 'Value'
         self.setModel(self._model)
-        self.tabfunc = TF()
-        
+
+        self.resetModel()
+
         # Selection of items
         self.setSelectionMode(QAbstractItemView.ExtendedSelection)
         #self.setSelectionBehavior(QAbstractItemView.SelectionBehavior.SelectRow)
         self.selection = self.selectionModel()
 
-    ######### Getters
+    ######### Getters & setters
 
     def getModel(self):
         return self._model
+
+    def resetModel(self):
+        self._model.resetModel(reset_header = True)
+        self.setSelectionMode(QAbstractItemView.ExtendedSelection)
+        self.setSelectionBehavior(QAbstractItemView.SelectionBehavior.SelectRows)
+        self.selection = self.selectionModel()
 
     ######### Event listener
 
@@ -124,20 +130,7 @@ class DataTable(QTableView):
         super(DataTable, self).mouseReleaseEvent(e)
         self.custom_mouse_release.emit()
 
-    ######### Update methods
-
-    def updateItems(self,data,items):
-        names = list(data)
-        prev = names[0]
-        i = 1
-        for j in range(0,len(names)-1):
-            prev = prev.split('#')[0]
-            name = names[i].split('#')[0]
-            if prev == name:
-                items.insert(j, items[j-1] )
-            prev = names[i]
-            i +=  1
-        return items
+    ########### Appearance-related methods
 
     def updateColumnSize(self):
         '''
@@ -146,6 +139,8 @@ class DataTable(QTableView):
         for i in range(self._model.columnCount()):
             self.resizeColumnToContents(i)
 
+    ############### Update methods
+
     def updateData(self, items):
         '''
         Updates the data in the table
@@ -153,22 +148,8 @@ class DataTable(QTableView):
         items [list of QNodeItems] contains the nodes which points to the netCDF variables
         that should be displayed
         '''
-        path = []
-        var = []
-        if len(items) > 0:
-            for itm in items:  #tm in items:
-                path.append(itm.getPath())
-                var.append(itm.labels)
-            data = self.tabfunc.tableFunctionGeneral(path, var)
-            self._model.update_header(self.tabfunc.return_header_names(path,var))
-        else:
-            raise ValueError('Argument items can not be empty.')
-
-        # Update Items incase one path gave several data arrays
-        items = self.updateItems(data,items)
-
         # Updates model
-        self._model.updateData(data, items)
+        self._model.updateData(items)
 
         # Updates size of column when content is changed
         self.updateColumnSize()
@@ -181,33 +162,13 @@ class DataTable(QTableView):
         items [list of QNodeItems] contains the nodes which points to the netCDF variables
         that should be displayed
         '''
-        path = []
-        var = []
-        if len(items) > 0:
-            for itm in items:  #tm in items:
-                path.append(itm.getPath())
-                var.append(itm.labels)
-            data_new = self.tabfunc.append_table(path, var)
-            data_all = self.tabfunc.get_table()
-            self._model.update_header(self.tabfunc.append_header(path,var))
-        else:
-            raise ValueError('Argument items contains wrong number of items, should be one or two.')
 
-        items = self.updateItems(data_new, items)
         # Updates model
-        self._model.appendData(data_new,items)
+        self._model.appendData(items)
 
         # Updates size of column when content is changed
         self.updateColumnSize()
 
-    def clearTable(self):
-        self._model.clearTable()
-        self.setModel(self._model)
-        self.setSelectionMode(QAbstractItemView.ExtendedSelection)
-        self.setSelectionBehavior(QAbstractItemView.SelectionBehavior.SelectRows)
-        self.selection = self.selectionModel()
-        self.tabfunc.data_reset()
-        self.tabfunc.header_reset()
 
     ######### Update through DataAxis methods
 
@@ -216,23 +177,9 @@ class DataTable(QTableView):
         Updates the table by giving it the data_axis, this gives a one to one correspondance with
         the plot
         '''
-        if len(data_axis) > 0:
-            items = []
-            for ax in data_axis:
-                items.append(ax.getItem())
-            # Update values in table
-            self._model.updateFromDataAxis(data_axis)
 
-            # Updates header
-            path = []
-            var = []
-            for itm in items:  #tm in items:
-                path.append(itm.getPath())
-                var.append(itm.labels)
-            data = self.tabfunc.tableFunctionGeneral(path,var)
-            header_labels = self.tabfunc.return_header_names(path,var)
-            header_labels.insert(DataModel.time_col, TF.time_label)
-            self._model.update_header(self.tabfunc.return_header_names(path,var))
+        # Update model
+        self._model.updateFromDataAxis(data_axis)
 
         # Updates size of column when content is changed
         self.updateColumnSize()
@@ -256,4 +203,4 @@ class DataTable(QTableView):
             for row_index in selected_data:
                 model_item = self._model.item(row_index, col_index)
                 item_index = self._model.indexFromItem(model_item)
-                self.selection.select(item_index, QItemSelectionModel.Select) # This line takes a lot of time to execute, needs fix
+                self.selection.select(item_index, QItemSelectionModel.Select) # This line takes a lot of time to execute
