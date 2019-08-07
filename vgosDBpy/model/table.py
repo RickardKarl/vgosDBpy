@@ -204,7 +204,7 @@ class DataModel(TableModel):
 
         self.nbrItems = len(names)
 
-    def appendData(self, item):
+    def appendData(self, items):
         '''
 
         Resets content and then replaces it with data
@@ -218,17 +218,16 @@ class DataModel(TableModel):
         path = []
         var = []
         if len(items) > 0:
-            for itm in items:  #tm in items:
+            for itm in items:
                 path.append(itm.getPath())
                 var.append(itm.labels)
             data_new = self.tabfunc.append_table(path, var)
-            data_all = self.tabfunc.get_table()
             self.update_header(self.tabfunc.append_header(path,var))
         else:
             raise ValueError('Argument items contains wrong number of items, should be one or two.')
 
         # Hanna
-        items = DataModel.updateItems(data, items)
+        items = DataModel.updateItems(data_new, items)
 
 
         # Update table
@@ -237,9 +236,9 @@ class DataModel(TableModel):
         for i in range(0,len(data_new[names[0]])):
             for j in range (0,len(names)):
                 if len(names) > 1:
-                    self.setItem(i, start+j, DataValue(str(data_new[names[j]][i]), item[j%(len(names)-1)], signal = self.dataChanged_customSignal))
+                    self.setItem(i, start+j, DataValue(str(data_new[names[j]][i]), items[j%(len(names)-1)], signal = self.dataChanged_customSignal))
                 else:
-                    self.setItem(i, start+j, DataValue(str(data_new[names[j]][i]), item[0], signal = self.dataChanged_customSignal))
+                    self.setItem(i, start+j, DataValue(str(data_new[names[j]][i]), items[0], signal = self.dataChanged_customSignal))
         self.nbrItems += len(names)
 
 
