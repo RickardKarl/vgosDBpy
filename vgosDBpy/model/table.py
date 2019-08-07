@@ -7,6 +7,7 @@ from vgosDBpy.data.readNetCDF import get_netCDF_variables, get_dtype_var_str, ge
 from vgosDBpy.data.combineYMDHMS import combineYMDHMwithSec,findCorrespondingTime
 from vgosDBpy.data.getName import get_unit_to_print
 from vgosDBpy.data.plotTable import Tablefunction as TF
+from vgosDBpy.data.getName import get_name_to_print
 
 class TableModel(QStandardItemModel):
     '''
@@ -277,9 +278,12 @@ class DataModel(TableModel):
                 path.append(itm.getPath())
                 var.append(itm.labels)
 
-            header_labels = self.tabfunc.return_header_names(path,var)
+            header_labels = []
+            for v in var:
+                header_labels.append(get_name_to_print(path, v))
+
             header_labels.insert(DataModel.time_col, self.tabfunc.time_label)
-            self.update_header(self.tabfunc.return_header_names(path,var))
+            self.update_header(header_labels)
 
             ###### Update data in table
 
@@ -292,7 +296,7 @@ class DataModel(TableModel):
 
             if len(data_axis) != len(items):
                 raise ValueError('data_axis and items do no have the same length')
-                
+
             for i in range(len(time_index)):
                 self.setItem(i, DataModel.time_col, DataValue(time_index[i], node = None, signal = self.dataChanged_customSignal))
 

@@ -140,6 +140,7 @@ class App(QWidget):
             items = []
             for i in range(len(index)):
                 items.append(self.var_table.getModel().itemFromIndex(index[i]))
+
             self.plot_widget.plot_canvas.updateFigure(items)
 
             data_axis = self.plot_widget.getDataAxis()
@@ -156,7 +157,6 @@ class App(QWidget):
         data_axis = self.plot_widget.getDataAxis()
         self.plot_toolbox.updateDataAxis(data_axis)
         self.data_table.updateFromDataAxis(data_axis)
-        #self._addbutton()
 
     def _tablebutton(self):
         '''

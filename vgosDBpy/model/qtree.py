@@ -210,7 +210,6 @@ class DataValue(QNodeItem):
         super(DataValue, self).__init__(node)
         self.value = value
 
-
         self.signal = signal
         self.custom_signal_bool = (signal != None)
 
@@ -220,7 +219,7 @@ class DataValue(QNodeItem):
     def data(self, role = QtCore.Qt.DisplayRole):
 
         if role == QtCore.Qt.DisplayRole:
-            return self.value
+            return str(self.value)
         elif role == QtCore.Qt.EditRole:
             return self.value
         else:

@@ -58,6 +58,7 @@ class AxesToolBox(QWidget):
         self.check_smooth_curve = QCheckBox('Show smooth curve')
         self.timeDefault = QCheckBox('Display time on X-axis')
 
+        self.clear_marked = QPushButton('Clear all marked data', self)
         self.remove_marked = QPushButton('Remove data', self)
         self.restore_marked = QPushButton('Restore removed data', self)
 
@@ -72,8 +73,9 @@ class AxesToolBox(QWidget):
         appearance_layout.addWidget(self.check_smooth_curve, 2, 0)
         appearance_layout.addWidget(self.timeDefault, 3, 0)
 
-        appearance_layout.addWidget(self.remove_marked, 0, 1)
-        appearance_layout.addWidget(self.restore_marked, 1, 1)
+        appearance_layout.addWidget(self.clear_marked, 0, 1)
+        appearance_layout.addWidget(self.remove_marked, 1, 1)
+        appearance_layout.addWidget(self.restore_marked, 2, 1)
 
         appearance_layout.addWidget(self.saveEdit, 0, 3)
         appearance_layout.addWidget(self.printTable, 1, 3)
@@ -94,6 +96,7 @@ class AxesToolBox(QWidget):
         self.timeDefault.setCheckState(QtCore.Qt.Checked)
         self.timeDefault.stateChanged.connect(self._timeDefault)
 
+        self.clear_marked.clicked.connect(self._clearMarkedData)
         self.remove_marked.clicked.connect(self._trackEdit)
         self.restore_marked.clicked.connect(self._restoreChanges)
 
