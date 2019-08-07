@@ -146,13 +146,12 @@ class PlotFigure(FigureCanvas):
         self.paths.append(item.getPath())
         self.vars.append(item.labels)
         self.items.append(item)
-        #self.clearAxes()
+        self.clearAxes()
         if not_S1(self.paths,self.vars):
             axis, data = self.plot_function.plotFunction(self.paths, self.vars, self.figure, self.timeInt)
             for i in range(len(axis)):
                 data_axis = DataAxis(axis[i], data[i], self.items[i])
-                if not self.exists(data_axis):
-                    self.addAxis(data_axis)
+                self.addAxis(data_axis)
 
             # Refresh canvas
             self.updatePlot()
