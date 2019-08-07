@@ -194,7 +194,7 @@ class DataModel(TableModel):
 
         # Update
         names = list(data)
-        self.reset()
+        self.resetModel()
         for i in range(0,len(data[names[0]])):
             for j in range (0,len(names)):
                 if len(names) > 1:
