@@ -68,6 +68,7 @@ class PlotFigure(FigureCanvas):
     ############### Update graphics
 
     def updatePlot(self):
+        self.figure.autofmt_xdate()
         self.draw()
 
 
