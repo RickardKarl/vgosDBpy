@@ -186,7 +186,7 @@ class Plotfunction_class():
             XX = range(len(self.y1.getData()))
             self.axis[0].set_xlabel(self.x.get_axis_lable())
             self.axis[0].set_ylabel(self.y1.get_axis_lable())
-            self.axis[0].plot(self.x.getData(), self.y1.getData())
+            self.axis[0].plot(self.x.getData(), self.y1.getData(),color=color)
             self.axis[0].tick_params(axis=self.y1.getVar(), labelcolor=color)
 
         if self.y2.isEmpty == False:
