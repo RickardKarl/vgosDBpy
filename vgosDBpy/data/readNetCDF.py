@@ -1,11 +1,6 @@
 from netCDF4 import Dataset
 
 from vgosDBpy.data.combineYMDHMS import combineYMDHMwithSec,findCorrespondingTime
-#from vgosDBpy.data.PathParser import findCorrespondingTime
-
-#Actuallt used functions:
-
-#used from outside this program
 
 """
 ___________________________________________________________________________________________
@@ -50,7 +45,6 @@ def get_data_to_table(pathToNetCDF, var):
     dims_len = _get_len_dims(pathToNetCDF, var)
     dim = get_dimension_var(pathToNetCDF,var)
     if var.strip() == 'Baseline':
-        #print('enter 1')
         y = _get_dataBaseline(pathToNetCDF)
     elif var.strip() == 'QualityCode':
         y = _get_QualityCode_table(pathToNetCDF,var)
@@ -158,8 +152,6 @@ def get_dtype_netCDF(pathToNetCDF):
             dtype.append(nc.variables[var].dtype)
     return dtype
 
-#only used inside this file
-
 """
 ___________________________________________________________________________________________
 Functions to read content of variable
@@ -173,7 +165,6 @@ def _getDataFromVar_table(path, var):
      return_data = []
      with Dataset(path, "r", format="NETCDF4_CLASSIC") as nc:
          return_data.append(nc.variables[var][:])
-         #print(return_data)
          return(return_data)
 
 def _get_S1_tableData(pathToNetCDF, var):
@@ -202,16 +193,13 @@ def _get_NumStation_S1_table(pathToNetCDF,var):
 
         for dim in dimensions:
             length.append(len(dim))
-        #print(length)
-        for i in range(length[0]): #len(dimensions[0]):
+        for i in range(length[0]):
             temp = ''
             for j in range(length[1]):
                 temp += content[i,j].decode('ASCII')
             temp += '  '
-            #print(temp)
             table.append(temp)
         return_data.append(table)
-        #print(len(return_data))
         return return_data
 
 def _get_QualityCode_table(pathToNetCDF,var):
@@ -230,15 +218,11 @@ def _getDataFromVar_multDim(pathToNetCDF, var):
     return_data = []
     with Dataset(pathToNetCDF, 'r', format= 'NETCDF4_CLASSIC') as nc:
         length = len(nc.variables[var.strip()].get_dims())
-        #print(length)
         length2 = len(nc.variables[var][0,:])
-        #print(length2)
         for i in range (0,length2):
             dtype = nc.variables[var.strip()][:,[i]].dtype
-            #print(nc.variables[var.strip()][:,[i]].dtype)
             if dtype == 'S1':
                 data_var= nc.variables[var][:,[i]]
-                #print(data_var)
                 data= []
                 for line in data_var:
                     temp = ''
@@ -246,8 +230,7 @@ def _getDataFromVar_multDim(pathToNetCDF, var):
                         temp += letter.decode('ASCII')
                     data.append(temp)
                 return_data.append(data)
-            else:#item  =str(nc.variables[var.strip()][:,[i]]) + '*'
-                #print('Not S1')
+            else:
                 return_data.append(nc.variables[var.strip()][:,[i]])
         return return_data
 
@@ -260,14 +243,12 @@ def _get_dataBaseline(pathToNetCDF):
         length = []
         for dim in dimensions:
             length.append(len(dim))
-            #print(len(dim))
 
         temp = ''
-        for i in range(length[0]):#len(dimensions[0]):
+        for i in range(length[0]):
             temp = ''
             for j in range(length[1]):
                 for k in range(length[2]):
-                    #print(k)
                     temp += content[i,j,k].decode('ASCII')
                 temp += '  '
             baseline_table.append(temp)
@@ -292,9 +273,8 @@ def get_netCDF_vars_info(pathToNetCDF):
     vars =get_netCDF_variables(pathToNetCDF)
     dtypes = get_dtype_netCDF(pathToNetCDF)
     for i in range(len(vars)):
-        if not is_Numscans(pathToNetCDF,vars[i]) and not is_NumObs(pathToNetCDF,vars[i]): #is_numScan_or_NumObs(pathToNetCDF, vars[i]):
+        if not is_Numscans(pathToNetCDF,vars[i]) and not is_NumObs(pathToNetCDF,vars[i]):
             if dtypes[i] == 'S1' :
-                #if not is_numScan_or_NumObs(pathToNetCDF, vars[i]):
                 info += vars[i] +':'+  get_var_content_S1(vars[i], pathToNetCDF) + "\n \n"
             else:
                 info += get_var_content_constant(pathToNetCDF, vars[i]) + '\n \n '
@@ -390,151 +370,3 @@ def not_S1(paths, vars):
             if dtype.strip() == 'S1':
                 return False
     return True
-
-
-#______________________________________________________
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-"""
-Takes in: path to netCDF file and name of variable in file
-Returns: True of variabele has dismension "NumScans" and d_type != S1
-internal calls:
-                read_netCDF_dimension_for_var(var, path)
-                get_dtype_for_var(path, var)
-"""
-#def is_possible_to_plot(paths, vars):
-#    for i in range(0,len(paths)):
-#        path = paths[i]
-#        var = vars[i]
-#        dimension = read_netCDF_dimension_for_var(path, var)
-#        data_type = get_dtype_for_var(path,var)
-#        if dimension.strip() == "NumScans" or dimension.strip() == 'NumObs' and data_type != "S1"  :
-#            return True
-#    return False
-
-
-
-
-
-
-#def read_all_dimensions_for_var(path, var):
-#    with Dataset(path, 'r', format = 'NETCDF4_CLASSIC') as nc:
-#        return nc.variables[var].get_dims()
-"""
-Takes in: path to netCDF file amd name of var in file
-Returns: True is varibale has dtype != S1 but is not plottable
-Internal calls:
-                get_dtype_for_var(path, var)
-                read_netCDF_dimension_for_var(path,var)
-"""
-#def is_var_constant(path, var):
-#    dtype = get_dtype_for_var(path, var)
-#    if is_numScan_or_NumObs(path,var):
-#        return False
-#    else:
-#        if dtype != 'S1':
-#            return True
-#    return False
-
-"""
-def read_unit_for_var (pathToNetCDF, var):
-    with Dataset(pathToNetCDF, 'r', format= 'NETCDF4_CLASSIC') as nc:
-        try:
-            unit = nc.variables[var].Units
-        except:
-            unit = '-'
-        return "  ["+unit+"]"
-"""
-
-"""
-def is_numScan_or_NumObs(path, var):
-    if is_Numscans(path,var):
-        return True
-    if is_NumObs(path,var):
-        return True
-    return False
-"""
