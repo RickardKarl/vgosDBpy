@@ -53,4 +53,4 @@ def findCorrespondingTime(path):
         if os.path.isfile(time_path):
             return time_path
         else:
-             return
+             return ""

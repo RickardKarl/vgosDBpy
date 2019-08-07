@@ -131,6 +131,15 @@ class PlotFigure(FigureCanvas):
             else:
                 raise ValueError('Can not plot a string')
 
+
+    def plot_script(self,paths,vars,figure, time):
+        self.clearAxes()
+
+        axis, data = self.plot_function.plotFunction(paths, vars, figure, -1)
+        for i in range(len(axis)):
+            self.addAxis(DataAxis(axis[i], data[i], items[i]))
+        self.updatePlot()
+
     def append_plot(self, item):
 
         #add new item
@@ -176,14 +185,14 @@ class PlotFigure(FigureCanvas):
 
     ######## Methods for saving figure as image
 
-    def saveCanvas(self, file_name):
-        '''
-        Saves current figure as a pdf
+def saveCanvas(file_name, fig):
+    '''
+    Saves current figure as a pdf
 
-        file_name [str]
-        '''
-        with PdfPages(file_name) as pdf:
-            pdf.savefig(self.figure)
+    file_name [str]
+    '''
+    with PdfPages(file_name) as pdf:
+        pdf.savefig(fig)
 
 
 class PlotWidget(QWidget):

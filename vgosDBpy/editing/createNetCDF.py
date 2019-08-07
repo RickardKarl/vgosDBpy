@@ -1,6 +1,4 @@
 import netCDF4 as nc
-import matplotlib.pyplot as plt
-
 from vgosDBpy.editing.newFileNames import new_netCDF_name
 
 def update_netCDF_variable(file_name_path, new_file_name_path, variables):

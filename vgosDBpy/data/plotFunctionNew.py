@@ -7,16 +7,11 @@ from netCDF4 import Dataset
 
 #from vgosDBpy.data.PathParser import findCorrespondingTime
 from vgosDBpy.data.combineYMDHMS import combineYMDHMwithSec, checkIfTimeAvailable, default_time,findCorrespondingTime
-from vgosDBpy.data.readNetCDF import header_plot,get_data_to_plot
+from vgosDBpy.data.readNetCDF import header_plot, get_data_to_plot
 from vgosDBpy.data.getName import get_name_to_print as name, get_unit_to_print as unit
 
 import os
 from datetime import datetime
-
-# # TODO:
-    #- legend
-    #- labelcolor
-    #- mult dim plot
 
 """
 ALWYAS CALL THIS METHOD FROM OUTSIDE THIS FILE
@@ -190,17 +185,18 @@ class Plotfunction_class():
             color = 'tab:red'
             XX = range(len(self.y1.getData()))
             self.axis[0].set_xlabel(self.x.get_axis_lable())
-            self.axis[0].set_ylabel(self.y1.get_axis_lable())
-            self.axis[0].plot(self.x.getData(), self.y1.getData())
+            self.axis[0].set_ylabel(self.y1.get_axis_lable(),color=color)
+            self.axis[0].plot(self.x.getData(), self.y1.getData(),color=color)
             self.axis[0].tick_params(axis=self.y1.getVar(), labelcolor=color)
 
         if self.y2.isEmpty == False:
             self._appendAxis() # instantiate a second axes that shares the same x-axis
             color = 'tab:blue'
             self.axis[1].plot(self.x.getData(), self.y2.getData(), color=color)
-            self.axis[1].set_ylabel(self.y2.get_axis_lable())
+            self.axis[1].set_ylabel(self.y2.get_axis_lable(),color=color)
             self.axis[1].tick_params(axis=self.y2.getVar(), labelcolor=color)
 
+        
         self.axis[0].set_title(header_plot(paths[0])+ "\nPlot " +name(self.y1.getPath(),self.y1.getVar()) +  " against " +name(self.x.getPath(), self.x.getVar()))
         self._append_data()
         return self.axis, self.data

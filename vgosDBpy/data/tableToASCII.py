@@ -19,6 +19,25 @@ def convertToAscii(tableview):
 
     return table_out
 
+def convertToAscii_script(directory, info, path):
+
+    table_out = PrettyTable() # Setup instance
+
+    field_names = list(directory)
+    table_out.field_names = field_names
+
+    nbr_cols = len(directory[field_names[0]])
+
+    for col_index in range(0,nbr_cols):
+
+        row = []
+
+        for name in field_names:
+
+            item = directory[name][col_index]
+            row.append(str(item))
+        table_out.add_row(row)
+    write_ascii_file(table_out, info, path)
 
 def write_ascii_file(ptable, other_info, file_path):
     '''
