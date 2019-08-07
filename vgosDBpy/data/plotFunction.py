@@ -178,28 +178,28 @@ class Plotfunction_class():
         # first handle y1 meaning working with axis[0]
         if self.y1.isEmpty == False:
             self._createAxis(fig)
-            color = 'tab:red'
-            XX = range(len(self.y1.getData()))
+            color ='black'
             self.axis[0].set_xlabel(self.x.get_axis_lable())
             self.axis[0].set_ylabel(self.y1.get_axis_lable(),color=color)
-            self.axis[0].plot(self.x.getData(), self.y1.getData(),color=color, label = self.y1.getVar())
+            self.axis[0].plot(self.x.getData(), self.y1.getData(),color=color, label = name(self.y1.getPath(),self.y1.getVar()))
             self.axis[0].tick_params(axis=self.y1.getVar(), labelcolor=color)
 
         # if two y-axis add the second one
         if self.y2.isEmpty == False:
             self._appendAxis() # instantiate a second axes that shares the same x-axis
             color = 'tab:blue'
-            self.axis[1].plot(self.x.getData(), self.y2.getData(), color=color,label = self.y2.getVar())
+            self.axis[1].plot(self.x.getData(), self.y2.getData(), color=color,label = name(self.y2.getPath(),self.y2.getVar()))
             self.axis[1].set_ylabel(self.y2.get_axis_lable(),color=color)
             self.axis[1].tick_params(axis=self.y2.getVar(), labelcolor=color)
 
         # set titel to entire plot handeling all diferent cases
         if self.y2.isEmpty == True:
-            self.axis[0].set_title(header_plot(paths[0])+ "\n Plot " +name(self.y1.getPath(),self.y1.getVar()) +  " against " +name(self.x.getPath(), self.x.getVar()))
+            self.axis[0].set_title(header_plot(paths[0])+ "\n Plot " + name(self.y1.getPath(),self.y1.getVar()) +  " against " +name(self.x.getPath(), self.x.getVar()))
         elif self.y2.isEmpty == False:
-            self.axis[0].set_title(header_plot(paths[0])+ "\n Plot " +name(self.y1.getPath(),self.y1.getVar()) + ' and ' + name(self.y2.getPath(),self.y2.getVar()) + " against " +name(self.x.getPath(), self.x.getVar()))
-        #elis self.y2
+            self.axis[0].set_title(header_plot(paths[0])+ "\n Plot " + name(self.y1.getPath(),self.y1.getVar()) + ' and ' + name(self.y2.getPath(),self.y2.getVar()) + " against " +name(self.x.getPath(), self.x.getVar()))
+
         self._append_data()
+
         return self.axis, self.data
 
 
