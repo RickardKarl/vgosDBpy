@@ -7,10 +7,6 @@ def get_dimensions(pathToNetCDF):
         vars= nc.variables
         dims= []
         for var in vars:
-            #for ncattr in var.ncattrs():
-                #print(var.getncattr(ncattr))
-            #if str(var).strip() == 'Cal-SlantPathTropWet':
-            #    print(len(nc.variables[var].get_dims()))
             dims.append(nc.variables[var].get_dims()[0].name)
     return dims
 
@@ -19,8 +15,6 @@ def get_length(pathToNetCDF):
         vars= nc.variables
         lengths= []
         for var in vars:
-            #for ncattr in var.ncattrs():
-                #print(var.getncattr(ncattr))
             lengths.append(len(nc.variables[var][:]))
     return lengths
 
@@ -29,8 +23,6 @@ def get_content(pathToNetCDF):
         vars= nc.variables
         content= []
         for var in vars:
-            #for ncattr in var.ncattrs():
-                #print(var.getncattr(ncattr))
             content.append(getDataFromVar(pathToNetCDF,var))
     return content
 

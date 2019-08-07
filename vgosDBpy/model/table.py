@@ -60,7 +60,6 @@ class TableModel(QStandardItemModel):
         self._header = []
         self.reset()
         self.nbrItems = 0
-        #self._header = []
         self.setHorizontalHeaderLabels(self._header)
         #self.data_axis = None # Keep track of the DataAxis that it shows from the plot
         #self.dataaxis_to_column_map = {} # DataAxis : Column index
@@ -114,7 +113,6 @@ class TableModel(QStandardItemModel):
         '''
         names = list(data)
         self.reset()
-        #self.clearTable()
         for i in range(0,len(data[names[0]])):
             for j in range (0,len(names)):
                 if len(names) > 1:
@@ -185,7 +183,6 @@ class TableModel(QStandardItemModel):
                     data = data_axis[j].getData()
 
                 # Check that the time indices are the same
-                # np.array_equal(a1, a2)
                 if not data.index.equals(time_index):
                     raise ValueError('DataAxis', data_axis[j], 'do not have the same time indices as', data_axis[0])
 

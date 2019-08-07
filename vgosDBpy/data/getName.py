@@ -7,11 +7,11 @@ def get_name_to_print(path, var):
         if var == 'AtmPres':
             return "Pressure "
         elif var == 'TempC':
-            return "Temperature " #" [" +unit+ "]"
+            return "Temperature "
         elif var == 'RelHum':
-            return "Humidity "#"[" +unit+ "]"
+            return "Humidity "
         elif var == 'Cal-Cabel':
-            return "Cal-Cabel  "#"[" +unit+ "]"
+            return "Cal-Cabel  "
         elif var == 'Time':
             return 'Time'
         else:
@@ -19,11 +19,6 @@ def get_name_to_print(path, var):
 
 def get_unit_to_print(path,var):
     with Dataset(path, "r", format="NETCDF4") as nc:
-        #dtype = nc.variables[var].dtype
-        #if dtype.name.strip() != 'S1':
-        #    unit=nc.variables[var].Units
-        #else:
-        #    unit = ''
         if var == 'Time':
             return '[M:D:H]'
         try:
@@ -31,4 +26,3 @@ def get_unit_to_print(path,var):
         except:
             unit = '-'
         return "  ["+unit+"]"
-        #return 'UNIT'

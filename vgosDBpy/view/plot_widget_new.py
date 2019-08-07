@@ -114,12 +114,9 @@ class PlotFigure(FigureCanvas):
                 axis, data = self.plot_function.plotFunction(self.paths, self.vars, self.figure, self.timeInt)
                 is_mult = is_multdim_var_list(self.paths, self.vars)
 
-                if is_mult!= -1:# and timeUpdated == False:
+                if is_mult!= -1:
                     items.append(items[is_mult])
-                print(len(data[0]))
-                #for j in range(len(data[0])):
                 for i in range(len(axis)):
-                    #print(data[i][j])
                     self.addAxis(DataAxis(axis[i], data[i], items[i]))
 
                 # Refresh canvas

@@ -167,7 +167,7 @@ class DataTable(QTableView):
         path = []
         var = []
         if len(items) > 0:
-            for itm in items:  #tm in items:
+            for itm in items:
                 path.append(itm.getPath())
                 var.append(itm.labels)
             data = self.tabfunc.tableFunctionGeneral(path, var)
@@ -195,7 +195,7 @@ class DataTable(QTableView):
         path = []
         var = []
         if len(items) > 0:
-            for itm in items:  #tm in items:
+            for itm in items:
                 path.append(itm.getPath())
                 var.append(itm.labels)
             data_new = self.tabfunc.append_table(path, var)
@@ -237,7 +237,7 @@ class DataTable(QTableView):
             # Updates header
             path = []
             var = []
-            for itm in items:  #tm in items:
+            for itm in items: 
                 path.append(itm.getPath())
                 var.append(itm.labels)
             data = self.tabfunc.tableFunctionGeneral(path,var)

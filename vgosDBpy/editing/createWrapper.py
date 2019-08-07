@@ -118,5 +118,3 @@ def test():
     new_names = ['Head_V001.nc', 'Met_v001.nc']
     create_new_wrapper(file, new_names, old, new)
     print_wrapper_file(new_path)
-    #print_wrapper_file(old)
-    #equal(old, new_path)
