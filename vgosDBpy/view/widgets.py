@@ -55,11 +55,11 @@ class VariableTable(QTableView):
     parent [QWidget]
     '''
 
-    def __init__(self, parent=None):
+    def __init__(self, parent = None, header = ['Name', 'Unit', 'Dimension', 'Dtype']):
         super(VariableTable, self).__init__(parent)
 
         # Setup model
-        self._model = VariableModel(['Name', 'Unit', 'Dimension', 'Dtype'], parent)
+        self._model = VariableModel(header, parent)
         self.setModel(self._model)
 
         # Selection of items

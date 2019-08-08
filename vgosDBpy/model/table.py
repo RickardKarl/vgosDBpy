@@ -225,25 +225,6 @@ class DataModel(TableModel):
             raise ValueError('Argument items can not be empty.')
 
 
-
-
-        '''
-        # Update items (HANNA WHAT THIS DOES)
-        items = DataModel.updateItems(data, items)
-
-        # Update
-        names = list(data)
-        #self.resetModel()
-        for i in range(0,len(data[names[0]])):
-            for j in range (0,len(names)):
-                if len(names) > 1:
-                    self.setItem(i, j, DataValue(str(data[names[j]][i]), items[j%(len(names)-1)], signal = self.dataChanged_customSignal))
-                else:
-                    self.setItem(i, j, DataValue(str(data[names[j]][i]), items[0], signal = self.dataChanged_customSignal))
-
-        self.nbrItems = len(names)
-        '''
-
     def appendData(self, items):
         '''
 
@@ -286,38 +267,6 @@ class DataModel(TableModel):
 
         else:
             raise ValueError('Argument items contains wrong number of items, should be one or two.')
-
-
-
-        '''
-        # Hanna
-        items = DataModel.updateItems(data_new, items)
-
-
-        # Update table
-        names = list(data_new)
-        start = self.nbrItems
-        for i in range(0,len(data_new[names[0]])):
-            for j in range (0,len(names)):
-                if len(names) > 1:
-                    self.setItem(i, start+j, DataValue(str(data_new[names[j]][i]), items[j%(len(names)-1)], signal = self.dataChanged_customSignal))
-                else:
-                    self.setItem(i, start+j, DataValue(str(data_new[names[j]][i]), items[0], signal = self.dataChanged_customSignal))
-        self.nbrItems += len(names)
-        '''
-
-    def updateItems(data, items):
-        names = list(data)
-        prev = names[0]
-        i = 1
-        for j in range(0,len(names)-1):
-            prev = prev.split('#')[0]
-            name = names[i].split('#')[0]
-            if prev == name:
-                items.insert(j, items[j-1] )
-            prev = names[i]
-            i +=  1
-        return items
 
     ######## DataAxis related methods
 
