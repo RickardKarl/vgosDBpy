@@ -1,0 +1,80 @@
+!To use the script driven function the format of the input must be very exact.
+!
+! Here is an example of how it can look:
+!__________________________________________________________________________________
+!
+!
+! '!' means line of comment and will not be read
+! Keywords: 'save_at', 'new_wrapper', 'begin_table', 'end_table', 'begin_plot', 'end_plot'
+!
+!
+!
+save_at ./../some_folder 
+!
+new_wrapper ../../path_to_wrp or just a wrapper name if the path is on the form ./500/vgosDB/YEAR/wrapper_name
+!
+!
+!Everything between begin_table and end_table is shown in ONE table, if you want several just write many scopes like this:
+!
+begin_table
+!
+path_to_netCDF_from_wrapper -- name_of_variable_one -- name_of_variable_2 -- ... -- name_of_variable_n
+path_to_netCDF_from_wrapper -- name_of_variable_one ...
+!
+end_table
+!
+!
+!Everything between begin_plot and end_plot is shown in ONE plot, if you want several just write many scopes like this:
+begin_plot
+!
+path_to_netCDF_from_wrapper -- name_of_variable_one -- name_of_variable_2 -- ... -- name_of_variabale_n
+path_to_netCDF_from_wrapper -- name_of_variable_one ...
+end_plot
+!
+!It is possible change wrapper just use the keyword 'new_wrapper' again
+new_wrapper ../../path_to_wrp or just a wrapper name if the path is on the form ./500/vgosDB/YEAR/wrapper_name
+!
+begin_plot
+path_to_netCDF_from_wrapper -- name_of_variable_one -- name_of_variable_2 -- ... -- name_of_variable_n
+path_to_netCDF_from_wrapper -- name_of_variable_one ...
+end_plot
+!
+!
+!
+!__________________________________________________________________________________ 
+!
+! Here is an example of how it can look:
+!__________________________________________________________________________________
+!
+! 
+save_at ../saved
+!
+new_wrapper ../../Files/10JAN04XK/10JAN04XK_V005_iGSFC_kall.wrp
+!
+begin_table
+!
+TSUKUB32/Met.nc -- TempC -- RelHum
+TSUKUB32/Met.nc -- AtmPres 
+!
+end_table
+!
+!
+!
+begin_plot
+!
+TSUKUB32/Met.nc -- TempC 
+TSUKUB32/Met.nc -- AtmPres
+end_plot
+!
+new_wrapper ../../Files/10JAN04XU/10JAN04XU_V005_iGSFC_kall.wrp
+!
+begin_plot
+KOKEE/Met.nc -- AtmPres 
+end_plot
+!
+!
+!
+!
+! This will generate two plot figures saved on the format *.png and one table saved as an ASCII *.txt file
+! The three files will be saved in the folder '../saved' meaning '../saved/*.txt' for example
+

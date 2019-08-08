@@ -110,6 +110,7 @@ class App(QWidget):
         has a instance variable named selection which points to the selection model
         '''
         return widget.selection.selectedIndexes()
+        #return widget.selectedIndexes()
 
     ### Methods connected to buttons ###
 

@@ -63,8 +63,11 @@ class VariableTable(QTableView):
         self.setModel(self._model)
 
         # Selection of items
+        #self.setSelectionBehavior(QAbstractItemView.SelectRows)
         self.setSelectionMode(QAbstractItemView.ExtendedSelection)
         self.selection = self.selectionModel()
+
+
 
         # Size
         '''

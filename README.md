@@ -4,6 +4,10 @@
 
 This project was developed during an internship at NVI Inc. @ NASA GSFC
 
+## Get the files to your computer:
+
+Either download the zip-file from the github repository or enter 'git clone https://github.com/RickardKarl/vgosDBpy.git' in the terminal
+
 ## How to use vgosDBpy:
 
 1. Make sure to have installed all dependencies which are the following:

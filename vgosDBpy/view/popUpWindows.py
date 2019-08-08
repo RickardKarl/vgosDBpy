@@ -1,4 +1,4 @@
-from PySide2.QtWidgets import QMessageBox, QDialogButtonBox, QPushButton
+from PySide2.QtWidgets import QMessageBox, QPushButton
 
 def popUpBoxEdit(msg):
 

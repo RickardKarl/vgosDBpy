@@ -31,7 +31,7 @@ class AxisItem():
         self.isEmpty = False
 
     def get_axis_lable(self):
-        return name(self.path,self.var)+unit(self.path,self.var)
+        return name(self.var)+unit(self.path,self.var)
 
     def empty(self):
         self.path  = ''
@@ -58,7 +58,7 @@ class Plotfunction_class():
         self.y = []
         self.place = 0
 
-        self.length_axis = -1
+
 
     def clear(self):
         self.data = []
@@ -68,11 +68,9 @@ class Plotfunction_class():
         self.y2 = AxisItem()
         self.y = []
         self.place = 0
-        self.length_axis = -1
 
     def _clear_axis(self):
         self.axis = []
-        self.length_axis = -1
 
     def _clear_data(self):
         self.data= []
@@ -85,12 +83,12 @@ class Plotfunction_class():
 
     def _createAxis(self,fig):
         self.axis.append(fig.add_subplot(1,1,1) ) # connects the axis to a figure
-        self.length_axis = 0
+
 
      # instantiate a second y-axis that shares the same x-axis
     def _appendAxis(self):
         self.axis.append(self.axis[0].twinx()) # this axis in connected to the same figure
-        self.length_axis = 1
+
 
     def add_to_x_axis(self,path, var, data): # adds data to the x-Axis
         data = np.squeeze(np.asarray(data))
@@ -181,22 +179,22 @@ class Plotfunction_class():
             color ='black'
             self.axis[0].set_xlabel(self.x.get_axis_lable())
             self.axis[0].set_ylabel(self.y1.get_axis_lable(),color=color)
-            self.axis[0].plot(self.x.getData(), self.y1.getData(),color=color, label = name(self.y1.getPath(),self.y1.getVar()))
+            self.axis[0].plot(self.x.getData(), self.y1.getData(),color=color, label = name(self.y1.getVar()))
             self.axis[0].tick_params(axis='y', labelcolor=color)
 
         # if two y-axis add the second one
         if self.y2.isEmpty == False:
             self._appendAxis() # instantiate a second axes that shares the same x-axis
             color = 'tab:blue'
-            self.axis[1].plot(self.x.getData(), self.y2.getData(), color=color,label = name(self.y2.getPath(),self.y2.getVar()))
+            self.axis[1].plot(self.x.getData(), self.y2.getData(), color=color,label = name(self.y2.getVar()))
             self.axis[1].set_ylabel(self.y2.get_axis_lable(),color=color)
             self.axis[1].tick_params(axis='y', labelcolor=color)
 
         # set titel to entire plot handeling all diferent cases
         if self.y2.isEmpty == True:
-            self.axis[0].set_title(header_plot(paths[0])+ "\n Plot " + name(self.y1.getPath(),self.y1.getVar()) +  " against " +name(self.x.getPath(), self.x.getVar()))
+            self.axis[0].set_title(header_plot(paths[0])+ "\n Plot " + name(self.y1.getVar()) +  " against " +name(self.x.getVar()))
         elif self.y2.isEmpty == False:
-            self.axis[0].set_title(header_plot(paths[0])+ "\n Plot " + name(self.y1.getPath(),self.y1.getVar()) + ' and ' + name(self.y2.getPath(),self.y2.getVar()) + " against " +name(self.x.getPath(), self.x.getVar()))
+            self.axis[0].set_title(header_plot(paths[0])+ "\n Plot " + name(self.y1.getVar()) + ' and ' + name(self.y2.getVar()) + " against " +name(self.x.getVar()))
 
         self._append_data()
 

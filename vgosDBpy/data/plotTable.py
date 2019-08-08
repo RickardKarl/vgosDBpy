@@ -1,15 +1,15 @@
 # tableFunction
 import sys
-import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
+import os
 
 
 from vgosDBpy.data.combineYMDHMS import combineYMDHMwithSec, findCorrespondingTime
 from vgosDBpy.data.readNetCDF import get_data_to_table
 from vgosDBpy.data.getName import get_name_to_print as name, get_unit_to_print as unit
 
-
+# called from outside, creates an directory with all information to a table
 class Tablefunction():
     time_label = 'Time [Y-M-D H:M:S]'
     time_key = 'Time'
@@ -20,33 +20,33 @@ class Tablefunction():
     # function that is called from other files
     def tableFunctionGeneral(self,paths,vars):
         self.data_reset()
-        timePath = findCorrespondingTime(paths[0])
-        if timePath != '':
+        timePath = findCorrespondingTime(paths[0].strip())
+        if os.path.isfile(timePath):
             time =  combineYMDHMwithSec(timePath)
             self.data[Tablefunction.time_key] = time
         c = 0
         for path in paths:
             y = get_data_to_table(path, vars[c])
             if len(y) == 1 :
-                self.data[name(path,vars[c])] = y[0]
+                self.data[name(vars[c])] = y[0]
             else:
                 for i in range(len(y)):
-                    self.data[name(path,vars[c])+' #'+ str(i+1)] = y[i]
+                    self.data[name(vars[c])+' #'+ str(i+1)] = y[i]
             c = c + 1
         return self.data
 
-    # function that is called from other files
+    # function that is called from other files, adda more columns to a already excisting table
     def append_table(self, paths, vars):
         y = get_data_to_table(paths[-1],vars[-1])
         new_data = {}
         if len(y) == 1 :
-            self.data[name(paths[-1],vars[-1])] = y[0]
-            new_data[name(paths[-1],vars[-1])] = y[0]
+            self.data[name(vars[-1])] = y[0]
+            new_data[name(vars[-1])] = y[0]
 
         else:
             for i in range(len(y)):
-                self.data[name(paths[-1],vars[-1])+' #'+ str(i+1)] = y[i]
-                new_data[name(paths[-1],vars[-1])+' #'+ str(i+1)] = y[i]
+                self.data[name(vars[-1])+' #'+ str(i+1)] = y[i]
+                new_data[name(vars[-1])+' #'+ str(i+1)] = y[i]
         return new_data
 
     def get_table(self):
