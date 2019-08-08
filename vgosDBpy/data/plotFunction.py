@@ -182,7 +182,7 @@ class Plotfunction_class():
             self.axis[0].set_xlabel(self.x.get_axis_lable())
             self.axis[0].set_ylabel(self.y1.get_axis_lable(),color=color)
             self.axis[0].plot(self.x.getData(), self.y1.getData(),color=color, label = name(self.y1.getPath(),self.y1.getVar()))
-            self.axis[0].tick_params(axis=self.y1.getVar(), labelcolor=color)
+            self.axis[0].tick_params(axis='y', labelcolor=color)
 
         # if two y-axis add the second one
         if self.y2.isEmpty == False:
@@ -190,7 +190,7 @@ class Plotfunction_class():
             color = 'tab:blue'
             self.axis[1].plot(self.x.getData(), self.y2.getData(), color=color,label = name(self.y2.getPath(),self.y2.getVar()))
             self.axis[1].set_ylabel(self.y2.get_axis_lable(),color=color)
-            self.axis[1].tick_params(axis=self.y2.getVar(), labelcolor=color)
+            self.axis[1].tick_params(axis='y', labelcolor=color)
 
         # set titel to entire plot handeling all diferent cases
         if self.y2.isEmpty == True:
