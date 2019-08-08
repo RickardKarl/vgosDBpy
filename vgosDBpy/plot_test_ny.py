@@ -72,9 +72,9 @@ class Plotfunction():
         data = []
         axis.append(fig.add_subplot(1,1,1))
         axis[0].plot(x,y)
-        axis[0].set_title(header_info_to_plot(paths[0]) + '\n' + 'Plot' + name(paths[0], vars[0]) )
+        axis[0].set_title(header_info_to_plot(paths[0]) + '\n' + 'Plot' + name(vars[0]) )
         axis[0].set_xlabel('Index')
-        axis[0].set_ylabel(name(paths[0],vars[0])+unit(paths[0],vars[0]))
+        axis[0].set_ylabel(name(vars[0])+unit(paths[0],vars[0]))
         data.append( pd.Series(y,index=x) )
         return axis, data
 
@@ -88,10 +88,10 @@ class Plotfunction():
         #create figure
         axis.append(fig.add_subplot(1,1,1))
         axis[0].plot(x,y)
-        axis[0].set_title(header_info_to_plot(paths[0]) + '\n' + 'Plot' + name(paths[0], vars[0]) + 'versus ' + name(paths[1], vars[1] ) )
+        axis[0].set_title(header_info_to_plot(paths[0]) + '\n' + 'Plot' + name(vars[0]) + 'versus ' + name(vars[1] ) )
         #ax.plot(x,y)
-        axis[0].set_xlabel(name(paths[0],vars[0])+unit(paths[0],vars[0]))
-        axis[0].set_ylabel(name(paths[1],vars[1])+unit(paths[1],vars[1]))
+        axis[0].set_xlabel(name(vars[0])+unit(paths[0],vars[0]))
+        axis[0].set_ylabel(name(vars[1])+unit(paths[1],vars[1]))
         data.append( pd.Series(y,index=x) )
         return axis, data
 
@@ -109,8 +109,8 @@ class Plotfunction():
 
         #first y-axis
         color = 'tab:red'
-        axis[0].set_xlabel(name(paths[0],vars[0])+unit(paths[0],vars[0]))
-        axis[0].set_ylabel(name(paths[1],vars[1])+unit(paths[1],vars[1]))
+        axis[0].set_xlabel(name(vars[0])+unit(paths[0],vars[0]))
+        axis[0].set_ylabel(name(vars[1])+unit(paths[1],vars[1]))
         axis[0].plot(x, y1, color=color)
         axis[0].tick_params(axis=vars[1], labelcolor=color)
 
@@ -118,9 +118,9 @@ class Plotfunction():
         axis[1] = axis[0].twinx()  # instantiate a second axes that shares the same x-axis
         color = 'tab:blue'
         axis[1].plot(x, y2, color=color)
-        axis[1].set_ylabel(name(paths[2],vars[2])+unit(paths[2],vars[2]))
+        axis[1].set_ylabel(name(vars[2])+unit(paths[2],vars[2]))
         axis[1].tick_params(axis=vars[2], labelcolor=color)
-        plt.title(header_info_to_plot(path1)+ "\nPlot " +name(paths[1],vars[1]) + "and " + name(paths[2], vars[2]) + " against " +name(paths[0], vars[0]))
+        plt.title(header_info_to_plot(path1)+ "\nPlot " +name(vars[1]) + "and " + name(vars[2]) + " against " +name(vars[0]))
         data.append( pd.Series(y1, index = x) )
         data.append( pd.Series(y2, index = x) )
         return axis, data
@@ -142,12 +142,12 @@ class Plotfunction():
 
         #Create plot
         axis.append( fig.add_subplot(1,1,1) )
-        axis[0].set_title(header_info_to_plot(path)+ "\n " + "Plot " + name(path,var) + " versus Time " )
+        axis[0].set_title(header_info_to_plot(path)+ "\n " + "Plot " + name(var) + " versus Time " )
         if len(time_data) == len(y):
             #axis[0].xticks(rotation= 80)
             axis[0].plot(time_data, y)
             axis[0].set_xlabel('Time')
-            axis[0].set_ylabel(name(path,var)+unit(path,var))
+            axis[0].set_ylabel(name(var)+unit(var))
             #axis[0].set_xticklabels(axis[0].get_xticklabels(), rotation=80)
             data.append(pd.Series(y, index = time_data ))
         else:
@@ -176,16 +176,16 @@ class Plotfunction():
             #ax1 = fig.add_subplot(1,1,1)
             color = 'tab:red'
             axis[0].set_xlabel('Time H:M:S')
-            axis[0].set_ylabel(name(paths[0],vars[0])+ unit(paths[0],vars[0]))
+            axis[0].set_ylabel(name(vars[0])+ unit(paths[0],vars[0]))
             axis[0].plot(time_data, y1, color=color)
             #plt.xticks( rotation= 80 )
             axis[0].tick_params(axis=vars[0], labelcolor=color)
             axis.append( axis[0].twinx() )  # instantiate a second y-axis that shares the same x-axis
             color = 'tab:blue'
             axis[1].plot(time_data, y2, color=color)
-            axis[1].set_ylabel(name(paths[1],vars[1])+ unit(paths[1],vars[1]))
+            axis[1].set_ylabel(name(vars[1])+ unit(paths[1],vars[1]))
             axis[1].tick_params(axis=vars[1], labelcolor=color)
-            plt.title(header_info_to_plot(paths[0])+ "\nPlot " +name(paths[0],vars[0]) + "and " + name(paths[1], vars[1]) + " over time ")
+            plt.title(header_info_to_plot(paths[0])+ "\nPlot " +name(vars[0]) + "and " + name( vars[1]) + " over time ")
             data.append(pd.Series(y1, index = time_data))
             data.append(pd.Series(y2, index = time_data))
             return axis, data

@@ -27,10 +27,10 @@ class Tablefunction():
         for path in paths:
             y = get_data_to_table(path, vars[c])
             if len(y) == 1 :
-                self.data[name(path,vars[c])] = y[0]
+                self.data[name(vars[c])] = y[0]
             else:
                 for i in range(len(y)):
-                    self.data[name(path,vars[c])+' #'+ str(i+1)] = y[i]
+                    self.data[name(vars[c])+' #'+ str(i+1)] = y[i]
             c = c + 1
         return self.data
 
@@ -39,13 +39,13 @@ class Tablefunction():
         y = get_data_to_table(paths[-1],vars[-1])
         new_data = {}
         if len(y) == 1 :
-            self.data[name(paths[-1],vars[-1])] = y[0]
-            new_data[name(paths[-1],vars[-1])] = y[0]
+            self.data[name(vars[-1])] = y[0]
+            new_data[name(vars[-1])] = y[0]
 
         else:
             for i in range(len(y)):
-                self.data[name(paths[-1],vars[-1])+' #'+ str(i+1)] = y[i]
-                new_data[name(paths[-1],vars[-1])+' #'+ str(i+1)] = y[i]
+                self.data[name(vars[-1])+' #'+ str(i+1)] = y[i]
+                new_data[name(vars[-1])+' #'+ str(i+1)] = y[i]
         return new_data
 
     def get_table(self):

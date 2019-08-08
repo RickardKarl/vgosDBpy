@@ -64,8 +64,11 @@ class VariableTable(QTableView):
         self.setModel(self._model)
 
         # Selection of items
+        #self.setSelectionBehavior(QAbstractItemView.SelectRows)
         self.setSelectionMode(QAbstractItemView.ExtendedSelection)
         self.selection = self.selectionModel()
+
+
 
         # Size
         '''
@@ -237,7 +240,7 @@ class DataTable(QTableView):
             # Updates header
             path = []
             var = []
-            for itm in items: 
+            for itm in items:
                 path.append(itm.getPath())
                 var.append(itm.labels)
             data = self.tabfunc.tableFunctionGeneral(path,var)
