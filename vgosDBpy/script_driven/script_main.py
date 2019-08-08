@@ -151,8 +151,9 @@ class script_class():
             for line in txt:
 
                 l= line.lower().strip()
-
-                if l.startswith('save_at'): # line before giving a new save_path
+                if l == '!' or l =='':
+                    pass
+                elif l.startswith('save_at'): # line before giving a new save_path
                     split = line.split(' ')
                     self._save_path = split[1].strip()
 
@@ -204,8 +205,7 @@ class script_class():
                     temp_table_list.append(str)
                     #temp_table_list.append(createFullPath(self.wrp_path,line))
 
-                elif l == '!' or l =='':
-                    pass
+
                 else:
                     print('The format of the file is not correct')
                     break
