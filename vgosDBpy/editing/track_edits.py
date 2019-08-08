@@ -129,6 +129,9 @@ class EditTracking:
 
         Returns path to new history file
         '''
+        print(sort_var_by_file)
+        print(path_to_file_list)
+        print(new_file_name_list)
 
         # Get folders
         folder = []

@@ -110,7 +110,7 @@ class DataTable(QTableView):
 
         # Selection of items
         self.setSelectionMode(QAbstractItemView.ExtendedSelection)
-        #self.setSelectionBehavior(QAbstractItemView.SelectionBehavior.SelectRow)
+        self.setSelectionBehavior(QAbstractItemView.SelectionBehavior.SelectItems)
         self.selection = self.selectionModel()
 
     ######### Getters & setters

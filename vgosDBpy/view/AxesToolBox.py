@@ -167,7 +167,8 @@ class AxesToolBox(QWidget):
 
         data_axis [DataAxis]
         '''
-        self.selector = RectangleSelector(data_axis.getAxis(), self._selector_callback_plot, drawtype='box')
+        if data_axis.axisExists():
+            self.selector = RectangleSelector(data_axis.getAxis(), self._selector_callback_plot, drawtype='box')
 
     def _selector_callback_plot(self, eclick, erelease):
         '''
@@ -210,6 +211,7 @@ class AxesToolBox(QWidget):
         # Track changes
         edited_data_axis = self.table_widget.getModel().getDataAxis(int)
         edited_data = edited_data_axis.getEditedData()
+        print(edited_data_axis.getItem())
         self.track_edits.addEdit(edited_data_axis.getItem(), edited_data.values)
 
         # Update plot

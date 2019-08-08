@@ -8,6 +8,7 @@ from vgosDBpy.data.combineYMDHMS import combineYMDHMwithSec,findCorrespondingTim
 from vgosDBpy.data.getName import get_unit_to_print
 from vgosDBpy.data.plotTable import Tablefunction as TF
 from vgosDBpy.data.getName import get_name_to_print
+from vgosDBpy.model.data_axis import DataAxis
 
 class TableModel(QStandardItemModel):
     '''
@@ -109,7 +110,8 @@ class DataModel(TableModel):
             self.tabfunc = TF()
 
             # Map to keep track of which column that belongs to each DataAxis (USED BY DataTable)
-            self.data_axis = None # Keep track of the DataAxis that it shows from the plot
+            self.data_axis = [] # Keep track of the DataAxis that it shows from the plot
+            self.time_index = None
             self.dataaxis_to_column_map = {} # DataAxis : Column index
             self.column_to_dataaxis_map = {}
 
@@ -135,6 +137,15 @@ class DataModel(TableModel):
         super(DataModel,self).resetModel(reset_header = reset_header)
         self.tabfunc.data_reset()
         self.tabfunc.header_reset()
+
+    def getAllDataAxis(self):
+        return self.data_axis
+
+    def getExistingItems(self):
+        items  = []
+        for ax in self.data_axis:
+            items.append(ax.getItem())
+        return items
 
     def getDataAxis(self, column):
         return self.column_to_dataaxis_map.get(column)
@@ -187,11 +198,41 @@ class DataModel(TableModel):
                 var.append(itm.labels)
             data = self.tabfunc.tableFunctionGeneral(path, var) # returns a map
 
+        ## Update data_axis
+            # Get time indices if they exists
+            for key, var in data.items():
+                if key == TF.time_key:
+                    self.time_index = var
+
+            # Turn data into DataAxis
+            index = 0
+            for key, var in data.items():
+                if key != TF.time_key:
+                    if self.time_index != None:
+                        data_series = pd.Series(var, index = self.time_index)
+                    else:
+                        data_series = pd.Series(var)
+
+                    data_axis = DataAxis(None, data_series, items[index])
+                    self.data_axis.append(data_axis)
+
+                    index += 1
+
+
         else:
             raise ValueError('Argument items can not be empty.')
 
+
+        # Reset model
+        self.resetModel()
+
         # Update header
         self.update_header(self.tabfunc.return_header_names())
+
+        # Update model
+        self.updateFromDataAxis(self.data_axis)
+
+        '''
 
         # Update items (HANNA WHAT THIS DOES)
         items = DataModel.updateItems(data, items)
@@ -207,6 +248,7 @@ class DataModel(TableModel):
                     self.setItem(i, j, DataValue(str(data[names[j]][i]), items[0], signal = self.dataChanged_customSignal))
 
         self.nbrItems = len(names)
+        '''
 
     def appendData(self, items):
         '''
@@ -226,9 +268,38 @@ class DataModel(TableModel):
                 var.append(itm.labels)
             data_new = self.tabfunc.append_table(path, var)
             self.update_header(self.tabfunc.append_header(path,var))
+
+        #existing_items = self.getExistingItems()
+        #for itm in existing_items:
+        #    items.remove(itm)
+        ## Update data_axis
+            # Get time indices if they exists
+            for key, var in data_new.items():
+                if key == TF.time_key:
+                    self.time_index = var
+
+
+
+            # Turn data into DataAxis
+            index = 0
+            for key, var in data_new.items():
+                if key != TF.time_key:
+                    if self.time_index != None:
+                        data_series = pd.Series(var, index = self.time_index)
+                    else:
+                        data_series = pd.Series(var)
+
+                    data_axis = DataAxis(None, data_series, items[index])
+                    self.data_axis.append(data_axis)
+
+                    index += 1
+
         else:
             raise ValueError('Argument items contains wrong number of items, should be one or two.')
 
+
+        self.updateFromDataAxis(self.data_axis)
+        '''
         # Hanna
         items = DataModel.updateItems(data_new, items)
 
@@ -243,7 +314,7 @@ class DataModel(TableModel):
                 else:
                     self.setItem(i, start+j, DataValue(str(data_new[names[j]][i]), items[0], signal = self.dataChanged_customSignal))
         self.nbrItems += len(names)
-
+        '''
 
     def updateItems(data, items):
         names = list(data)

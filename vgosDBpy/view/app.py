@@ -167,6 +167,7 @@ class App(QWidget):
                 items.append(self.var_table.getModel().itemFromIndex(index[i]))
             if not items == [] :
                 self.data_table.updateData(items)
+                self.plot_toolbox.updateDataAxis(self.data_table.getModel().getAllDataAxis())
 
     def _addbutton(self):
         index= self._getSelected(self.var_table)
@@ -175,6 +176,7 @@ class App(QWidget):
             for i in range (len(index)):
                 items.append(self.var_table.getModel().itemFromIndex(index[i]))
         self.data_table.appendData(items)
+        self.plot_toolbox.updateDataAxis(self.data_table.getModel().getAllDataAxis())
 
     def _clear(self):
         self.plot_widget.plot_canvas.clearFigure()
