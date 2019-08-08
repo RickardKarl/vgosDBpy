@@ -57,10 +57,6 @@ Reads in *TreeModel*.
 Table widget that display the variable content from a netCDF file in a table.
 
 
-###### ConstantTable (Inherits from QTableView)
-
-**???????????**
-
 ###### DataTable
 
 Table widget that display the data content from a netCDF variable in a table.

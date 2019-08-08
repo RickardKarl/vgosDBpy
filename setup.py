@@ -18,8 +18,7 @@ setup(
     author_email='rickkarl@student.chalmers.se',
     url='https://github.com/RickardKarl/NVI_vgosDB_openv2',
     license=license,
-    packages=find_packages(exclude=('Rickard', 'Hanna')),
-    keywords = 'vgosDB VLBI space-geodesy QT',
+    packages=find_packages(exclude=('Hanna')),
     install_requires = requirements,
     python_requires='>=3'
 )

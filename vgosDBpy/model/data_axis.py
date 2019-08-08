@@ -23,19 +23,19 @@ class DataAxis:
 
         self._item = item
 
+        if self.axisExists():
+            ### Lines that belongs to the axes
+            if len(axes.get_lines()) > 1:
+                raise ValueError('Too many lines in Axes, need to fix.', axes.get_lines())
+            self.main_curve = axes.get_lines()[0] # Saves the curve for edited data (where marked data is hidden)
 
-        ### Lines that belongs to the axes
-        if len(axes.get_lines()) > 1:
-            raise ValueError('Too many lines in Axes, need to fix.', axes.get_lines())
-        self.main_curve = axes.get_lines()[0] # Saves the curve for edited data (where marked data is hidden)
+            self.smooth_curve = self._axes.add_line(createSmoothCurve(self._data)) # Saves the smooth curve
+            self.smooth_curve.update_from(self.main_curve)
 
-        self.smooth_curve = self._axes.add_line(createSmoothCurve(self._data)) # Saves the smooth curve
-        self.smooth_curve.update_from(self.main_curve)
-
-        self.marked_data_curve = self._axes.add_line(createMarkedCurve(self._data, self._marked_data)) # Saves marked data points to plot
+            self.marked_data_curve = self._axes.add_line(createMarkedCurve(self._data, self._marked_data)) # Saves marked data points to plot
 
 
-        self.smooth_curve.set_visible(False)
+            self.smooth_curve.set_visible(False)
 
     def __eq__(self, other):
         if isinstance(other, self.__class__):
@@ -45,6 +45,10 @@ class DataAxis:
 
     def __hash__(self):
         return hash(self._item)*22 + int(self._edited_data.mean()) + int(self._edited_data.median())
+
+
+    def axisExists(self):
+        return self._axes != None
 
     ########## Getters and setters
 
@@ -59,6 +63,9 @@ class DataAxis:
 
     def getEditedData(self):
         return self._edited_data
+
+    def setEditedData(self, edited_data):
+        self._edited_data = edited_data
 
     def getMarkedData(self):
         return self._marked_data
@@ -75,29 +82,32 @@ class DataAxis:
     ######### Appearance methods
 
     def setMarkerSize(self, marker_size):
-
-        self.main_curve.set_markersize(marker_size)
-        self.smooth_curve.set_markersize(marker_size)
-        self.marked_data_curve.set_markersize(marker_size*1.2)
-
+        if self.axisExists():
+            self.main_curve.set_markersize(marker_size)
+            self.smooth_curve.set_markersize(marker_size)
+            self.marked_data_curve.set_markersize(marker_size*1.2)
 
     def displayMainCurve(self, bool):
-        if bool == True:
-            self.main_curve.set_linestyle('-')
-        else:
-            self.main_curve.set_linestyle('None')
+        if self.axisExists():
+            if bool == True:
+                self.main_curve.set_linestyle('-')
+            else:
+                self.main_curve.set_linestyle('None')
 
     def displayMarkers(self, bool):
-        if bool == True:
-            self.main_curve.set_marker('o')
-        else:
-            self.main_curve.set_marker('None')
+        if self.axisExists():
+            if bool == True:
+                self.main_curve.set_marker('o')
+            else:
+                self.main_curve.set_marker('None')
 
     def displayMarkedDataCurve(self, bool):
-        self.marked_data_curve.set_visible(bool)
+        if self.axisExists():
+            self.marked_data_curve.set_visible(bool)
 
     def displaySmoothCurve(self, bool):
-        self.smooth_curve.set_visible(bool)
+        if self.axisExists():
+            self.smooth_curve.set_visible(bool)
 
 
 
@@ -107,17 +117,19 @@ class DataAxis:
         '''
         line [matplotlib.Line2D]
         '''
-        return self._axes.add_line(line)
+        if self.axisExists():
+            return self._axes.add_line(line)
 
     def updateLines(self):
-        self.main_curve.set_ydata(self._edited_data)
+        if self.axisExists():
+            self.main_curve.set_ydata(self._edited_data)
 
-        smooth_data = createSmoothCurve(self._edited_data, return_data = True)
-        self.smooth_curve.set_ydata(smooth_data.array)
+            smooth_data = createSmoothCurve(self._edited_data, return_data = True)
+            self.smooth_curve.set_ydata(smooth_data.array)
 
-        marked_data = createMarkedCurve(self._edited_data, self._marked_data, return_data = True)
-        self.marked_data_curve.set_ydata(marked_data.array)
-        self.marked_data_curve.set_xdata(marked_data.index)
+            marked_data = createMarkedCurve(self._edited_data, self._marked_data, return_data = True)
+            self.marked_data_curve.set_ydata(marked_data.array)
+            self.marked_data_curve.set_xdata(marked_data.index)
 
     def getNewEdit(self):
         '''
