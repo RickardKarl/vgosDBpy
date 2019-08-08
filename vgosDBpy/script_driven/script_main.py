@@ -59,6 +59,7 @@ def _parse_script(path):
                 temp_plot_list.append(line)
             elif table == True:
                 temp_table_list.append(line)
+
     return plot_list, table_list
 
 
@@ -74,13 +75,12 @@ def _script_plot(list):
     for itm in list:
         fig  = plt.figure()
 
-        line_split = itm.split('--')
-        path = line_split[0].strip()
-        for i in range(1,len(line_split)):
+        line = itm.split('--')
+        path = line[0].strip()
+        # adds all variables in the netCDF file to the list
+        for i in range(1,len(line)):
             paths.append(path)
-            vars.append(line_split[i].strip())
-        #paths.append(path.strip())
-        #vars.append(var.strip())
+            vars.append(line[i].strip())
 
     ex_name = './plot.png'
     new_name = new_netCDF_name(ex_name)
@@ -98,9 +98,11 @@ def _script_table(list):
     vars = []
 
     for itm in list:
-        path, var = itm.split('--')
-        paths.append(path.strip())
-        vars.append(var.strip())
+        line = itm.split('--')
+        # adds all variables in the netCDF file to the list
+        for i in range(1,len(line)):
+            paths.append(line[0].strip())
+            vars.append(line[i].strip())
 
     ex_name = './table.txt'
     new_name = new_netCDF_name(ex_name)

@@ -4,7 +4,7 @@ contains methods to get name of variables to print
 from netCDF4 import Dataset
 
 # returns the name to print instead of the shortname that is the variable name
-def get_name_to_print(path, var):
+def get_name_to_print(var):
         if var == 'AtmPres':
             return "Pressure"
         elif var == 'TempC':
