@@ -1,7 +1,7 @@
 """
 FORMAT FOR .TXT FILE INPUT:
 begin plot
-pathToNetCDF -- var
+pathToNetCDF -- var_1 -- var_2 -- ... -- var_n
 pathToNetCDF --  var
 end plot
 
@@ -74,9 +74,13 @@ def _script_plot(list):
     for itm in list:
         fig  = plt.figure()
 
-        path, var = itm.split('--')
-        paths.append(path.strip())
-        vars.append(var.strip())
+        line_split = itm.split('--')
+        path = line_split[0].strip()
+        for i in range(1,len(line_split)):
+            paths.append(path)
+            vars.append(line_split[i].strip())
+        #paths.append(path.strip())
+        #vars.append(var.strip())
 
     ex_name = './plot.png'
     new_name = new_netCDF_name(ex_name)
