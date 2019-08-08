@@ -208,8 +208,6 @@ class DataModel(TableModel):
         '''
 
         Resets content and then replaces it with data
-
-        data [dict] which contains data to fill the table with. E.g. {'time': time, "var_data": var_data}
         item [QStandardItems] contains the item which contains the variable with the data
         '''
 
