@@ -58,7 +58,7 @@ class Plotfunction_class():
         self.y = []
         self.place = 0
 
-        self.length_axis = -1
+
 
     def clear(self):
         self.data = []
@@ -68,11 +68,9 @@ class Plotfunction_class():
         self.y2 = AxisItem()
         self.y = []
         self.place = 0
-        self.length_axis = -1
 
     def _clear_axis(self):
         self.axis = []
-        self.length_axis = -1
 
     def _clear_data(self):
         self.data= []
@@ -85,12 +83,12 @@ class Plotfunction_class():
 
     def _createAxis(self,fig):
         self.axis.append(fig.add_subplot(1,1,1) ) # connects the axis to a figure
-        self.length_axis = 0
+
 
      # instantiate a second y-axis that shares the same x-axis
     def _appendAxis(self):
         self.axis.append(self.axis[0].twinx()) # this axis in connected to the same figure
-        self.length_axis = 1
+
 
     def add_to_x_axis(self,path, var, data): # adds data to the x-Axis
         data = np.squeeze(np.asarray(data))
