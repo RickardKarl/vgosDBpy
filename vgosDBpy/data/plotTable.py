@@ -52,14 +52,13 @@ class Tablefunction():
         return self.data
 
     def append_header(self, paths, vars):
-
         new_data = self.append_table(paths,vars)
         names = list(new_data)
         for name in names :
             self.header.append(name)
         return self.header
 
-    def return_header_names(self,paths, vars):
+    def return_header_names(self):
         self.header_reset()
         names = list(self.data)
         for name in names :
