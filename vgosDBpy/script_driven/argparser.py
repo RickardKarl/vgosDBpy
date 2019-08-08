@@ -9,9 +9,9 @@ from vgosDBpy.read_log.parser import LogInfo
 from vgosDBpy.read_log.plotter import plotSeries
 
 # Script-driven
-from vgosDBpy.script_driven.script_main import script
+from vgosDBpy.script_driven.script_main import script_class
 
-
+from vgosDBpy.data.getName import create_wrp_path
 import argparse
 import sys
 
@@ -41,6 +41,7 @@ class CommandLineInterface(argparse.ArgumentParser):
 
         # Retrieve arguments
         self.args = self.parse_args()
+        self.script = script_class()
 
         # Decisions based on input ###################
 
@@ -48,26 +49,27 @@ class CommandLineInterface(argparse.ArgumentParser):
 
         # Checking if file looks correctly
         if self.args.file.endswith('.wrp'):
-
+            wrp_path = create_wrp_path(self.args.file)
             # GUI
             if self.args.graphic == True:
                 # Create the Qt Application
                 app = QApplication(sys.argv)
 
                 # Create and show
-                window = App(self.args.file)
+                #wrp_path = create_wrp_path(self.args.file)
+                window = App(wrp_path)
 
                 window.show()
                 # Run the main Qt loop
                 sys.exit(app.exec_())
 
             else:
-                parser = Parser(self.args.file)
-                wrapper = parser.parseWrapper(self.args.file)
+                parser = Parser(wrp_path)
+                wrapper = parser.parseWrapper(wrp_path)
                 print(wrapper)
 
         elif self.args.file.endswith('.txt'):
-            script(self.args.file)
+            self.script.script(self.args.file)
 
         '''
         elif self.args.file.endswith('.log'):

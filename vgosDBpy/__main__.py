@@ -10,7 +10,7 @@ from vgosDBpy.script_driven.argparser import CommandLineInterface
 from vgosDBpy.data.netCDFdebug import print_name_dtype_dim_length, get_dimensions
 #sfrom vgosDBpy.data.readNetCDF import #getDataFromVar_multDim,#get_dataBaseline
 from vgosDBpy.editing.createWrapper import test
-from vgosDBpy.script_driven.script_main import script
+from vgosDBpy.script_driven.script_main import script_class
 
 
 if __name__ == '__main__':
@@ -53,7 +53,7 @@ if __name__ == '__main__':
                     for dim in dimension:
                         print('.    '+ dim.name)
             """
-            path = './../../Files/text_script.txt'
+            path = './../../Files/format_script.txt'
             with open(path , 'w+') as txt:
                 txt.write('begin table\n')
                 txt.write('./../../Files/10JAN04XK/TSUKUB32/Met.nc -- AtmPres\n')
@@ -63,7 +63,7 @@ if __name__ == '__main__':
                 txt.write('./../../Files/10JAN04XK/TSUKUB32/Met.nc -- AtmPres\n')
                 txt.write('./../../Files/10JAN04XK/TSUKUB32/Met.nc -- TempC\n')
                 txt.write('end plot')
-            script(path)
+            #script(path)
             """
             print_name_dtype_dim_length(path2)
             with Dataset(path2, 'r', format = 'NETCDF4_CLASSIC') as nc:

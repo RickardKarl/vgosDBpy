@@ -2,13 +2,14 @@
 import sys
 import numpy as np
 import pandas as pd
+import os
 
 
 from vgosDBpy.data.combineYMDHMS import combineYMDHMwithSec, findCorrespondingTime
 from vgosDBpy.data.readNetCDF import get_data_to_table
 from vgosDBpy.data.getName import get_name_to_print as name, get_unit_to_print as unit
 
-
+# called from outside, creates an directory with all information to a table
 class Tablefunction():
     time_label = 'Time [Y-M-D H:M:S]'
     def __init__(self):
@@ -18,8 +19,8 @@ class Tablefunction():
     # function that is called from other files
     def tableFunctionGeneral(self,paths,vars):
         self.data_reset()
-        timePath = findCorrespondingTime(paths[0])
-        if timePath != '':
+        timePath = findCorrespondingTime(paths[0].strip())
+        if os.path.isfile(timePath):
             time =  combineYMDHMwithSec(timePath)
             self.data['Time'] = time
         c = 0
@@ -33,7 +34,7 @@ class Tablefunction():
             c = c + 1
         return self.data
 
-    # function that is called from other files
+    # function that is called from other files, adda more columns to a already excisting table
     def append_table(self, paths, vars):
         y = get_data_to_table(paths[-1],vars[-1])
         new_data = {}

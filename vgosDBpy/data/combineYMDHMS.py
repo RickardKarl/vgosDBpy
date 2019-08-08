@@ -49,7 +49,7 @@ def default_time(state):
 
 # finds the timeUTC that is related to the netCDF file
 def findCorrespondingTime(path):
-    time_path = ""
+    time_path = " "
     if os.path.isfile(path):
         parts = path.split("/")
         parts[-1] = 'TimeUTC.nc'
@@ -57,4 +57,4 @@ def findCorrespondingTime(path):
         if os.path.isfile(time_path):
             return time_path
         else: # returning an empty string is seen as other functions as a sign to default with index instead
-             return ""
+             return " "
