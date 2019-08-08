@@ -66,7 +66,7 @@ class App(QWidget):
         # Button event
         self.button_plot.clicked.connect(self._plotbutton)
         self.button_table.clicked.connect(self._tablebutton)
-        self.button_append_table.clicked.connect(self._addbutton)
+        self.button_append_table.clicked.connect(self._append_tablebutton)
         self.button_append_plot.clicked.connect(self._append_plotbutton)
         self.button_clear.clicked.connect(self._clear)
 
@@ -133,6 +133,7 @@ class App(QWidget):
         '''
         Method for plotting data from variables
         '''
+        self._clear()
         index = self._getSelected(self.var_table)
         if not index == []:
             items = []
@@ -143,7 +144,6 @@ class App(QWidget):
 
             data_axis = self.plot_widget.getDataAxis()
             self.plot_toolbox.updateDataAxis(data_axis)
-            self.data_table.resetModel()
             self.data_table.updateFromDataAxis(data_axis)
 
     def _append_plotbutton(self):
@@ -160,6 +160,7 @@ class App(QWidget):
         '''
         Method for displaying variables in table
         '''
+        self._clear()
         index = self._getSelected(self.var_table)
         if not index == []:
             items = []
@@ -169,7 +170,7 @@ class App(QWidget):
                 self.data_table.updateData(items)
                 self.plot_toolbox.updateDataAxis(self.data_table.getModel().getAllDataAxis())
 
-    def _addbutton(self):
+    def _append_tablebutton(self):
         index= self._getSelected(self.var_table)
         if not index  == [] :
             items = []

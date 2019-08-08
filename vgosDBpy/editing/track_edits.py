@@ -76,13 +76,11 @@ class EditTracking:
             path_to_file_list = [] # Saves path to the file that is replaced
             new_file_name_list = [] # Saves name of all newly created files
 
-            for parent_key in sort_by_parent:
-                # Get variables that belongs to the same parent
-                var_list = sort_by_parent.get(parent_key)
-                # Create temporary dict for these variables
+            for parent_key, var_list in sort_by_parent.items():
+                # Create temporary dict for the variables
                 edited_variables = {}
 
-                # Add these variables to the dict
+                # Add the variables to the temporary dict
                 for var_item in var_list:
                     edited_variables[str(var_item)] = self._edited_data.get(var_item)
 
@@ -95,13 +93,13 @@ class EditTracking:
                 path_to_file_list.append(parent_key.getPath())
                 new_file_name_list.append(new_file_name)
 
-                # Create new history file and add it to the wrapper changes
-                new_hist_path, timestamp = self.createNewHistFile(sort_by_parent, path_to_file_list, new_file_name_list)
-                hist_file_name = new_hist_path.split('/')[-1]
+            # Create new history file and add it to the wrapper changes
+            new_hist_path, timestamp = self.createNewHistFile(sort_by_parent, path_to_file_list, new_file_name_list)
+            hist_file_name = new_hist_path.split('/')[-1]
 
-                # Create new wrapper
-                new_wrp_path = create_new_wrapper(path_to_file_list, new_file_name_list, self._wrapper.wrapper_path,
-                                    hist_file_name, timestamp)
+            # Create new wrapper
+            new_wrp_path = create_new_wrapper(path_to_file_list, new_file_name_list, self._wrapper.wrapper_path,
+                                hist_file_name, timestamp)
 
         else:
             print('There exists no tracked changes to be saved.')
@@ -129,10 +127,6 @@ class EditTracking:
 
         Returns path to new history file
         '''
-        print(sort_var_by_file)
-        print(path_to_file_list)
-        print(new_file_name_list)
-
         # Get folders
         folder = []
         for path in path_to_file_list:

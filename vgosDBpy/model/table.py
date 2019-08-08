@@ -220,14 +220,9 @@ class DataModel(TableModel):
                     index += 1
 
             # Update model
-            for ax in self.data_axis:
-                print(ax.getItem())
             self.updateFromDataAxis(self.data_axis)
         else:
             raise ValueError('Argument items can not be empty.')
-
-        # Update header
-        #self.update_header(self.tabfunc.return_header_names())
 
 
 
@@ -265,11 +260,7 @@ class DataModel(TableModel):
                 path.append(itm.getPath())
                 var.append(itm.labels)
             data_new = self.tabfunc.append_table(path, var)
-            #self.update_header(self.tabfunc.append_header(path,var))
 
-        #existing_items = self.getExistingItems()
-        #for itm in existing_items:
-        #    items.remove(itm)
         ## Update data_axis
             # Get time indices if they exists
             for key, var in data_new.items():
@@ -291,8 +282,6 @@ class DataModel(TableModel):
                     index += 1
 
             # Updates model
-            for ax in self.data_axis:
-                print(ax.getItem())
             self.updateFromDataAxis(self.data_axis)
 
         else:

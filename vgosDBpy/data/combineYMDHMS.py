@@ -53,7 +53,7 @@ def findCorrespondingTime(path):
     time_path = ""
     if os.path.isfile(path):
         parts = path.split("/")
-        parts[-1] = 'TimeUTC.nc'
+        parts[-1] = 'TimeUTC.nc' # Hard-coded
         time_path = '/'.join(parts)
         if os.path.isfile(time_path):
             return time_path
