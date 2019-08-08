@@ -293,7 +293,7 @@ class DataModel(TableModel):
 
             header_labels = []
             for v in var:
-                header_labels.append(get_name_to_print(path, v))
+                header_labels.append(get_name_to_print(v))
 
             header_labels.insert(DataModel.time_col, self.tabfunc.time_label)
             self.update_header(header_labels)
