@@ -62,10 +62,6 @@ class TableModel(QStandardItemModel):
         self._header = names
         self.setHorizontalHeaderLabels(self._header)
 
-    def append_header(self,names):
-        for name in names:
-            self._header.append(name)
-        self.setHorizontalHeaderLabels(self._header)
 
 class VariableModel(TableModel):
 
@@ -185,20 +181,20 @@ class DataModel(TableModel):
             for itm in items:
                 path.append(itm.getPath())
                 var.append(itm.labels)
-            data = self.tabfunc.tableFunctionGeneral(path, var) # returns a map
+            data = self.tabfunc.tableFunctionGeneral(path, var)
 
         else:
             raise ValueError('Argument items can not be empty.')
 
         # Update header
-        self.update_header(self.tabfunc.return_header_names())
+        self.update_header(self.tabfunc.return_header_names(path,var))
 
         # Update items (HANNA WHAT THIS DOES)
         items = DataModel.updateItems(data, items)
 
         # Update
         names = list(data)
-        #self.resetModel()
+        self.resetModel()
         for i in range(0,len(data[names[0]])):
             for j in range (0,len(names)):
                 if len(names) > 1:
@@ -216,8 +212,9 @@ class DataModel(TableModel):
         data [dict] which contains data to fill the table with. E.g. {'time': time, "var_data": var_data}
         item [QStandardItems] contains the item which contains the variable with the data
         '''
-        # Retrieve data from items
 
+
+        # Retrieve data from items
         path = []
         var = []
         if len(items) > 0:
