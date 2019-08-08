@@ -143,7 +143,7 @@ class App(QWidget):
 
             data_axis = self.plot_widget.getDataAxis()
             self.plot_toolbox.updateDataAxis(data_axis)
-            self.data_table.reset()
+            self.data_table.resetModel()
             self.data_table.updateFromDataAxis(data_axis)
 
     def _append_plotbutton(self):

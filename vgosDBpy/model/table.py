@@ -133,8 +133,9 @@ class DataModel(TableModel):
 
     ############# Getter method & setters
 
-    def resetModel(self, reset_header = False):
+    def resetModel(self, reset_header = True):
         super(DataModel,self).resetModel(reset_header = reset_header)
+        self.data_axis = []
         self.tabfunc.data_reset()
         self.tabfunc.header_reset()
 
@@ -190,9 +191,9 @@ class DataModel(TableModel):
         self.resetModel()
 
         # Retrieve data from items
-        path = []
-        var = []
         if len(items) > 0:
+            path = []
+            var = []
             for itm in items:
                 path.append(itm.getPath())
                 var.append(itm.labels)
@@ -218,22 +219,20 @@ class DataModel(TableModel):
 
                     index += 1
 
-
+            # Update model
+            for ax in self.data_axis:
+                print(ax.getItem())
+            self.updateFromDataAxis(self.data_axis)
         else:
             raise ValueError('Argument items can not be empty.')
 
-
-        # Reset model
-        self.resetModel()
-
         # Update header
-        self.update_header(self.tabfunc.return_header_names())
+        #self.update_header(self.tabfunc.return_header_names())
 
-        # Update model
-        self.updateFromDataAxis(self.data_axis)
+
+
 
         '''
-
         # Update items (HANNA WHAT THIS DOES)
         items = DataModel.updateItems(data, items)
 
@@ -259,7 +258,6 @@ class DataModel(TableModel):
         item [QStandardItems] contains the item which contains the variable with the data
         '''
         # Retrieve data from items
-
         path = []
         var = []
         if len(items) > 0:
@@ -267,7 +265,7 @@ class DataModel(TableModel):
                 path.append(itm.getPath())
                 var.append(itm.labels)
             data_new = self.tabfunc.append_table(path, var)
-            self.update_header(self.tabfunc.append_header(path,var))
+            #self.update_header(self.tabfunc.append_header(path,var))
 
         #existing_items = self.getExistingItems()
         #for itm in existing_items:
@@ -277,8 +275,6 @@ class DataModel(TableModel):
             for key, var in data_new.items():
                 if key == TF.time_key:
                     self.time_index = var
-
-
 
             # Turn data into DataAxis
             index = 0
@@ -294,11 +290,16 @@ class DataModel(TableModel):
 
                     index += 1
 
+            # Updates model
+            for ax in self.data_axis:
+                print(ax.getItem())
+            self.updateFromDataAxis(self.data_axis)
+
         else:
             raise ValueError('Argument items contains wrong number of items, should be one or two.')
 
 
-        self.updateFromDataAxis(self.data_axis)
+
         '''
         # Hanna
         items = DataModel.updateItems(data_new, items)
@@ -376,7 +377,6 @@ class DataModel(TableModel):
 
             col_index = 0
             for j in range(len(data_axis)):
-
                 # Checks so it does not write in same col as time
                 if col_index == DataModel.time_col:
                     col_index += 1
