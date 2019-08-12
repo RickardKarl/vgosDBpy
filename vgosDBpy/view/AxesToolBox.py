@@ -148,6 +148,7 @@ class AxesToolBox(QWidget):
     def resetToolBox(self):
         self.selector = None
         self.data_axis = []
+        self.canvas.updatePlot()
 
     def setCurrentAxis(self, data_axis):
         if data_axis in self.data_axis:
@@ -191,11 +192,12 @@ class AxesToolBox(QWidget):
 
     def _selection_changed_callback_table(self):
         # Get marked data
-        marked_data = self.table_widget.getModel().getDataFromSelected(self.table_widget.selection.selectedIndexes(), self.current_axis)
 
-        # Update current axis with the marked data
-        if self.canvas.isPlotting():
-            self.current_axis.updateMarkedData(marked_data)
+        for ax in self.data_axis:
+            marked_data = self.table_widget.getModel().getDataFromSelected(self.table_widget.selection.selectedIndexes(), ax)
+            # Update current axis with the marked data
+            if self.canvas.isPlotting():
+                ax.updateMarkedData(marked_data)
 
         # Update appearance of plot and table
         self._updateSelectionWidgets()
@@ -206,19 +208,25 @@ class AxesToolBox(QWidget):
         int is the column index of the edited cell in the table
         '''
 
-        # Update table
-        self.table_widget.getModel().updateDataAxisfromTable()
+        # Check that the column does not contain time
+        if not self.table_widget.getModel().isTimeColumn(int):
 
-        # Track changes
-        edited_data_axis = self.table_widget.getModel().getDataAxis(int)
-        edited_data = edited_data_axis.getEditedData()
-        self.track_edits.addEdit(edited_data_axis.getItem(), edited_data.values)
+            # Update table
+            self.table_widget.getModel().updateDataAxisfromTable()
 
-        # Update plot
-        if self.canvas.isPlotting():
-            self._updateDisplayedData(update_plot_only = True)
+            # Track changes
+            edited_data_axis = self.table_widget.getModel().getDataAxis(int)
+            edited_data = edited_data_axis.getEditedData()
+            self.track_edits.addEdit(edited_data_axis.getItem(), edited_data.values)
+
+            # Update plot
+            if self.canvas.isPlotting():
+                self._updateDisplayedData(update_plot_only = True)
 
 
+        else:
+            # Update table
+            self.table_widget.updateFromDataAxis(self.data_axis)
 
 
     ############# Used by both plot canvas and data table
@@ -297,7 +305,10 @@ class AxesToolBox(QWidget):
         else:
             self.canvas.timeInt = 0
 
+
+        self.table_widget.resetModel()
         self.canvas.timeChanged()
+
 
     def _select_axis(self):
         selected_axis = popUpChooseCurrentAxis(self.data_axis)

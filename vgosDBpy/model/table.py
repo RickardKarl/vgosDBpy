@@ -27,7 +27,6 @@ class TableModel(QStandardItemModel):
         super(TableModel,self).__init__(parent)
         self._header = header
         self.setHorizontalHeaderLabels(self._header)
-        self.nbrItems = 0
 
     # Set flags
     def flags(self, index):
@@ -49,7 +48,6 @@ class TableModel(QStandardItemModel):
         (Has to be done since clear otherwise would remove the header)
         '''
         self.clear()
-        self.nbrItems = 0
         if reset_header:
             self._header = []
         self.setHorizontalHeaderLabels(self._header)
@@ -178,6 +176,13 @@ class DataModel(TableModel):
         else:
             return pd.Series(data)
 
+
+    def isTimeColumn(self, col_index):
+        header_label = self._header[col_index]
+
+        return header_label == TF.time_label
+
+
     ########### Update methods ############
 
     def updateData(self, items):
@@ -284,20 +289,6 @@ class DataModel(TableModel):
             for ax in data_axis:
                 items.append(ax.getItem())
 
-            ###### Updates header
-            path = []
-            var = []
-            for itm in items:  #tm in items:
-                path.append(itm.getPath())
-                var.append(itm.labels)
-
-            header_labels = []
-            for v in var:
-                header_labels.append(get_name_to_print(v))
-
-            header_labels.insert(DataModel.time_col, self.tabfunc.time_label)
-            self.update_header(header_labels)
-
             ###### Update data in table
 
             # Get a time index of the series,
@@ -310,13 +301,20 @@ class DataModel(TableModel):
             if len(data_axis) != len(items):
                 raise ValueError('data_axis and items do no have the same length')
 
-            for i in range(len(time_index)):
-                self.setItem(i, DataModel.time_col, DataValue(time_index[i], node = None, signal = self.dataChanged_customSignal))
+            # Check if time_index is ordinary integer indices or timestamps
+            if time_index.dtype == 'datetime64[ns]':
+                use_timestamp = True
+            else:
+                use_timestamp = False
+
+            if use_timestamp is True:
+                for i in range(len(time_index)):
+                    self.setItem(i, DataModel.time_col, DataValue(time_index[i], node = None, signal = self.dataChanged_customSignal))
 
             col_index = 0
             for j in range(len(data_axis)):
                 # Checks so it does not write in same col as time
-                if col_index == DataModel.time_col:
+                if col_index == DataModel.time_col and use_timestamp:
                     col_index += 1
 
                 # Retrieve pd.Series stored in DataAxis
@@ -325,17 +323,32 @@ class DataModel(TableModel):
                 else:
                     data = data_axis[j].getData()
 
-                # Check that the time indices are the same
-                if not data.index.equals(time_index):
-                    raise ValueError('DataAxis', data_axis[j], 'do not have the same time indices as', data_axis[0])
-
                 for i in range(len(data)):
-                    self.setItem(i, col_index, DataValue(str(data[i]), items[j], signal = self.dataChanged_customSignal))
+
+                    data_value = str(data.iloc[i])
+                    self.setItem(i, col_index, DataValue(data_value, items[j], signal = self.dataChanged_customSignal))
 
                 self.dataaxis_to_column_map[data_axis[j]] = col_index
                 self.column_to_dataaxis_map[col_index] = data_axis[j]
 
                 col_index += 1
+
+
+            ###### Updates header
+            path = []
+            var = []
+            for itm in items:  #tm in items:
+                path.append(itm.getPath())
+                var.append(itm.labels)
+
+            header_labels = []
+            for v in var:
+                header_labels.append(get_name_to_print(v))
+
+            if use_timestamp is True:
+                header_labels.insert(DataModel.time_col, self.tabfunc.time_label)
+
+            self.update_header(header_labels)
 
         self.data_axis = data_axis
 
