@@ -58,8 +58,6 @@ class Plotfunction_class():
         self.y = []
         self.place = 0
 
-
-
     def clear(self):
         self.data = []
         self.axis = []
