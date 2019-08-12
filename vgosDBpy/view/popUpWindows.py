@@ -1,4 +1,4 @@
-from PySide2.QtWidgets import QMessageBox, QPushButton
+from PySide2.QtWidgets import QMessageBox, QPushButton, QInputDialog
 
 def popUpBoxEdit(msg):
 
@@ -7,7 +7,7 @@ def popUpBoxEdit(msg):
     msgBox.setText('Confirm saving your changes:')
     msgBox.setDetailedText(msg)
 
-    msgBox.addButton(QMessageBox.Save)
+    save_button = msgBox.addButton(QMessageBox.Save)
     msgBox.addButton(QMessageBox.Cancel)
     msgBox.addButton(QMessageBox.Reset)
 
@@ -32,6 +32,17 @@ def popUpBoxTable(path):
     pressed_button = msgBox.clickedButton()
     return msgBox.buttonRole(pressed_button)
 
+
+def history_information():
+    dialogBox= QInputDialog()
+    info = []
+    dialog = QInputDialog.getText(dialogBox, 'Enter the history iformation', 'Version:')
+    info.append(dialog[0])
+    dialog = QInputDialog.getText(dialogBox, 'Enter the history iformation', 'Author:')
+    info.append(dialog[0])
+    dialog = QInputDialog.getText(dialogBox, 'Enter the history iformation', 'RunTimeTag:')
+    info.append(dialog[0])
+    return info
 
 
 def popUpChooseCurrentAxis(plotted_data_axis):

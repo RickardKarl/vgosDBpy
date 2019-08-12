@@ -8,7 +8,7 @@ from vgosDBpy.editing.select_data import getData
 from vgosDBpy.view.plotlines import createLine2D, createSmoothCurve
 from vgosDBpy.data.tableToASCII import convertToAscii, write_ascii_file
 from vgosDBpy.model.data_axis import DataAxis
-from vgosDBpy.view.popUpWindows import popUpBoxTable, popUpBoxEdit, popUpChooseCurrentAxis
+from vgosDBpy.view.popUpWindows import popUpBoxTable, popUpBoxEdit, popUpChooseCurrentAxis, history_information
 from vgosDBpy.view.widgets import VariableTable
 
 class AxesToolBox(QWidget):
@@ -332,7 +332,9 @@ class AxesToolBox(QWidget):
         button_pressed = popUpBoxEdit(msg)
 
         if button_pressed == QMessageBox.AcceptRole:
-            self.track_edits.saveEdit()
+            information = history_information()
+            self.track_edits.saveEdit(information)
+
         elif button_pressed == QMessageBox.ResetRole:
             self.track_edits.reset()
             for ax in self.data_axis:
