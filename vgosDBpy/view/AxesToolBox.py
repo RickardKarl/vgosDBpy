@@ -208,19 +208,25 @@ class AxesToolBox(QWidget):
         int is the column index of the edited cell in the table
         '''
 
-        # Update table
-        self.table_widget.getModel().updateDataAxisfromTable()
+        # Check that the column does not contain time
+        if not self.table_widget.getModel().isTimeColumn(int):
 
-        # Track changes
-        edited_data_axis = self.table_widget.getModel().getDataAxis(int)
-        edited_data = edited_data_axis.getEditedData()
-        self.track_edits.addEdit(edited_data_axis.getItem(), edited_data.values)
+            # Update table
+            self.table_widget.getModel().updateDataAxisfromTable()
 
-        # Update plot
-        if self.canvas.isPlotting():
-            self._updateDisplayedData(update_plot_only = True)
+            # Track changes
+            edited_data_axis = self.table_widget.getModel().getDataAxis(int)
+            edited_data = edited_data_axis.getEditedData()
+            self.track_edits.addEdit(edited_data_axis.getItem(), edited_data.values)
+
+            # Update plot
+            if self.canvas.isPlotting():
+                self._updateDisplayedData(update_plot_only = True)
 
 
+        else:
+            # Update table
+            self.table_widget.updateFromDataAxis(self.data_axis)
 
 
     ############# Used by both plot canvas and data table
@@ -302,7 +308,7 @@ class AxesToolBox(QWidget):
 
         self.table_widget.resetModel()
         self.canvas.timeChanged()
-        
+
 
     def _select_axis(self):
         selected_axis = popUpChooseCurrentAxis(self.data_axis)
