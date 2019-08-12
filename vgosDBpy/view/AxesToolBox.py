@@ -8,8 +8,8 @@ from vgosDBpy.editing.select_data import getData
 from vgosDBpy.view.plotlines import createLine2D, createSmoothCurve
 from vgosDBpy.data.tableToASCII import convertToAscii, write_ascii_file
 from vgosDBpy.model.data_axis import DataAxis
-from vgosDBpy.view.popUpWindows import popUpBoxTable,popUpBoxEdit
-
+from vgosDBpy.view.popUpWindows import popUpBoxTable, popUpBoxEdit, popUpChooseCurrentAxis
+from vgosDBpy.view.widgets import VariableTable
 
 class AxesToolBox(QWidget):
     '''
@@ -45,13 +45,11 @@ class AxesToolBox(QWidget):
         # Track edits
         self.track_edits = self.parentWidget().track_edits
 
-        ### Listen to changes of selection in table_widget
-        self.table_widget.getSignal().connect(self._selection_changed_callback_table)
-
         # Control, appearance and data variables
         self.selector = None
         self.data_axis = canvas.getDataAxis()
         self.current_axis = start_axis
+        self.legend = None
 
         # Buttons and their respective functions ##################################################
         appearance_widget = QWidget(self)
@@ -60,9 +58,12 @@ class AxesToolBox(QWidget):
         self.check_marker = QCheckBox('Show markers')
         self.check_smooth_curve = QCheckBox('Show smooth curve')
         self.timeDefault = QCheckBox('Display time on X-axis')
+        self.select_axis_button = QPushButton('Change selected variable', self)
 
+        self.clear_marked = QPushButton('Clear all marked data', self)
         self.remove_marked = QPushButton('Remove data', self)
         self.restore_marked = QPushButton('Restore removed data', self)
+
 
         self.saveEdit = QPushButton('Save changes', self)
         self.printTable = QPushButton('Print table', self)
@@ -74,12 +75,14 @@ class AxesToolBox(QWidget):
         appearance_layout.addWidget(self.check_marker, 1, 0)
         appearance_layout.addWidget(self.check_smooth_curve, 2, 0)
         appearance_layout.addWidget(self.timeDefault, 3, 0)
+        appearance_layout.addWidget(self.select_axis_button, 4, 0)
 
-        appearance_layout.addWidget(self.remove_marked, 0, 1)
-        appearance_layout.addWidget(self.restore_marked, 1, 1)
+        appearance_layout.addWidget(self.clear_marked, 0, 1)
+        appearance_layout.addWidget(self.remove_marked, 1, 1)
+        appearance_layout.addWidget(self.restore_marked, 2, 1)
 
-        appearance_layout.addWidget(self.saveEdit, 0, 3)
-        appearance_layout.addWidget(self.printTable, 1, 3)
+        appearance_layout.addWidget(self.saveEdit, 0, 2)
+        appearance_layout.addWidget(self.printTable, 1, 2)
 
         appearance_widget.setLayout(appearance_layout)
 
@@ -97,12 +100,19 @@ class AxesToolBox(QWidget):
         self.timeDefault.setCheckState(QtCore.Qt.Checked)
         self.timeDefault.stateChanged.connect(self._timeDefault)
 
+        self.select_axis_button.clicked.connect(self._select_axis)
+
+        self.clear_marked.clicked.connect(self._clearMarkedData)
         self.remove_marked.clicked.connect(self._trackEdit)
         self.restore_marked.clicked.connect(self._restoreChanges)
 
         self.saveEdit.clicked.connect(self._saveEdit)
         self.printTable.clicked.connect(self._printTable)
 
+        ######### Listen to changes of selection in table_widget
+
+        self.table_widget.custom_mouse_release.connect(self._selection_changed_callback_table)
+        self.table_widget.getModel().dataChanged_customSignal.connect(self._tableDataChanged)
 
     ######## Methods for updating the DataAxis of the tool box
 
@@ -115,29 +125,25 @@ class AxesToolBox(QWidget):
 
         if len(data_axis) > 0:
             self.resetToolBox()
-            self.current_axis = data_axis[0]
 
+            bool = True
             for ax in data_axis:
                 if ax not in self.data_axis:
-                    self.addSingleDataAxis(ax)
+                    self.addSingleDataAxis(ax, make_current_axis = bool)
+                    bool = False
 
 
-    def addSingleDataAxis(self, data_axis):
+    def addSingleDataAxis(self, data_axis, make_current_axis = False):
         '''
         Updates the instance with a new axis
 
         data_axis [DataAxis]
         '''
         self.data_axis.append(data_axis)
-        data_axis.updateLines()
-
-        if data_axis == self.current_axis:
-
-            self.updateSelector(data_axis)
-
-        self._showLine()
-        self._showMarkers()
-        self.current_axis.setMarkerSize(AxesToolBox.marker_size)
+        if make_current_axis:
+            self.setCurrentAxis(data_axis)
+        self._updateDisplayedData(update_plot_only = True)
+        data_axis.setMarkerSize(AxesToolBox.marker_size)
 
     def resetToolBox(self):
         self.selector = None
@@ -147,12 +153,15 @@ class AxesToolBox(QWidget):
         if data_axis in self.data_axis:
             self.current_axis = data_axis
             self.updateSelector(data_axis)
+            self._updateDisplayedData()
 
         else:
             raise ValueError('Invalid choice of DataAxis, does not exist in figure.', data_axis)
 
 
-    ######## Selector methods
+    ############## Selector methods #########
+
+    ###### Used by plot canvas
 
     def updateSelector(self, data_axis):
         '''
@@ -160,7 +169,8 @@ class AxesToolBox(QWidget):
 
         data_axis [DataAxis]
         '''
-        self.selector = RectangleSelector(data_axis.getAxis(), self._selector_callback_plot, drawtype='box')
+        if data_axis.axisExists():
+            self.selector = RectangleSelector(data_axis.getAxis(), self._selector_callback_plot, drawtype='box')
 
     def _selector_callback_plot(self, eclick, erelease):
         '''
@@ -171,22 +181,47 @@ class AxesToolBox(QWidget):
         x2, y2 = erelease.xdata, erelease.ydata
 
         marked_data = getData(x1, x2, y1, y2, self.current_axis.getData(), self.canvas.timeInt)
-
         # Update marked data
         self.current_axis.updateMarkedData(marked_data)
 
         # Update appearance of plot and table
         self._updateSelectionWidgets()
 
+    ####### Used by data table
+
     def _selection_changed_callback_table(self):
         # Get marked data
         marked_data = self.table_widget.getModel().getDataFromSelected(self.table_widget.selection.selectedIndexes(), self.current_axis)
 
         # Update current axis with the marked data
-        self.current_axis.updateMarkedData(marked_data)
+        if self.canvas.isPlotting():
+            self.current_axis.updateMarkedData(marked_data)
 
         # Update appearance of plot and table
         self._updateSelectionWidgets()
+
+    @QtCore.Slot(int)
+    def _tableDataChanged(self, int):
+        '''
+        int is the column index of the edited cell in the table
+        '''
+
+        # Update table
+        self.table_widget.getModel().updateDataAxisfromTable()
+
+        # Track changes
+        edited_data_axis = self.table_widget.getModel().getDataAxis(int)
+        edited_data = edited_data_axis.getEditedData()
+        self.track_edits.addEdit(edited_data_axis.getItem(), edited_data.values)
+
+        # Update plot
+        if self.canvas.isPlotting():
+            self._updateDisplayedData(update_plot_only = True)
+
+
+
+
+    ############# Used by both plot canvas and data table
 
     def _updateSelectionWidgets(self):
         '''
@@ -194,23 +229,30 @@ class AxesToolBox(QWidget):
         '''
 
         # Update plot figure with marked data
-        self.current_axis.updateLines()
+        for ax in self.data_axis:
+            ax.updateLines()
         self.canvas.updatePlot()
 
         # Update table with marked data
         #self.table_widget.getSignal().disconnect(self._selection_changed_callback_table)
         self.table_widget.updateMarkedRows(self.data_axis)
 
-    def _updateDisplayedData(self):
-        # Update plot
-        self.current_axis.updateLines()
+    def _updateDisplayedData(self, update_plot_only = False):
+
+        if update_plot_only is False:
+            self.table_widget.updateFromDataAxis(self.data_axis)
+
+        for ax in self.data_axis:
+            ax.updateLines()
         self.canvas.updatePlot()
         self._showLine()
         self._showMarkers()
         self._showSmoothCurve()
+        self._showLegend()
 
         # Update table
         self.table_widget.updateFromDataAxis(self.data_axis)
+
 
 
 
@@ -238,6 +280,17 @@ class AxesToolBox(QWidget):
         self.current_axis.displaySmoothCurve(self.check_smooth_curve.isChecked())
         self.canvas.updatePlot()
 
+    def _showLegend(self):
+        labels = []
+        for ax in self.data_axis:
+            labels.append(str(ax.getItem()))
+
+        if self.legend != None:
+            self.legend.remove()
+        self.legend = self.canvas.figure.legend(labels = labels)
+        self.legend.set_draggable(True)
+
+
     def _timeDefault(self):
         if self.timeDefault.isChecked():
             self.canvas.timeInt = 1
@@ -246,11 +299,14 @@ class AxesToolBox(QWidget):
 
         self.canvas.timeChanged()
 
+    def _select_axis(self):
+        selected_axis = popUpChooseCurrentAxis(self.data_axis)
+        if selected_axis != None:
+            self.setCurrentAxis(selected_axis)
 
     #### Methods for editing and saving data
 
     def _clearMarkedData(self):
-
         if self.current_axis == None:
             pass
         else:
@@ -266,8 +322,10 @@ class AxesToolBox(QWidget):
 
     def _restoreChanges(self):
         self.current_axis.resetEditedData()
+        self.track_edits.removeEdit(self.current_axis.getItem())
         self._clearMarkedData()
         self._updateDisplayedData()
+
 
     def _saveEdit(self):
         msg = self.track_edits.getTextInfo()

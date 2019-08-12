@@ -6,7 +6,7 @@ Might actually be a better idea to overwrite *matplotlib.Axis* with this one? It
 Should do more internal stuff such as automatically create a new line with the edited data.
 Move edited_curve variable to this one?
 
-## standardtree.py (Qt-dependent)
+## qtree.py (Qt-dependent)
 
 This file contains the data structure needed to store the data in a model as required by QT,
 it basically copies another data structure that is used when reading the wrapper.
@@ -39,4 +39,4 @@ A version of QNodeItem for nodes that points to one data_point contained in each
 
 ###### TableModel (Inherits from QStandardItemModel)
 Qt-model for all of the tables used in the interface.
-Reads input from different sources, all methods are not needed for each instance of the class. 
+Reads input from different sources, all methods are not needed for each instance of the class.

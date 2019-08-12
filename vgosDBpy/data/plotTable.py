@@ -12,6 +12,7 @@ from vgosDBpy.data.getName import get_name_to_print as name, get_unit_to_print a
 # called from outside, creates an directory with all information to a table
 class Tablefunction():
     time_label = 'Time [Y-M-D H:M:S]'
+    time_key = 'Time'
     def __init__(self):
         self.data = {} # key = name of variable, value = array of data
         self.header = [] # Arrat of names of varibles
@@ -22,7 +23,7 @@ class Tablefunction():
         timePath = findCorrespondingTime(paths[0].strip())
         if os.path.isfile(timePath):
             time =  combineYMDHMwithSec(timePath)
-            self.data['Time'] = time
+            self.data[Tablefunction.time_key] = time
         c = 0
         for path in paths:
             y = get_data_to_table(path, vars[c])
@@ -52,14 +53,13 @@ class Tablefunction():
         return self.data
 
     def append_header(self, paths, vars):
-
         new_data = self.append_table(paths,vars)
         names = list(new_data)
         for name in names :
             self.header.append(name)
         return self.header
 
-    def return_header_names(self,paths, vars):
+    def return_header_names(self):
         self.header_reset()
         names = list(self.data)
         for name in names :

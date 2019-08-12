@@ -9,6 +9,7 @@ from vgosDBpy.view.plot_widget_new import AxesToolBox, PlotWidget
 from vgosDBpy.editing.track_edits import EditTracking
 from vgosDBpy.wrapper.tree import Wrapper
 
+
 class App(QWidget):
     '''
     Application that is the entire interface for the utilities
@@ -60,16 +61,14 @@ class App(QWidget):
         self.button_table = QPushButton('& Table',self)
         self.button_append_table = QPushButton('& Add to table' )
         self.button_append_plot = QPushButton( '& Add to plot')
-        self.button_clear_plot = QPushButton('& Clear plot')
-        self.button_clear_table = QPushButton('& Clear table')
+        self.button_clear = QPushButton('& Clear')
 
         # Button event
         self.button_plot.clicked.connect(self._plotbutton)
         self.button_table.clicked.connect(self._tablebutton)
-        self.button_append_table.clicked.connect(self._addbutton)
+        self.button_append_table.clicked.connect(self._append_tablebutton)
         self.button_append_plot.clicked.connect(self._append_plotbutton)
-        self.button_clear_plot.clicked.connect(self._clear_plot)
-        self.button_clear_table.clicked.connect(self._clear_table)
+        self.button_clear.clicked.connect(self._clear)
 
         # Button layout
         self.button_widget = QWidget(self)
@@ -78,8 +77,7 @@ class App(QWidget):
         button_layout.addWidget(self.button_table, 0, 1)
         button_layout.addWidget(self.button_append_plot, 1, 0)
         button_layout.addWidget(self.button_append_table, 1, 1)
-        button_layout.addWidget(self.button_clear_plot, 2, 0)
-        button_layout.addWidget(self.button_clear_table, 2, 1)
+        button_layout.addWidget(self.button_clear, 2, 0)
         self.button_widget.setLayout(button_layout)
 
         # Listeners
@@ -132,20 +130,17 @@ class App(QWidget):
                 text = Wrapper.getHistory(item.getPath())
                 self.info_text.setPlainText(text)
 
-
-    def _plot_table_button(self):
-        self._plotbutton()
-        self._tablebutton()
-
     def _plotbutton(self):
         '''
         Method for plotting data from variables
         '''
+        self._clear()
         index = self._getSelected(self.var_table)
         if not index == []:
             items = []
             for i in range(len(index)):
                 items.append(self.var_table.getModel().itemFromIndex(index[i]))
+
 
             for itm in items:
                 if is_string(itm.getPath(),itm.labels):
@@ -159,6 +154,7 @@ class App(QWidget):
                 self.plot_toolbox.updateDataAxis(data_axis)
                 self.data_table.clearTable()
                 self.data_table.updateFromDataAxis(data_axis)
+
 
     def _append_plotbutton(self):
         index = self._getSelected(self.var_table)
@@ -174,25 +170,25 @@ class App(QWidget):
         '''
         Method for displaying variables in table
         '''
+        self._clear()
         index = self._getSelected(self.var_table)
-        if not index == [] :
+        if not index == []:
             items = []
             for i in range (len(index)):
                 items.append(self.var_table.getModel().itemFromIndex(index[i]))
             if not items == [] :
                 self.data_table.updateData(items)
+                self.plot_toolbox.updateDataAxis(self.data_table.getModel().getAllDataAxis())
 
-    def _addbutton(self):
+    def _append_tablebutton(self):
         index= self._getSelected(self.var_table)
         if not index  == [] :
             items = []
             for i in range (len(index)):
                 items.append(self.var_table.getModel().itemFromIndex(index[i]))
         self.data_table.appendData(items)
+        self.plot_toolbox.updateDataAxis(self.data_table.getModel().getAllDataAxis())
 
-    def _clear_plot(self):
+    def _clear(self):
         self.plot_widget.plot_canvas.clearFigure()
-        self.data_table.clearTable()
-
-    def _clear_table(self):
-        self.data_table.clearTable()
+        self.data_table.resetModel()

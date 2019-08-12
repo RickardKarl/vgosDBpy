@@ -1,18 +1,19 @@
 from netCDF4 import Dataset
 import pandas as pd
 import os
-#from vgosDBpy.data.readNetCDF import get_data_to_plot
-
-
 """
 Takes in a path to a TimeUTC.nc file and combines the YMDHM data
 with the second to create a YMDHMS format.
 Uses panda to create Timestamp.
 """
 def combineYMDHMwithSec(timeFilePath):
-    with Dataset(timeFilePath,"r", format="NETCDF4_CLASSIC") as time :
-        seconds = time.variables["Second"]
-        YMDHM = time.variables["YMDHM"]
+    '''
+    Note: Executes very slowly because of the loop, no fix found.
+    '''
+    with Dataset(timeFilePath,"r", format="NETCDF4_CLASSIC") as time_file:
+
+        seconds = time_file.variables["Second"]
+        YMDHM = time_file.variables["YMDHM"]
         if len(seconds) != len(YMDHM):
             return null
 
@@ -52,7 +53,7 @@ def findCorrespondingTime(path):
     time_path = " "
     if os.path.isfile(path):
         parts = path.split("/")
-        parts[-1] = 'TimeUTC.nc'
+        parts[-1] = 'TimeUTC.nc' # Hard-coded
         time_path = '/'.join(parts)
         if os.path.isfile(time_path):
             return time_path

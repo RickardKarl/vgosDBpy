@@ -42,6 +42,9 @@ class PlotFigure(FigureCanvas):
         self.plot_function = Plotfunction_class()
 
 
+    def isPlotting(self):
+        return len(self._ax) > 0
+
     ############### Getters & Setters
 
     def getDataAxis(self):
@@ -65,6 +68,7 @@ class PlotFigure(FigureCanvas):
     ############### Update graphics
 
     def updatePlot(self):
+        self.figure.autofmt_xdate()
         self.draw()
 
 
@@ -88,6 +92,10 @@ class PlotFigure(FigureCanvas):
         axis = data_axis.getAxis()
         self._ax.remove(data_axis)
         self._ax.clear()
+
+
+    def exists(self, data_axis):
+        return data_axis in self._ax
 
     def updateFigure(self, items, timeUpdated = False):
 
@@ -134,6 +142,7 @@ class PlotFigure(FigureCanvas):
         self.updatePlot()
 
     def append_plot(self, item):
+
         #add new item
         self.paths.append(item.getPath())
         self.vars.append(item.labels)
@@ -142,7 +151,8 @@ class PlotFigure(FigureCanvas):
         if not_S1(self.paths,self.vars):
             axis, data = self.plot_function.plotFunction(self.paths, self.vars, self.figure, self.timeInt)
             for i in range(len(axis)):
-                self.addAxis(DataAxis(axis[i], data[i], self.items[i]))
+                data_axis = DataAxis(axis[i], data[i], self.items[i])
+                self.addAxis(data_axis)
 
             # Refresh canvas
             self.updatePlot()

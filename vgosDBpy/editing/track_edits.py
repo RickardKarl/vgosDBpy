@@ -28,7 +28,7 @@ class EditTracking:
         '''
         Add or update an edited data array for the corresponding variable
 
-        variable [model.standardtree.Variable]
+        variable [model.qtree.Variable]
         data_array [numpy array] is the edited data
         '''
         if not variable in set(self._edited_variables):
@@ -37,11 +37,11 @@ class EditTracking:
 
     def removeEdit(self, variable):
         '''
-        variable [model.standardtree.Variable]
+        variable [model.qtree.Variable]
         '''
         if variable in self._edited_data:
             self._edited_data.pop(variable)
-            self._edited_variables.pop(variable)
+            self._edited_variables.remove(variable)
         else:
             raise ValueError('Variable is not listed in the object:', self)
 
@@ -58,41 +58,40 @@ class EditTracking:
         Also creates a new history file
         '''
 
+        if self._edited_variables != [] and self._edited_data != {}:
 
-        sort_by_parent = {}
-        for variable in self._edited_variables:
-            # Get parent of variable and check if it is a netCDF file
-            parent = variable.getNode()
-            if parent.isNetCDF():
-                # Check if this is a new parent or if it is shared with some other variable
-                if parent in sort_by_parent:
-                    sort_by_parent.get(parent).append(variable)
+            sort_by_parent = {}
+            for variable in self._edited_variables:
+                # Get parent of variable and check if it is a netCDF file
+                parent = variable.getNode()
+                if parent.isNetCDF():
+                    # Check if this is a new parent or if it is shared with some other variable
+                    if parent in sort_by_parent:
+                        sort_by_parent.get(parent).append(variable)
+                    else:
+                        sort_by_parent[parent] = [variable]
                 else:
-                    sort_by_parent[parent] = [variable]
-            else:
-                raise ValueError('Can not find netCDF that variable belongs to', variable)
+                    raise ValueError('Can not find netCDF that variable belongs to', variable)
 
-        path_to_file_list = [] # Saves path to the file that is replaced
-        new_file_name_list = [] # Saves name of all newly created files
+            path_to_file_list = [] # Saves path to the file that is replaced
+            new_file_name_list = [] # Saves name of all newly created files
 
-        for parent_key in sort_by_parent:
-            # Get variables that belongs to the same parent
-            var_list = sort_by_parent.get(parent_key)
-            # Create temporary dict for these variables
-            edited_variables = {}
+            for parent_key, var_list in sort_by_parent.items():
+                # Create temporary dict for the variables
+                edited_variables = {}
 
-            # Add these variables to the dict
-            for var_item in var_list:
-                edited_variables[str(var_item)] = self._edited_data.get(var_item)
+                # Add the variables to the temporary dict
+                for var_item in var_list:
+                    edited_variables[str(var_item)] = self._edited_data.get(var_item)
 
-            # Get netCDF path of the parent (which is a netCDF file, it has been checked)
-            netCDF_path = parent_key.getPath()
+                # Get netCDF path of the parent (which is a netCDF file, it has been checked)
+                netCDF_path = parent_key.getPath()
 
-            new_file_path = create_netCDF_file(netCDF_path, edited_variables)
-            new_file_name = new_file_path.split('/')[-1]
+                new_file_path = create_netCDF_file(netCDF_path, edited_variables)
+                new_file_name = new_file_path.split('/')[-1]
 
-            path_to_file_list.append(parent_key.getPath())
-            new_file_name_list.append(new_file_name)
+                path_to_file_list.append(parent_key.getPath())
+                new_file_name_list.append(new_file_name)
 
             # Create new history file and add it to the wrapper changes
             new_hist_path, timestamp = self.createNewHistFile(sort_by_parent, path_to_file_list, new_file_name_list)
@@ -101,6 +100,9 @@ class EditTracking:
             # Create new wrapper
             new_wrp_path = create_new_wrapper(path_to_file_list, new_file_name_list, self._wrapper.wrapper_path,
                                 hist_file_name, timestamp)
+
+        else:
+            print('There exists no tracked changes to be saved.')
 
 
 
@@ -125,7 +127,6 @@ class EditTracking:
 
         Returns path to new history file
         '''
-
         # Get folders
         folder = []
         for path in path_to_file_list:

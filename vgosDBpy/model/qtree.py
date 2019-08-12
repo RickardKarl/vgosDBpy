@@ -204,22 +204,44 @@ class DataValue(QNodeItem):
 
     _type = 1113
 
-    def __init__(self, value, node = None):
+
+
+    def __init__(self, value, node = None, signal = None):
         super(DataValue, self).__init__(node)
         self.value = value
+
+        self.signal = signal
+        self.custom_signal_bool = (signal != None)
 
     def type(self):
         NetCDFItem._type
 
     def data(self, role = QtCore.Qt.DisplayRole):
+
         if role == QtCore.Qt.DisplayRole:
             return str(self.value)
-
         elif role == QtCore.Qt.EditRole:
-            return str(self.value)
-
+            return self.value
         else:
             return None
+
+    def setData(self, data, role = QtCore.Qt.EditRole):
+
+        if role == QtCore.Qt.EditRole:
+            self.value = data
+
+        elif role == QtCore.Qt.DisplayRole: # Do not really do anything?
+            self.value = data
+
+        else:
+            return False
+
+        if self.custom_signal_bool is True:
+            self.signal.emit(self.column())
+        else:
+            self.emitDataChanged()
+
+        return True
 
     def __str__(self):
         return str(self.value)
