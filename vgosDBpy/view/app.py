@@ -141,10 +141,10 @@ class App(QWidget):
             for i in range(len(index)):
                 items.append(self.var_table.getModel().itemFromIndex(index[i]))
 
-
+            # goes though all items to see if they are possible to plot, meaning not a string,
+            # if not removes them
             for itm in items:
                 if is_string(itm.getPath(),itm.labels):
-                    print('removed')
                     items.remove(itm)
 
             if len(items)>0:
@@ -160,11 +160,14 @@ class App(QWidget):
         index = self._getSelected(self.var_table)
         if not index == []:
             item = self.var_table.getModel().itemFromIndex(index[-1])
-            self.plot_widget.plot_canvas.append_plot(item)
 
-        data_axis = self.plot_widget.getDataAxis()
-        self.plot_toolbox.updateDataAxis(data_axis)
-        self.data_table.updateFromDataAxis(data_axis)
+            # checks if selected item should and can be visulized in plot
+            if not is_string( item.getPath(), item.lables):
+                self.plot_widget.plot_canvas.append_plot(item)
+
+                data_axis = self.plot_widget.getDataAxis()
+                self.plot_toolbox.updateDataAxis(data_axis)
+                self.data_table.updateFromDataAxis(data_axis)
 
     def _tablebutton(self):
         '''

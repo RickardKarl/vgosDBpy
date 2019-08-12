@@ -62,8 +62,13 @@ class Tablefunction():
     def return_header_names(self):
         self.header_reset()
         names = list(self.data)
+        print(names)
         for name in names :
-            self.header.append(name)
+            print(name)
+            if name == tableFunction.time_key:
+                self.header.append(Tablefunction.time_label)
+            else:
+                self.header.append(name)
         return self.header
 
     def header_reset(self):

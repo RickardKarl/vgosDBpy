@@ -385,15 +385,9 @@ def not_S1(paths, vars):
                 return False
     return True
 
-def is_string(path,var):
-    vars =get_netCDF_variables(pathToNetCDF)
-    dtypes = get_dtype_netCDF(pathToNetCDF)
-    for i in range(len(vars)):
-        if vars[i] 
-
-    with Dataset(path,'r',format = 'NETCDF4_CLASSIC') as nc:
-        dtype= str(nc.variables[var].dtype).strip()
-        print(dtype)
-        if dtype == 'S1':
-            return True
-    return False
+def is_string(pathToNetCDF,var):
+    dtype = get_dtype_var(pathToNetCDF, var)
+    if dtype == 'S1':
+        return True
+    else:
+        return False
