@@ -44,7 +44,8 @@ class DataAxis:
             return False
 
     def __hash__(self):
-        return hash(self._item)*22 + int(self._edited_data.mean()) + int(self._edited_data.median())
+        series_data = self._edited_data.values # Gives a numpy array
+        return hash(self._item)*22 + hash(series_data.tostring())*11 # Combines has of the node and the numpy array
 
 
     def axisExists(self):

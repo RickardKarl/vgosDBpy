@@ -124,7 +124,7 @@ class DataTable(QTableView):
     def resetModel(self):
         self._model.resetModel(reset_header = True)
         self.setSelectionMode(QAbstractItemView.ExtendedSelection)
-        self.setSelectionBehavior(QAbstractItemView.SelectionBehavior.SelectRows)
+        self.setSelectionBehavior(QAbstractItemView.SelectionBehavior.SelectItems)
         self.selection = self.selectionModel()
 
     ######### Event listener

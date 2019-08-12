@@ -148,6 +148,7 @@ class AxesToolBox(QWidget):
     def resetToolBox(self):
         self.selector = None
         self.data_axis = []
+        self.canvas.updatePlot()
 
     def setCurrentAxis(self, data_axis):
         if data_axis in self.data_axis:
@@ -191,11 +192,12 @@ class AxesToolBox(QWidget):
 
     def _selection_changed_callback_table(self):
         # Get marked data
-        marked_data = self.table_widget.getModel().getDataFromSelected(self.table_widget.selection.selectedIndexes(), self.current_axis)
 
-        # Update current axis with the marked data
-        if self.canvas.isPlotting():
-            self.current_axis.updateMarkedData(marked_data)
+        for ax in self.data_axis:
+            marked_data = self.table_widget.getModel().getDataFromSelected(self.table_widget.selection.selectedIndexes(), ax)
+            # Update current axis with the marked data
+            if self.canvas.isPlotting():
+                ax.updateMarkedData(marked_data)
 
         # Update appearance of plot and table
         self._updateSelectionWidgets()
@@ -297,7 +299,10 @@ class AxesToolBox(QWidget):
         else:
             self.canvas.timeInt = 0
 
+
+        self.table_widget.resetModel()
         self.canvas.timeChanged()
+        
 
     def _select_axis(self):
         selected_axis = popUpChooseCurrentAxis(self.data_axis)
