@@ -1,6 +1,7 @@
 from vgosDBpy.editing.createNetCDF import create_netCDF_file
 from vgosDBpy.editing.createWrapper import create_new_wrapper
 
+
 import os
 from datetime import datetime
 
@@ -51,7 +52,7 @@ class EditTracking:
 
     ########### Methods for saving edits
 
-    def saveEdit(self):
+    def saveEdit(self,information):
         '''
         Saves the changes made in the edited variables
         Creates new netCDF files and a wrapper that points to the new file(s)
@@ -99,7 +100,7 @@ class EditTracking:
 
             # Create new wrapper
             new_wrp_path = create_new_wrapper(path_to_file_list, new_file_name_list, self._wrapper.wrapper_path,
-                                hist_file_name, timestamp)
+                                hist_file_name, timestamp,information)
 
         else:
             print('There exists no tracked changes to be saved.')
