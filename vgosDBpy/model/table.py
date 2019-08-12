@@ -27,7 +27,6 @@ class TableModel(QStandardItemModel):
         super(TableModel,self).__init__(parent)
         self._header = header
         self.setHorizontalHeaderLabels(self._header)
-        self.nbrItems = 0
 
     # Set flags
     def flags(self, index):
@@ -49,7 +48,6 @@ class TableModel(QStandardItemModel):
         (Has to be done since clear otherwise would remove the header)
         '''
         self.clear()
-        self.nbrItems = 0
         if reset_header:
             self._header = []
         self.setHorizontalHeaderLabels(self._header)
