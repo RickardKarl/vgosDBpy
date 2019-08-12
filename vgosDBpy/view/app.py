@@ -4,7 +4,7 @@ from PySide2 import QtCore
 from pandas.plotting import register_matplotlib_converters
 
 from vgosDBpy.view.widgets import QWrapper, VariableTable, DataTable
-from vgosDBpy.data.readNetCDF import get_netCDF_vars_info
+from vgosDBpy.data.readNetCDF import get_netCDF_vars_info, is_string
 from vgosDBpy.view.plot_widget_new import AxesToolBox, PlotWidget
 from vgosDBpy.editing.track_edits import EditTracking
 from vgosDBpy.wrapper.tree import Wrapper
@@ -146,12 +146,19 @@ class App(QWidget):
             items = []
             for i in range(len(index)):
                 items.append(self.var_table.getModel().itemFromIndex(index[i]))
-            self.plot_widget.plot_canvas.updateFigure(items)
 
-            data_axis = self.plot_widget.getDataAxis()
-            self.plot_toolbox.updateDataAxis(data_axis)
-            self.data_table.clearTable()
-            self.data_table.updateFromDataAxis(data_axis)
+            for itm in items:
+                if is_string(itm.getPath(),itm.labels):
+                    print('removed')
+                    items.remove(itm)
+
+            if len(items)>0:
+                self.plot_widget.plot_canvas.updateFigure(items)
+
+                data_axis = self.plot_widget.getDataAxis()
+                self.plot_toolbox.updateDataAxis(data_axis)
+                self.data_table.clearTable()
+                self.data_table.updateFromDataAxis(data_axis)
 
     def _append_plotbutton(self):
         index = self._getSelected(self.var_table)

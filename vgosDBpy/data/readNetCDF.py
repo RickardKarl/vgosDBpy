@@ -7,6 +7,7 @@ ________________________________________________________________________________
 Functions to create plot
 ___________________________________________________________________________________________
 """
+
 # returns an array cotaning an array of the data sored in an variable
 def get_data_to_plot(pathToNetCDF,var):
     with Dataset(pathToNetCDF, 'r', format = 'NETCDF4_CLASSIC') as nc:
@@ -383,3 +384,16 @@ def not_S1(paths, vars):
             if dtype.strip() == 'S1':
                 return False
     return True
+
+def is_string(path,var):
+    vars =get_netCDF_variables(pathToNetCDF)
+    dtypes = get_dtype_netCDF(pathToNetCDF)
+    for i in range(len(vars)):
+        if vars[i] 
+
+    with Dataset(path,'r',format = 'NETCDF4_CLASSIC') as nc:
+        dtype= str(nc.variables[var].dtype).strip()
+        print(dtype)
+        if dtype == 'S1':
+            return True
+    return False

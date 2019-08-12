@@ -21,7 +21,7 @@ from vgosDBpy.data.plotTable import Tablefunction
 from vgosDBpy.data.tableToASCII import convertToAscii_script
 
 from vgosDBpy.editing.newFileNames import new_netCDF_name
-
+"""
 <<<<<<< Updated upstream
 # function that is called from outisde, takes in a path to a txt file with info of what to do.
 def script(path):
@@ -113,11 +113,13 @@ def _script_table(list):
     directory = table_function.tableFunctionGeneral(paths,vars)
     convertToAscii_script(directory, info, new_name)
 =======
+"""
 class script_class():
 
     def __init__(self):
-        self.wrp_path = ''
+        self._wrp_path = ''
         self._save_path = '.'
+        self._session = ''
 
     def get_wrp_path(self):
         return self._wrp_path
@@ -251,13 +253,11 @@ class script_class():
             for i in range(1,len(words)):
                 paths.append(path)
                 vars.append(words[i].strip())
-            #paths.append(path.strip())
-            #vars.append(var.strip())
 
         ex_name = self._save_path+'/table.txt'
         new_name = new_netCDF_name(ex_name)
-        info = 'HEEEEJ'
+        info = 'Session: ' + self._wrp_path.split('/')[-1].split('_')[0]
 
         directory = table_function.tableFunctionGeneral(paths,vars)
         convertToAscii_script(directory, info, new_name)
->>>>>>> Stashed changes
+#>>>>>>> Stashed changes
