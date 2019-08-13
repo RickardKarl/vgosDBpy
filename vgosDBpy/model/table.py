@@ -214,7 +214,7 @@ class DataModel(TableModel):
             # Turn data into DataAxis
             index = 0
             #updateItems(items)
-            for key, var in data.items():xsw
+            for key, var in data.items():
                 if key != TF.time_key:
                     if self.time_index != None:
                         data_series = pd.Series(var, index = self.time_index)
