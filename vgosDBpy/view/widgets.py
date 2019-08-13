@@ -157,7 +157,6 @@ class DataTable(QTableView):
         # Updates size of column when content is changed
         self.updateColumnSize()
 
-
     def appendData(self,items):
         '''
         Updates the data in the table
@@ -172,7 +171,6 @@ class DataTable(QTableView):
         # Updates size of column when content is changed
         self.updateColumnSize()
 
-
     ######### Update through DataAxis methods
 
     def updateFromDataAxis(self, data_axis):
@@ -186,7 +184,7 @@ class DataTable(QTableView):
 
         # Updates size of column when content is changed
         self.updateColumnSize()
-        
+
 
     def updateMarkedRows(self, data_axis):
         '''

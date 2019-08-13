@@ -4,14 +4,12 @@ from vgosDBpy.data.PathParser import PathParser
 from vgosDBpy.editing.newFileNames import new_netCDF_name, new_wrapper_path
 from vgosDBpy.wrapper.equalWrapper import equal
 import os
-import time
 
     # from split find directory by going trough all words
     # and see if they matches any in the predefined list of directories possible, which is found by
     # looping through the wrapper that one reads in and seraches for the keyword "default_dir"
 
 def create_new_wrapper(list_changed_files, new_file_names, path_to_old_wrp, hist_file_name, timestamp, information):
-
     path_to_new_wrp = new_wrapper_path(path_to_old_wrp)
 
     while os.path.isfile(path_to_new_wrp):
@@ -96,13 +94,12 @@ def create_new_wrapper(list_changed_files, new_file_names, path_to_old_wrp, hist
     return path_to_new_wrp
 
 def writeHistoryBlock(file, hist_file_name, timestamp, information):
-    print(time.time)
     file.write('!\n')
     file.write('Begin Process vgosDBpy\n')
     file.write('Version ----\n')
     file.write('CreatedBy'+information+'\n')
     file.write('Default_dir History\n')
-    file.write('RunTimeTag ----\n')
+    file.write('RunTimeTag'+ timestamp +'\n')
     file.write('History ' + hist_file_name + '\n')
     file.write('End Process vgosDBpy\n')
 

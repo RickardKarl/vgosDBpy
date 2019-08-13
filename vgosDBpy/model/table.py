@@ -1,6 +1,7 @@
 from PySide2.QtGui import QStandardItemModel
 from PySide2 import QtCore
 import pandas as pd
+import numpy as np
 
 from vgosDBpy.model.qtree import Variable, DataValue
 from vgosDBpy.data.readNetCDF import get_netCDF_variables, get_dtype_var_str, get_dimension_var, show_in_table
@@ -180,10 +181,10 @@ class DataModel(TableModel):
     def isTimeColumn(self, col_index):
         header_label = self._header[col_index]
 
-        return header_label == TF.time_label
+        return header_label == TF.time_lable
 
 
-    ########### Update methods ############
+    ###########  methods ############
 
     def updateData(self, items):
         '''
@@ -203,8 +204,8 @@ class DataModel(TableModel):
                 path.append(itm.getPath())
                 var.append(itm.labels)
             data = self.tabfunc.tableFunctionGeneral(path, var) # returns a map
-
-        ## Update data_axis
+            items = self.updateItems(data, items)
+         ## Update data_axis
             # Get time indices if they exists
             for key, var in data.items():
                 if key == TF.time_key:
@@ -212,7 +213,8 @@ class DataModel(TableModel):
 
             # Turn data into DataAxis
             index = 0
-            for key, var in data.items():
+            #updateItems(items)
+            for key, var in data.items():xsw
                 if key != TF.time_key:
                     if self.time_index != None:
                         data_series = pd.Series(var, index = self.time_index)
@@ -221,7 +223,6 @@ class DataModel(TableModel):
 
                     data_axis = DataAxis(None, data_series, items[index])
                     self.data_axis.append(data_axis)
-
                     index += 1
 
             # Update model
@@ -229,6 +230,18 @@ class DataModel(TableModel):
         else:
             raise ValueError('Argument items can not be empty.')
 
+    def updateItems(self,data,items):
+        names = list(data)
+        prev = names[0]
+        i = 1
+        for j in range(0,len(names)-1):
+            prev = prev.split('#')[0]
+            name = names[i].split('#')[0]
+            if prev == name:
+                items.insert(j, items[j-1] )
+            prev = names[i]
+            i +=  1
+        return items
 
     def appendData(self, items):
         '''
@@ -246,8 +259,8 @@ class DataModel(TableModel):
                 path.append(itm.getPath())
                 var.append(itm.labels)
             data_new = self.tabfunc.append_table(path, var)
-
-        ## Update data_axis
+            items = self.updateItems(data_new, items)
+            ## Update data_axis
             # Get time indices if they exists
             for key, var in data_new.items():
                 if key == TF.time_key:
@@ -344,6 +357,7 @@ class DataModel(TableModel):
             header_labels = []
             for v in var:
                 header_labels.append(get_name_to_print(v))
+                ##################HERE#######################
 
             if use_timestamp is True:
                 header_labels.insert(DataModel.time_col, self.tabfunc.time_label)
