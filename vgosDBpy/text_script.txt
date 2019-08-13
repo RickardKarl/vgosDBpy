@@ -1,0 +1,25 @@
+save_at ../saved
+!
+new_wrapper ../../Files/10JAN04XK/10JAN04XK_V005_iGSFC_kall.wrp
+!
+begin_table
+!
+TSUKUB32/Met.nc -- TempC -- RelHum
+TSUKUB32/Met.nc -- AtmPres 
+end_table
+!
+!
+!
+!
+begin_plot
+!
+TSUKUB32/Met.nc -- TempC 
+TSUKUB32/Met.nc -- AtmPres
+end_plot
+!
+new_wrapper ../../Files/10JAN04XU/10JAN04XU_V005_iGSFC_kall.wrp
+!
+begin_plot
+KOKEE/Met.nc -- AtmPres 
+end_plot
+!
