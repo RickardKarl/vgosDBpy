@@ -162,7 +162,7 @@ class App(QWidget):
             item = self.var_table.getModel().itemFromIndex(index[-1])
 
             # checks if selected item should and can be visulized in plot
-            if not is_string( item.getPath(), item.lables):
+            if not is_string( item.getPath(), item.labels):
                 self.plot_widget.plot_canvas.append_plot(item)
 
                 data_axis = self.plot_widget.getDataAxis()
