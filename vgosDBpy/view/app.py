@@ -155,6 +155,8 @@ class App(QWidget):
                 self.data_table.resetModel()
                 self.data_table.updateFromDataAxis(data_axis)
 
+        self.tab_widget_plt.setCurrentWidget(self.plot_widget)
+
 
     def _append_plotbutton(self):
         index = self._getSelected(self.var_table)
@@ -182,6 +184,8 @@ class App(QWidget):
             if not items == [] :
                 self.data_table.updateData(items)
                 self.plot_toolbox.updateDataAxis(self.data_table.getModel().getAllDataAxis())
+
+        self.tab_widget_plt.setCurrentWidget(self.data_table)
 
     def _append_tablebutton(self):
         index= self._getSelected(self.var_table)

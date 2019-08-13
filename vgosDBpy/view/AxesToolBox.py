@@ -61,7 +61,7 @@ class AxesToolBox(QWidget):
         self.select_axis_button = QPushButton('Change selected variable', self)
 
         self.clear_marked = QPushButton('Clear all marked data', self)
-        self.remove_marked = QPushButton('Remove data', self)
+        self.remove_marked = QPushButton('Remove marked data', self)
         self.restore_marked = QPushButton('Restore removed data', self)
 
 
@@ -171,7 +171,6 @@ class AxesToolBox(QWidget):
         data_axis [DataAxis]
         '''
         if data_axis.axisExists():
-            print('New selector:', data_axis.getItem(), data_axis)
             self.selector = RectangleSelector(data_axis.getAxis(), self._selector_callback_plot, drawtype='box')
 
     def _selector_callback_plot(self, eclick, erelease):
