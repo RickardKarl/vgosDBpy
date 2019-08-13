@@ -171,7 +171,6 @@ class AxesToolBox(QWidget):
         data_axis [DataAxis]
         '''
         if data_axis.axisExists():
-            print('New selector:', data_axis.getItem(), data_axis)
             self.selector = RectangleSelector(data_axis.getAxis(), self._selector_callback_plot, drawtype='box')
 
     def _selector_callback_plot(self, eclick, erelease):
