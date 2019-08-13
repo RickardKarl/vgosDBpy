@@ -30,12 +30,18 @@ class DataAxis:
 
             self.main_curve = axes.get_lines()[0] # Saves the curve for edited data (where marked data is hidden)
 
-            self.smooth_curve = self._axes.add_line(createSmoothCurve(self._data)) # Saves the smooth curve
-            self.smooth_curve.update_from(self.main_curve)
+            smooth_curve = createSmoothCurve(self._data)
+            if type(smooth_curve) == None:
+                self.smooth_curve = None
+            else:
+                self.smooth_curve = self._axes.add_line(smooth_curve) # Saves the smooth curve
+                self.smooth_curve.update_from(self.main_curve)
+                self.smooth_curve.set_visible(False)
+
 
             self.marked_data_curve = self._axes.add_line(createMarkedCurve(self._data, self._marked_data)) # Saves marked data points to plot
 
-            self.smooth_curve.set_visible(False)
+
 
     def __eq__(self, other):
         if isinstance(other, self.__class__):
@@ -83,9 +89,12 @@ class DataAxis:
 
     def setMarkerSize(self, marker_size):
         if self.axisExists():
-            self.main_curve.set_markersize(marker_size)
-            self.smooth_curve.set_markersize(marker_size)
-            self.marked_data_curve.set_markersize(marker_size*1.2)
+            if DataAxis.lineExists(self.main_curve):
+                self.main_curve.set_markersize(marker_size)
+            if DataAxis.lineExists(self.smooth_curve):
+                self.smooth_curve.set_markersize(marker_size)
+            if DataAxis.lineExists(self.marked_data_curve):
+                self.marked_data_curve.set_markersize(marker_size*1.2)
 
     def displayMainCurve(self, bool):
         if self.axisExists():
@@ -107,7 +116,8 @@ class DataAxis:
 
     def displaySmoothCurve(self, bool):
         if self.axisExists():
-            self.smooth_curve.set_visible(bool)
+            if DataAxis.lineExists(self.smooth_curve):
+                self.smooth_curve.set_visible(bool)
 
 
 
@@ -125,7 +135,8 @@ class DataAxis:
             self.main_curve.set_ydata(self._edited_data)
 
             smooth_data = createSmoothCurve(self._edited_data, return_data = True)
-            self.smooth_curve.set_ydata(smooth_data.array)
+            if type(smooth_data) != None:
+                self.smooth_curve.set_ydata(smooth_data.array)
 
             marked_data = createMarkedCurve(self._edited_data, self._marked_data, return_data = True)
             self.marked_data_curve.set_ydata(marked_data.array)

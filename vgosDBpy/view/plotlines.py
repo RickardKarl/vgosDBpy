@@ -35,10 +35,11 @@ def createSmoothCurve(series, window_size = 31, pol_order = 4, return_data = Fal
             data = savgol_filter(series, window_size, pol_order)
 
         except:
-            window_size -= 5
+            window_size -= 1
 
+            # Lowest possible window_size. Breaks loop and returns None if true
             if window_size <= pol_order:
-                error = False
+                return None
         else:
             error = False
 
