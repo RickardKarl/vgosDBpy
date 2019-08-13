@@ -27,13 +27,13 @@ class DataAxis:
             ### Lines that belongs to the axes
             if len(axes.get_lines()) > 1:
                 raise ValueError('Too many lines in Axes, need to fix.', axes.get_lines())
+
             self.main_curve = axes.get_lines()[0] # Saves the curve for edited data (where marked data is hidden)
 
             self.smooth_curve = self._axes.add_line(createSmoothCurve(self._data)) # Saves the smooth curve
             self.smooth_curve.update_from(self.main_curve)
 
             self.marked_data_curve = self._axes.add_line(createMarkedCurve(self._data, self._marked_data)) # Saves marked data points to plot
-
 
             self.smooth_curve.set_visible(False)
 
@@ -46,7 +46,6 @@ class DataAxis:
     def __hash__(self):
         series_data = self._edited_data.values # Gives a numpy array
         return hash(self._item)*22 + hash(series_data.tostring())*11 # Combines has of the node and the numpy array
-
 
     def axisExists(self):
         return self._axes != None

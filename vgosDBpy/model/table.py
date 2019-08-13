@@ -135,6 +135,7 @@ class DataModel(TableModel):
     def resetModel(self, reset_header = True):
         super(DataModel,self).resetModel(reset_header = reset_header)
         self.data_axis = []
+        self.time_index = None
         self.tabfunc.data_reset()
         self.tabfunc.header_reset()
 
