@@ -31,7 +31,8 @@ class Tablefunction():
                 self.data[name(vars[c])] = y[0]
             else:
                 for i in range(len(y)):
-                    self.data[name(vars[c])+' #'+ str(i+1)] = y[i]
+                    y[i]= np.squeeze(np.asarray(y[i])) # to convert matrix to array if needed
+                    self.data[name(vars[c])+'#'+ str(i+1)] = y[i]
             c = c + 1
         return self.data
 
@@ -59,12 +60,11 @@ class Tablefunction():
             self.header.append(name)
         return self.header
 
+
     def return_header_names(self):
         self.header_reset()
         names = list(self.data)
-        print(names)
         for name in names :
-            print(name)
             if name == tableFunction.time_key:
                 self.header.append(Tablefunction.time_label)
             else:
