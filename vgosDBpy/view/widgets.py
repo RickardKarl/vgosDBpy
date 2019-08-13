@@ -186,6 +186,7 @@ class DataTable(QTableView):
 
         # Updates size of column when content is changed
         self.updateColumnSize()
+        
 
     def updateMarkedRows(self, data_axis):
         '''
