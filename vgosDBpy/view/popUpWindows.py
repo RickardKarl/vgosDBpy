@@ -35,13 +35,9 @@ def popUpBoxTable(path):
 
 def history_information():
     dialogBox= QInputDialog()
-    info = []
-    dialog = QInputDialog.getText(dialogBox, 'Enter the history iformation', 'Version:')
-    info.append(dialog[0])
+    info = ''
     dialog = QInputDialog.getText(dialogBox, 'Enter the history iformation', 'Author:')
-    info.append(dialog[0])
-    dialog = QInputDialog.getText(dialogBox, 'Enter the history iformation', 'RunTimeTag:')
-    info.append(dialog[0])
+    info=dialog[0]
     return info
 
 
