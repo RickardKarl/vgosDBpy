@@ -100,6 +100,9 @@ class App(QWidget):
 
     ### Getters ###
     def getWrapperModel():
+        '''
+        Returns TreeModel belonging to QWrapper
+        '''
         return self.treeview.getModel()
 
     def _getSelected(self, widget):
@@ -118,9 +121,14 @@ class App(QWidget):
         '''
         Updates information in the app, selected items are read from the wrapper directory
         '''
+
         index = self._getSelected(self.treeview)
+        # Checks if non-empty
         if not index == []:
+            # Only display the first selected
             item = self.treeview.getModel().itemFromIndex(index[0])
+
+            # Checks the type of file
             if item.isNetCDF():
                 text = get_netCDF_vars_info(item.getPath())
                 self.info_text.setPlainText(str(text))
@@ -134,68 +142,109 @@ class App(QWidget):
         '''
         Method for plotting data from variables
         '''
+        # Resets
         self._clear()
+
         index = self._getSelected(self.var_table)
+        # Checks if index is non-empty
         if not index == []:
+
+            # Retrieve selected items from VariableModel
             items = []
             for i in range(len(index)):
                 items.append(self.var_table.getModel().itemFromIndex(index[i]))
 
-            # goes though all items to see if they are possible to plot, meaning not a string,
-            # if not removes them
+            # Goes though all items to see if they are possible to plot, meaning not a string,
+            # If not, remove them
             for itm in items:
                 if is_string(itm.getPath(),itm.labels):
                     items.remove(itm)
 
+            # Updates display in plot and table
             if len(items)>0:
                 self.plot_widget.plot_canvas.updateFigure(items)
-
                 data_axis = self.plot_widget.getDataAxis()
                 self.plot_toolbox.updateDataAxis(data_axis)
                 self.data_table.resetModel()
                 self.data_table.updateFromDataAxis(data_axis)
 
+        # Switch over to plot-tab
         self.tab_widget_plt.setCurrentWidget(self.plot_widget)
 
 
     def _append_plotbutton(self):
+        '''
+        Appends a variable to be displayed in a plot
+        '''
+
         index = self._getSelected(self.var_table)
+
+        # Checks if non-empty index
         if not index == []:
+
+            # Get the last selected data
             item = self.var_table.getModel().itemFromIndex(index[-1])
 
-            # checks if selected item should and can be visulized in plot
+            # Checks if selected item should and can be visulized in plot
             if not is_string( item.getPath(), item.labels):
-                self.plot_widget.plot_canvas.append_plot(item)
 
+                self.plot_widget.plot_canvas.append_plot(item)
                 data_axis = self.plot_widget.getDataAxis()
                 self.plot_toolbox.updateDataAxis(data_axis)
                 self.data_table.updateFromDataAxis(data_axis)
+
+        # Switch over to plot-tab
+        self.tab_widget_plt.setCurrentWidget(self.plot_widget)
 
     def _tablebutton(self):
         '''
         Method for displaying variables in table
         '''
+
+        # Resets
         self._clear()
+
         index = self._getSelected(self.var_table)
+
+        # Checks that index is non-empty
         if not index == []:
+
+            # Retrieve selected from VariableModel
             items = []
             for i in range (len(index)):
                 items.append(self.var_table.getModel().itemFromIndex(index[i]))
-            if not items == [] :
+
+            # Update plot with items
+            if not items == []:
                 self.data_table.updateData(items)
                 self.plot_toolbox.updateDataAxis(self.data_table.getModel().getAllDataAxis())
 
+        # Switch over to table-tab
         self.tab_widget_plt.setCurrentWidget(self.data_table)
 
     def _append_tablebutton(self):
+
         index= self._getSelected(self.var_table)
-        if not index  == [] :
+
+        # Check that index is non-empty
+        if not index  == []:
+
+            # Retreieve items from VariableModel
             items = []
             for i in range (len(index)):
                 items.append(self.var_table.getModel().itemFromIndex(index[i]))
-        self.data_table.appendData(items)
-        self.plot_toolbox.updateDataAxis(self.data_table.getModel().getAllDataAxis())
+
+            # Update items in table (Using the appending method in DataTable)
+            if not items == []:
+                self.data_table.appendData(items)
+                self.plot_toolbox.updateDataAxis(self.data_table.getModel().getAllDataAxis())
+
+        # Switch over to table-tab
+        self.tab_widget_plt.setCurrentWidget(self.data_table)
 
     def _clear(self):
+        '''
+        Resets plot and table
+        '''
         self.plot_widget.plot_canvas.clearFigure()
         self.data_table.resetModel()

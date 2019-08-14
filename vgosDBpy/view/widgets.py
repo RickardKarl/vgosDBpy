@@ -14,13 +14,13 @@ class QWrapper(QTreeView):
     Visual representation of the wrapper as a folder structure
 
     Imports TreeModel which is the model representation of the wrapper
-
-    Constructor needs:
-    root_path [string] is the path to the root folder of the vgosDB data base
-    parent [QWidget]
     '''
 
     def __init__(self, root_path, parent=None):
+        '''
+        root_path [string] is the path to the folder of the vgosDB session
+        parent [QWidget]
+        '''
         super(QWrapper, self).__init__(parent)
 
         # Setup model
@@ -39,9 +39,15 @@ class QWrapper(QTreeView):
         self.resizeColumnToContents(0)
 
     def getModel(self):
+        '''
+        Returns TreeModel
+        '''
         return self._model
 
     def getWrapper(self):
+        '''
+        Returns Wrapper belonging to the TreeModel
+        '''
         return self._model.getWrapper()
 
 class VariableTable(QTableView):
@@ -50,12 +56,15 @@ class VariableTable(QTableView):
     Visual representation of the items in a table
 
     Imports VariableModel
-
-    Constructor needs:
-    parent [QWidget]
     '''
 
     def __init__(self, parent = None, header = ['Name', 'Unit', 'Dimension', 'Dtype']):
+        '''
+        parent [QWidget]
+        header [list of strings] is the labels for the table, the number of strings has to equals
+        the number of columns filled with data
+        '''
+
         super(VariableTable, self).__init__(parent)
 
         # Setup model
@@ -78,6 +87,9 @@ class VariableTable(QTableView):
         '''
 
     def getModel(self):
+        '''
+        Returns VariableModel
+        '''
         return self._model
 
     def updateVariables(self, var_list):
@@ -95,21 +107,20 @@ class VariableTable(QTableView):
 class DataTable(QTableView):
     '''
     Displays data from DataModel which has values from a variable together with timestamp
-
-    parent [QWidget] is the parent widget
     '''
 
-    # SIGNAL
+    # SIGNAL used to detect mouse release (The ordinary signal in Qt was not working)
     custom_mouse_release = Signal()
 
     def __init__(self, parent = None):
+        '''
+        parent [QWidget] is the parent widget
+        '''
         super(DataTable, self).__init__(parent)
 
         # Setup model
         self._model = DataModel('', parent) # just use the two functions get_name_to_print and get_unit_to_print istead of 'Value'
         self.setModel(self._model)
-
-        self.resetModel()
 
         # Selection of items
         self.setSelectionMode(QAbstractItemView.ExtendedSelection)
@@ -119,9 +130,15 @@ class DataTable(QTableView):
     ######### Getters & setters
 
     def getModel(self):
+        '''
+        Returns DataModel
+        '''
         return self._model
 
     def resetModel(self):
+        '''
+        Resets the model's instance variables
+        '''
         self._model.resetModel(reset_header = True)
         self.setSelectionMode(QAbstractItemView.ExtendedSelection)
         self.setSelectionBehavior(QAbstractItemView.SelectionBehavior.SelectItems)
@@ -130,6 +147,9 @@ class DataTable(QTableView):
     ######### Event listener
 
     def mouseReleaseEvent(self, e):
+        '''
+        Overwriting the ordinary mouse release event with another emitted signal
+        '''
         super(DataTable, self).mouseReleaseEvent(e)
         self.custom_mouse_release.emit()
 
@@ -177,6 +197,8 @@ class DataTable(QTableView):
         '''
         Updates the table by giving it the data_axis, this gives a one to one correspondance with
         the plot
+
+        data_axis [list of DataAxis] is the DataAxis instances which the table should display
         '''
 
         # Update model
@@ -188,9 +210,9 @@ class DataTable(QTableView):
 
     def updateMarkedRows(self, data_axis):
         '''
-        data_axis [DataAxis]
-
         Mark selected data from plot in the table
+
+        data_axis [list of DataAxis] is the rows that should be updated
         '''
         self.selection.clear()
 

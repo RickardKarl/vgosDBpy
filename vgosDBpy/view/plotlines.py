@@ -8,17 +8,19 @@ def createLine2D(series, marker = None):
     used for adding new line to an existing axis in matplotlib
 
     series [pd.Dataframe] is a time series
+    marker [string] decides if a marker should be shown for the line
     '''
     return Line2D(series.index, series[:], marker = marker)
 
 def createSmoothCurve(series, window_size = 31, pol_order = 4, return_data = False):
     '''
-    Return a time series [pd.Datafram] that is more smooth
+    Return a dataset [pd.Series or Line2D] that is a smoothened curve of the input data
 
     series [pd.Dataframe] is a time series
-    window_size [int] is the window size of the applied filter
+    window_size [int] is the window size of the applied filter, has to be an non-even integer
     pol_order [int] is the highest order of the polynome fitted to the data,
-    has to be lower than the window size and uneven
+    has to be lower than the window size
+    return_data [boolean] decides whether pandas.Series or Line2D should be returned
     '''
     if window_size%2 == 0:
         window_size += 1
@@ -52,8 +54,14 @@ def createSmoothCurve(series, window_size = 31, pol_order = 4, return_data = Fal
 
 def createMarkedCurve(series, marked_data, return_data = False):
     '''
-    Return Line2D with marked data
+    Returns curve with the marked data points
 
+    series [pandas.Series] contains the whole dataset
+    marked_data [list of int] contains the corresponding integer index in series to each of
+    the marked data points
+    return_data [boolean] decides whether pandas.Series or Line2D should be returned
+
+    Return Line2D or pandas.Series with marked data
     '''
     index_list = []
     for index in marked_data:

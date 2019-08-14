@@ -1,6 +1,14 @@
 from PySide2.QtWidgets import QMessageBox, QPushButton, QInputDialog
 
 def popUpBoxEdit(msg):
+    '''
+    A pop-up window to confirm if one should save tracked changes
+
+    msg [string] is the displayed information in the window
+
+    Will return buttonRole of pressed button
+
+    '''
 
     msgBox = QMessageBox()
 
@@ -17,6 +25,13 @@ def popUpBoxEdit(msg):
     return msgBox.buttonRole(pressed_button)
 
 def popUpBoxTable(path):
+    '''
+    A pop-up window to confirm if one should save a table in ASCII
+
+    path [string] is the displayed path to the new history file
+
+    Will return buttonRole of pressed button
+    '''
 
     msgBox = QMessageBox()
 
@@ -45,7 +60,9 @@ def popUpChooseCurrentAxis(plotted_data_axis):
     '''
     A window pops up and allows you to choose one of the given DataAxis in plotted_data_axis
 
-    Return the selected one
+    plotted_data_axis [list of DataAxis] is the data_axis to choose between
+
+    Return the selected data_axis
     '''
     if len(plotted_data_axis) > 1:
         button_pressed_map = {}
