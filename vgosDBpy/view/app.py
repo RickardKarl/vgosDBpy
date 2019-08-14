@@ -10,7 +10,7 @@ from vgosDBpy.editing.track_edits import EditTracking
 from vgosDBpy.wrapper.tree import Wrapper
 
 
-class App(QWidget):
+class vgosDBpyGUI(QWidget):
     '''
     Application that is the entire interface for the utilities
     '''
@@ -22,7 +22,7 @@ class App(QWidget):
         wrapper_path [string] is the path to the wrapper file which is to be displayed
         parent [QWidget]
         '''
-        super(App,self).__init__(parent)
+        super(vgosDBpyGUI,self).__init__(parent)
 
         ######### Matplotlib time format converter registers
         register_matplotlib_converters()

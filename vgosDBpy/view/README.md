@@ -1,7 +1,7 @@
 # view (Qt-dependent)
 The widgets used by Qt GUI.
 
-## app.py
+## vgosDBpyGUI.py
 Main window of the GUI, will call all the other widgets.
 
 Controls layout and several buttons.
