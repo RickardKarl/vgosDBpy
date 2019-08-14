@@ -50,6 +50,7 @@ class CommandLineInterface(argparse.ArgumentParser):
         # Checking if file looks correctly
         if self.args.file.endswith('.wrp'):
             wrp_path = create_wrp_path(self.args.file)
+
             # GUI
             if self.args.graphic == True:
                 # Create the Qt Application
@@ -65,7 +66,7 @@ class CommandLineInterface(argparse.ArgumentParser):
 
             else:
                 parser = Parser(wrp_path)
-                wrapper = parser.parseWrapper(wrp_path)
+                wrapper = parser.parseWrapper()
                 print(wrapper)
 
         elif self.args.file.endswith('.txt'):

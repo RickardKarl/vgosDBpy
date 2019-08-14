@@ -55,7 +55,7 @@ class TreeModel(QStandardItemModel):
         wrapper_name [string]
         '''
         parser = Parser(root_path)
-        parser.parseWrapper(root_path)
+        parser.parseWrapper()
         root_parent = parser.getWrapperRoot()
         self.recursive(root_parent, self.invisibleRootItem())
 

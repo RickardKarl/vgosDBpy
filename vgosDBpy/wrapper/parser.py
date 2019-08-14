@@ -10,6 +10,10 @@ class Parser:
 
     # Constructor
     def __init__(self, root_path):
+        '''
+        root_path [string] is the path to the wrapper
+
+        '''
         self.wrapper = Wrapper(root_path)
         self._active_scope = []
         self.path_to_wrp = root_path
@@ -19,7 +23,7 @@ class Parser:
     # Represented as a queue which keeps the most recent mentioned scope
     # Scopes are defined in wrapper.py
     def get_wrp_path(self):
-        return self.root_path
+        return self.path_to_wrp
 
     def getWrapper(self):
         return self.wrapper
@@ -59,18 +63,16 @@ class Parser:
 
 
 
-    def parseWrapper(self,path):
+    def parseWrapper(self):
         '''
         Methods that parses the wrapper files which contains information and
         pointers to relevant files in one VLBI session
-
-        path [string] is the path to the wrapper file (*.wrp)
         '''
         # Define current folder, None if the wrapper has no default_dir
         active_folder = None
 
         # Open file
-        with open(path,'r') as src:
+        with open(self.path_to_wrp,'r') as src:
 
             # Loop through each file
             for line in src:
