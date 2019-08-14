@@ -11,17 +11,18 @@ class TreeModel(QStandardItemModel):
     Model that represents the wrapper
     It is inherited from QStandardModel which can be used to implement a tree structure
     Is used together with QTreeView to generate a visual representation
-
-    Constructor
-    root_path [string]
-    wrapper_name [string]
-    parent [QWidget]
     '''
 
     def __init__(self, header, root_path, parent=None):
+        '''
+        root_path [string]
+        wrapper_name [string]
+        parent [QWidget]
+        '''
         super(TreeModel,self).__init__(parent)
 
-        self._wrapper = None # Is set in setupModel
+        # Is set up in setupModel
+        self._wrapper = None
 
         self.setupModel(root_path)
         self.setHorizontalHeaderLabels(header)
@@ -41,7 +42,7 @@ class TreeModel(QStandardItemModel):
 
     def getWrapper(self):
         '''
-        Returns the tree structure that represents the parsed wrapper
+        Returns the tree structure that represents the parsed wrapper [Wrapper]
         '''
         return self._wrapper
 
@@ -52,7 +53,6 @@ class TreeModel(QStandardItemModel):
         (Imports Parser class)
 
         root_path [string]
-        wrapper_name [string]
         '''
         parser = Parser(root_path)
         parser.parseWrapper()
@@ -62,6 +62,13 @@ class TreeModel(QStandardItemModel):
         self._wrapper = parser.getWrapper()
 
     def recursive(self, node, parent):
+        '''
+        Recursively read the wrapper.Wrapper class and load it to this tree structure
+
+        node [wrapper.tree.Node]
+        parent [wrapper.tree.Node]
+
+        '''
         if node.isNetCDF():
             item = NetCDFItem(node)
         else:
@@ -80,17 +87,20 @@ class TreeModel(QStandardItemModel):
 class QNodeItem(QStandardItem):
     '''
     Custom data item for the QStandardItemModel
-
-    Constructor
-    node [Node]
     '''
     _type = 1110
 
 
     def __init__(self, node):
+        '''
+        node [wrapper.tree.Node]
+        '''
+
         super(QNodeItem, self).__init__(0,2)
         self.labels = str(node)
         self.node = node
+
+    ####### Getters ################
 
     def getPath(self):
         '''
@@ -100,6 +110,8 @@ class QNodeItem(QStandardItem):
 
     def getNode(self):
         return self.node
+
+    ####### Type checking ###########
 
     def isNetCDF(self):
         '''
@@ -114,9 +126,17 @@ class QNodeItem(QStandardItem):
         return self.node.isHistFile()
 
     def type(self):
+        '''
+        Returns type
+        '''
         return QNodeItem._type
 
+    ###### Data reading and setting
+
     def data(self, role = QtCore.Qt.DisplayRole):
+        '''
+        Decides how to display data in the Qt view
+        '''
         if role == QtCore.Qt.DisplayRole:
             return self.labels
 
@@ -127,6 +147,9 @@ class QNodeItem(QStandardItem):
             return None
 
     def setData(self, data, role = QtCore.Qt.EditRole):
+        '''
+        Decides how to edit data in the Qt view
+        '''
         if role == QtCore.Qt.EditRole:
             self.labels = data
 
@@ -138,6 +161,8 @@ class QNodeItem(QStandardItem):
 
         self.emitDataChanged()
         return True
+
+    ###### __ __ methods #########
 
     def __str__(self):
         return self.labels
@@ -168,6 +193,9 @@ class NetCDFItem(QNodeItem):
     _type = 1111
 
     def __init__(self, node):
+        '''
+        node [wrapper.tree.Node]
+        '''
         super(NetCDFItem, self).__init__(node)
 
     def type(self):
@@ -187,8 +215,14 @@ class Variable(QNodeItem):
     _type = 1112
 
     def __init__(self, variable_name, node):
+        '''
+        variable_name [string]
+        node [wrapper.tree.Node]
+        '''
         super(Variable, self).__init__(node)
         self.labels = variable_name
+
+    ########## Type checking ##################
 
     def type(self):
         NetCDFItem._type
@@ -205,18 +239,28 @@ class DataValue(QNodeItem):
     _type = 1113
 
 
-
     def __init__(self, value, node = None, signal = None):
+        '''
+        value [Object] is the value that is belong to this cell/node
+        node [wrapper.tree.Node]
+        signal [QtCore.Signal] is necessary for editing the DataTable
+        '''
         super(DataValue, self).__init__(node)
         self.value = value
 
         self.signal = signal
         self.custom_signal_bool = (signal != None)
 
+    ########## Type checking ##################
+
     def type(self):
         NetCDFItem._type
 
+    ############# Data reading and setting methods #######
     def data(self, role = QtCore.Qt.DisplayRole):
+        '''
+        Decides how to display data in the Qt view
+        '''
 
         if role == QtCore.Qt.DisplayRole:
             return str(self.value)
@@ -226,6 +270,11 @@ class DataValue(QNodeItem):
             return None
 
     def setData(self, data, role = QtCore.Qt.EditRole):
+        '''
+        Decides how to edit data in the Qt view
+
+        Emits custom signal if one was given
+        '''
 
         if role == QtCore.Qt.EditRole:
             self.value = data
@@ -243,6 +292,7 @@ class DataValue(QNodeItem):
 
         return True
 
+    ######## __ __ methods ############
     def __str__(self):
         return str(self.value)
 
