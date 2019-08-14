@@ -1,28 +1,6 @@
 """
 Equal method for wrapper
-takes in two wrappers.
-"""
-#from vgosDBpy.data.
-"""
-from readNetCDF import read_netCDF_variables as get_vars, get_dtype_for_var
-
-def contains_same_vars(path1, path2):
-
-    variables_1 = get_vars(path1)
-    variables_2 = get_vars(path2)
-
-    if len(variables_1) != len(variables_2):
-        return False
-
-    for var in variables_1:
-        if var not in variables_2:
-            return False
-    return True
-
-def contains_same_data(path1, var1, path2, var2):
-     dtypes_1 = get_dtype_for_var(path1, var1)
-     dtypes_2 = get_dtype_for_var(path2, var2)
-
+takes in two wrappers and prints all the lines that differs.
 """
 from vgosDBpy.wrapper.tree import Wrapper
 from vgosDBpy.wrapper.parser import Parser

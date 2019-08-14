@@ -3,8 +3,9 @@ import os
 import re
 
 """
-DOES: takes in a string as a path. Then decides what the next version should be called,
-plus checks if that version already exists.
+Takes in a path to a netCDF-file and decides what the next version of the file in the path should be named
+input: path: [string]
+output: file_path: [string]
 """
 def new_netCDF_name(path):
     path_split= path.split("/")
@@ -34,7 +35,7 @@ def new_netCDF_name(path):
 
     # Else if digit exists
     else:
-        file_digit = getStringDigit(file_digit)
+        file_digit = _getStringDigit(file_digit)
         new_file_name = file_name_non_digit + file_digit + '.' + rhs
 
     file_path = path_to_file + '/' + new_file_name
@@ -46,6 +47,11 @@ def new_netCDF_name(path):
     else:
         return file_path
 
+"""
+Takes in a path to a wrp-file and decides what the next version of the file in the path should be named
+input: path: [string]
+output: string]
+"""
 def new_wrapper_path(wrapper_path):
     path_splits = wrapper_path.split('/')
     wrapper_name = path_splits[-1]
@@ -68,12 +74,16 @@ def new_wrapper_path(wrapper_path):
     if version_number == None:
         raise ValueError('Can not find version number in wrapper file.') # Should be fixed so that it adds a version number
 
-    name_splits[index] = 'V' + getStringDigit(version_number[1:])
+    name_splits[index] = 'V' + _getStringDigit(version_number[1:])
 
     return root_path + '/' + '_'.join(name_splits)
 
-
-def getStringDigit(str_digit):
+"""
+Help function in getting a new name for a file
+input: str_digit: [string]
+output: file_digit: [string]
+"""
+def _getStringDigit(str_digit):
     ## Expects string on format 'XXX' where X is an integer 0-9
     int_file_digit = int(str_digit)
     if int_file_digit <= 9:

@@ -8,7 +8,15 @@ Functions to create plot
 ___________________________________________________________________________________________
 """
 
-# returns an array cotaning an array of the data sored in an variable
+
+"""
+returns an array cotaning an array of the data sored in an variable
+input:
+    pathToNetCDF: [string]
+    var: [string]
+output:
+    y: [array[var_dtype]]
+"""
 def get_data_to_plot(pathToNetCDF,var):
     with Dataset(pathToNetCDF, 'r', format = 'NETCDF4_CLASSIC') as nc:
         marker= is_multdim_var(pathToNetCDF, var)
@@ -19,10 +27,12 @@ def get_data_to_plot(pathToNetCDF,var):
         return y
 
 """
-Takes in a path to a NetCDF file
-Returns a header to a plot on the format: Station_name + Date
-internal calls:
-                read_var_content_S1(seekedData, path)
+creates the title for a plot on the form 'Sation_name + date_of_Session'
+input:
+    path[string]
+output:
+    stting
+
 """
 def header_plot(path):
     #get date of session
@@ -41,8 +51,15 @@ ________________________________________________________________________________
 Functions to create table
 ___________________________________________________________________________________________
 """
-#Checks how the data inte specifik variable should be displayed and chooses propriate get_function for the varibles
-# returns an array of arrays
+
+"""
+Checks how the data inte specific variable should be displayed and chooses propriate get_function for the data
+input:
+    pathToNetCDF: [string]
+    var: [string]
+output:
+    y: [array[data_array[var_dtype]]]
+"""
 def get_data_to_table(pathToNetCDF, var):
     dtype = get_dtype_var(pathToNetCDF, var)
     dims_len = _get_len_dims(pathToNetCDF, var)
@@ -63,8 +80,9 @@ def get_data_to_table(pathToNetCDF, var):
         y = _getDataFromVar_table(pathToNetCDF, var)
     return y
 
-# check if the variables should be displayed in the table that contains data that
-#should be visualised as plot or table
+"""
+Returns True if a variable has dtype NumObs, NumScans or NumStation <==> show in Variable Table
+"""
 def show_in_table(path,var):
     if is_Numscans(path,var):
         return True
@@ -82,34 +100,63 @@ ________________________________________________________________________________
 """
 
 """
-Takes in: path to netCDF file and the name of a specific varibale in file
-Returns: thr data type of that variable
+Returns a variables dtype
+input:
+    path: [string]
+    var[stirng]
+output:
+    dtype
 """
 def get_dtype_var(path, var):
     with Dataset(path, "r", format = "NETCDF4_CLASSIC" ) as nc:
         return nc.variables[var].dtype
 
-# returns the dtype of a variable in a netCDF-file converted to a string
+
+
+"""
+Returns a variables dtype as a string
+input:
+    path: [string]
+    var[stirng]
+output:
+    string
+"""
 def get_dtype_var_str(path, var):
     with Dataset(path,'r', format = 'NETCDF4_CLASSIC') as nc:
         return str(nc.variables[var].dtype)
 
+
 """
-Takes in: path to netCDF file and name of specifik variable in netCDF file
-returns: that vairbales dimemsions name
+returns the name of the first dimension of a netCDF variable
+input:
+    pathToNetCDF: [str]
+    var: [str]
+output:
+    dimension: [str]
 """
 def get_dimension_var(pathToNetCDF, var):
     with Dataset(pathToNetCDF, "r", format="NETCDF4_CLASSIC") as nc:
         dimension = nc.variables[var].get_dims()[0].name
     return dimension
 
-# returns the number of dimensions stored in a netCDF files varibale
+"""
+returns the number of dimensions stored in a netCDF files varibale
+output:
+    [int]
+"""
 def _get_len_dims(path, var):
     with Dataset(path, 'r', format= 'NETCDF4_CLASSIC') as nc:
         dims = nc.variables[var].get_dims()
         return len(dims)
 
-# checks if a variable in a netCDF file as several columns on data
+"""
+checks if a variable in a netCDF file has several columns on data
+input:
+    path [string]
+    var[string]
+output:
+    marker: [int]
+"""
 def is_multdim_var(path,var):
     marker = -1
     c=0
@@ -119,7 +166,16 @@ def is_multdim_var(path,var):
         c += 1
     return marker
 
-# checks if the dimension of a variable in a netCDF file is 'NumScans'
+
+
+"""
+checks if the dimension of a variable in a netCDF file is 'NumScans'
+input:
+    path [string],
+    var[string]
+output:
+    boolean
+"""
 def is_Numscans(path, var):
     with Dataset(path, 'r', format = 'NETCDF4_CLASSIC') as nc:
         dimensions = nc.variables[var].get_dims()
@@ -129,7 +185,15 @@ def is_Numscans(path, var):
                 return True
     return False
 
-# checks if the dimension of a variable in a netCDF file is 'NumStation'
+
+"""
+checks if the dimension of a variable in a netCDF file is 'NumStation'
+input:
+    path [string]
+    var[string]
+output:
+    boolean
+"""
 def is_NumsSation(path,var):
     with Dataset(path, 'r', format = 'NETCDF4_CLASSIC') as nc:
         dimensions = nc.variables[var].get_dims()
@@ -139,7 +203,16 @@ def is_NumsSation(path,var):
                 return True
     return False
 
-# checks if the dimension of a variable in a netCDF file is 'NumObs'
+
+
+"""
+checks if the dimension of a variable in a netCDF file is 'NumObs'
+input:
+    path [string]
+    var[string]
+output:
+    boolean
+"""
 def is_NumObs(path, var):
     with Dataset(path, 'r', format = 'NETCDF4_CLASSIC') as nc:
         dimensions = nc.variables[var].get_dims()
@@ -153,6 +226,14 @@ def is_NumObs(path, var):
 ___________________________________________________________________________________________
 Functions to get characteristics of netCDF file
 ___________________________________________________________________________________________
+"""
+
+"""
+returns the first dtype for all variables in a netCDF files
+input:
+    pathToNetCDF: [string]
+output:
+    dtype: [array[string]]
 """
 def get_dtype_netCDF(pathToNetCDF):
     with Dataset(pathToNetCDF, "r", format="NETCDF4_CLASSIC") as nc:
@@ -168,19 +249,42 @@ Functions to read content of variable
 ___________________________________________________________________________________________
 """
 
-#returns the data stored in the first column in a netCDF files variable
+
+"""
+returns the data stored in the first column in a netCDF files variable
+input:
+    path: [string]
+    var[string]
+output:
+    [array]
+"""
 def getDataFromVar(path, var):
     with Dataset(path, "r", format="NETCDF4_CLASSIC") as nc:
         return(nc.variables[var][:])
 
-#returns the data stored in the first column in a netCDF files variable stored one element in an array
+
+"""
+returns the data stored in the first column in a netCDF file
+input:
+    path: [string]
+    var[string]
+output:
+    [array[data_array]]
+"""
 def _getDataFromVar_table(path, var):
      return_data = []
      with Dataset(path, "r", format="NETCDF4_CLASSIC") as nc:
          return_data.append(nc.variables[var][:])
          return(return_data)
 
-
+"""
+Return data from NetCDF variable with dtype S1
+input:
+    path: [string]
+    var[string]
+output:
+    [array[data_array]]
+"""
 def _get_S1_tableData(pathToNetCDF, var):
     return_data = []
     data = []
@@ -197,6 +301,14 @@ def _get_S1_tableData(pathToNetCDF, var):
     return return_data
 
 
+"""
+Return data from NetCDF variable with dtype S1 and dimension NumStation
+input:
+    path: [string]
+    var[string]
+output:
+    [array[data_array]]
+"""
 def _get_NumStation_S1_table(pathToNetCDF,var):
     table = []
     return_data  = []
@@ -216,6 +328,16 @@ def _get_NumStation_S1_table(pathToNetCDF,var):
         return_data.append(table)
         return return_data
 
+
+
+"""
+Return data from the NetCDF varibale QualityCode
+input:
+    path: [string]
+    var[string]
+output:
+    [array[data_array]]
+"""
 def _get_QualityCode_table(pathToNetCDF,var):
     return_data = []
     data_arr = []
@@ -228,6 +350,16 @@ def _get_QualityCode_table(pathToNetCDF,var):
         return_data.append(data_arr)
     return return_data
 
+
+
+"""
+Return data from NetCDF variable with data stored in matrix instead of array
+input:
+    path: [string]
+    var[string]
+output:
+    [array[data_array]]
+"""
 def _getDataFromVar_multDim(pathToNetCDF, var):
     return_data = []
     with Dataset(pathToNetCDF, 'r', format= 'NETCDF4_CLASSIC') as nc:
@@ -248,6 +380,14 @@ def _getDataFromVar_multDim(pathToNetCDF, var):
                 return_data.append(nc.variables[var.strip()][:,[i]])
         return return_data
 
+
+"""
+Return data from the NetCDF variable Baseline
+input:
+    path: [string]
+output:
+    [array[data_array]]
+"""
 def _get_dataBaseline(pathToNetCDF):
     baseline_table = []
     return_data  = []
@@ -275,12 +415,11 @@ def _get_dataBaseline(pathToNetCDF):
 
 
 """
-Takes in: path to netCDF file
-Returns: a long string containing all the information stored in "S1" datatype vairbales in a netCDF file
-internal Calls:
-            read_netCDF_variables(path)
-            find_dtype(path)
-            read_var_content_S1(var, path)
+returns data from netCDF file as a text string
+input:
+    pathToNetCDF: [string]
+output:
+    info: [string]
 """
 def get_netCDF_vars_info(pathToNetCDF):
     info = ""
@@ -297,20 +436,22 @@ def get_netCDF_vars_info(pathToNetCDF):
 
 
 """
-Takes in: path to netCDF file and the name of the variable that one is looking for.
-Retuns the header of a netCDF file, meaning all the S1 vars as a long string.
-Internal Calls:
-                non
+returns a string of the information in a netCDF-file variabel with dimension S1
+input:
+    pathToNetCDF:[string]
+    var[string]
+output:
+    head: [string]
 """
-def get_var_content_S1(seekedData,pathToNetCDF):
+def get_var_content_S1(var,pathToNetCDF):
     with Dataset(pathToNetCDF, "r", format= "NETCDF4_CLASSIC") as nc:
 
-        dimensions = nc.variables[seekedData].get_dims()
+        dimensions = nc.variables[var].get_dims()
         lengths = []
         for dim in dimensions:
             lengths.append(len(dim))
 
-        data= getDataFromVar(pathToNetCDF, seekedData)
+        data= getDataFromVar(pathToNetCDF, var)
 
         head = " "
 
@@ -334,6 +475,14 @@ def get_var_content_S1(seekedData,pathToNetCDF):
                 head += letter
         return head
 
+"""
+returns a string of the information in a netCDF-file variabel
+input:
+    pathToNetCDF:[string]
+    var[string]
+output:
+    head: [string]
+"""
 def get_var_content_constant(pathToNetCDF, var):
     name = var
     with Dataset(pathToNetCDF, 'r', format = 'NETCDF4_CLASSIC') as nc:
@@ -349,8 +498,14 @@ ________________________________________________________________________________
 Other
 ___________________________________________________________________________________________
 """
+
 """
-Takes is a path to a netCDF file and a name of a variable and returns the varibales content.
+Takes is an list of netCDF varibales and checks if any of them store a matrix insted of an array
+input:
+    paths: [array]
+    vars: [array]
+output:
+    market: int
 """
 def is_multdim_var_list(paths, vars):
     for i in range(0,len(paths)):
@@ -366,8 +521,11 @@ def is_multdim_var_list(paths, vars):
 
 
 """
-Takes in: Path to NetCDF file
-returns: an array containing all the variabls names for the netCDF file
+Returns a list of all varibales stored in a netCDF file
+input:
+    pathToNetCDF: [string]
+output:
+    variables [array]
 """
 def get_netCDF_variables(pathToNetCDF):
     with Dataset(pathToNetCDF, "r", format="NETCDF4_CLASSIC") as nc:
@@ -377,6 +535,15 @@ def get_netCDF_variables(pathToNetCDF):
             variables.append(var)
     return variables
 
+
+"""
+Return true if no variable is of dtype S1
+input:
+    paths:[array[string]],
+    vars[array[string]]
+output:
+    boolean
+"""
 def not_S1(paths, vars):
     for i in range(len(paths)):
         with Dataset(paths[i], 'r', format = 'NETCDF4_CLASSIC') as nc:
@@ -385,6 +552,14 @@ def not_S1(paths, vars):
                 return False
     return True
 
+
+"""
+input:
+    pathToNetCDF:[string]
+    var[string]
+output:
+    boolean
+"""
 def is_string(pathToNetCDF,var):
     dtype = get_dtype_var(pathToNetCDF, var)
     if dtype == 'S1':

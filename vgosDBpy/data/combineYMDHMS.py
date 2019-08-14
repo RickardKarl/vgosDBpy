@@ -1,10 +1,13 @@
 from netCDF4 import Dataset
 import pandas as pd
 import os
+
 """
-Takes in a path to a TimeUTC.nc file and combines the YMDHM data
-with the second to create a YMDHMS format.
-Uses panda to create Timestamp.
+Takes in a path to a TimeUTC.nc file and combines the YMDHM with the related seconds
+input:
+    timeFilePath [string]
+output:
+    YMDHMS [array[pd.Timestamp]]
 """
 def combineYMDHMwithSec(timeFilePath):
     '''
@@ -24,7 +27,14 @@ def combineYMDHMwithSec(timeFilePath):
             YMDHMS.append(pd.Timestamp(int(YMDHM[i][0]),int(YMDHM[i][1]),int(YMDHM[i][2]),int(YMDHM[i][3]),int(YMDHM[i][4]),int(seconds[i])))
     return YMDHMS
 
-# checks if a specific netCDF file and varible can be visualised with a timestamp
+
+"""
+checks if a specific netCDF file and varible has a related timestamp
+input :
+    paths: [array[string], vars: [array[string]]
+output:
+    boolean
+"""
 def checkIfTimeAvailable(paths,vars):
     c = 0
     for path in paths:
@@ -41,18 +51,29 @@ def checkIfTimeAvailable(paths,vars):
         c += 1
     return True
 
-# checks if the x-axis should be time
+"""
+checks if status is to have the time on the x-axis in plot
+input:
+    state: [int]
+output:
+    boolean
+"""
 def default_time(state):
     if state == 1:
         return True
     else:
         return False
-
-# finds the timeUTC that is related to the netCDF file
-def findCorrespondingTime(path):
+"""
+Returns the timeUTC netCDF that is related to the netCDF-file given as input
+input:
+    path: [string]
+output:
+    time_path: [string] 
+"""
+def findCorrespondingTime(pathToNetCDF):
     time_path = " "
-    if os.path.isfile(path):
-        parts = path.split("/")
+    if os.path.isfile(pathToNetCDF):
+        parts = pathToNetCDF.split("/")
         parts[-1] = 'TimeUTC.nc' # Hard-coded
         time_path = '/'.join(parts)
         if os.path.isfile(time_path):

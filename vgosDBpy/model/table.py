@@ -186,7 +186,10 @@ class DataModel(TableModel):
 
 
     ###########  methods ############
-
+    """
+    Updates the data for the table, this is done by using the functions in "plotTable.py"
+    input: items[QStandardItems]
+    """
     def updateData(self, items):
         '''
         Resets content and then replaces it with data
@@ -229,8 +232,15 @@ class DataModel(TableModel):
             # Update model
             self.updateFromDataAxis(self.data_axis)
         else:
-            raise ValueError('Argument items can not be empty.')
+        raise ValueError('Argument items can not be empty.')
 
+
+
+    """
+    Makes sure that the list of items in syncronized in element and index with the list of data for the table
+    input: data: [array[data_arrays[variable_dtype]]], items: [array[Items]]
+    output: items [array[items]] - fixed
+    """
     def updateItems(self,data,items):
         names = list(data)
         prev = names[0]
@@ -248,8 +258,6 @@ class DataModel(TableModel):
         '''
 
         Resets content and then replaces it with data
-
-        data [dict] which contains data to fill the table with. E.g. {'time': time, "var_data": var_data}
         item [QStandardItems] contains the item which contains the variable with the data
         '''
         # Retrieve data from items

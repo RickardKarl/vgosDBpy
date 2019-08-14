@@ -1,10 +1,13 @@
-"""
-contains methods to get name of variables to print
-"""
 from netCDF4 import Dataset
 import os
 
-# returns the name to print instead of the shortname that is the variable name
+"""
+Returns the fullname of a variable instead of the shortname that is the variable name
+input:
+    var: [string]
+output:
+    name of var [string]
+"""
 def get_name_to_print(var):
         if var == 'AtmPres':
             return "Pressure"
@@ -19,6 +22,14 @@ def get_name_to_print(var):
         else:
             return var
 
+
+"""
+Returns the unit of a variable
+input:
+    var: [string]
+output:
+    name of unit [string]
+"""
 def get_unit_to_print(path,var):
     with Dataset(path, "r", format="NETCDF4") as nc:
         if var == 'Time':
@@ -28,6 +39,29 @@ def get_unit_to_print(path,var):
         except:
             unit = '-'
         return "  ["+unit+"]"
+
+
+"""
+merges a path to a wrappers location with the name of the wrp-file to create a full path
+input:
+    wrp_path: [string],
+    str: [string]
+output:
+    path_to_file: [string]
+"""
+def createFullPath(wrp_path, str):
+
+    path_split= wrp_path.split("/")
+    # Create path to the actual folder by removing last item in path
+    base_path = path_split[0:-1]
+    base_path= '/'.join(base_path)
+
+    if str.startswith('/'):
+        path_to_file= base_path+str
+    else:
+        path_to_file = base_path+'/'+str
+    return path_to_file
+
 
 def create_wrp_path(path):
     path=path.strip()
@@ -51,17 +85,3 @@ def create_wrp_path(path):
     else:
         print('Incorrect wrapper format')
         return ''
-
-
-def createFullPath(wrp_path, str):
-
-    path_split= wrp_path.split("/")
-    # Create path to the actual folder by removing last item in path
-    base_path = path_split[0:-1]
-    base_path= '/'.join(base_path)
-
-    if str.startswith('/'):
-        path_to_file= base_path+str
-    else:
-        path_to_file = base_path+'/'+str
-    return path_to_file

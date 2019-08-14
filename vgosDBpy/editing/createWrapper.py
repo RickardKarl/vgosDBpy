@@ -99,7 +99,7 @@ def writeHistoryBlock(file, hist_file_name, timestamp, information):
     file.write('Version ----\n')
     file.write('CreatedBy'+information+'\n')
     file.write('Default_dir History\n')
-    file.write('RunTimeTag'+ timestamp +'\n')
+    file.write('RunTimeTag'+ timestamp.strftime('%Y-%m-%d %H:%M:%S') +'\n')
     file.write('History ' + hist_file_name + '\n')
     file.write('End Process vgosDBpy\n')
 

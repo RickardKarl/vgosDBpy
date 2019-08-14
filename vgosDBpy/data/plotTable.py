@@ -9,7 +9,10 @@ from vgosDBpy.data.combineYMDHMS import combineYMDHMwithSec, findCorrespondingTi
 from vgosDBpy.data.readNetCDF import get_data_to_table
 from vgosDBpy.data.getName import get_name_to_print as name, get_unit_to_print as unit
 
-# called from outside, creates an directory with all information to a table
+
+"""
+Class that retrieves the data to a table and formats in correct
+"""
 class Tablefunction():
     time_label = 'Time [Y-M-D H:M:S]'
     time_key = 'Time'
@@ -17,7 +20,15 @@ class Tablefunction():
         self.data = {} # key = name of variable, value = array of data
         self.header = [] # Arrat of names of varibles
 
-    # function that is called from other files
+    """
+    function that is called from other files to create a table
+    input:
+        paths: [array[strings]]
+        vars: [array[strings]]
+    output:
+        data: [directory '{}']
+    """
+    function that is called from other files
     def tableFunctionGeneral(self,paths,vars):
         self.data_reset()
         timePath = findCorrespondingTime(paths[0].strip())
@@ -36,7 +47,11 @@ class Tablefunction():
             c = c + 1
         return self.data
 
-    # function that is called from other files, adda more columns to a already excisting table
+    """
+    function that is called from other files to append a table
+    input: paths: [array[strings]], vars: [array[strings]]
+    output: data: [directory '{}']
+    """
     def append_table(self, paths, vars):
         y = get_data_to_table(paths[-1],vars[-1])
         new_data = {}
@@ -53,6 +68,11 @@ class Tablefunction():
     def get_table(self):
         return self.data
 
+    """
+    adds more names to the tabels header
+    input: paths: array[string], vars: [array[string]]
+    output: header: array[strings]
+    """
     def append_header(self, paths, vars):
         new_data = self.append_table(paths,vars)
         names = list(new_data)
@@ -60,7 +80,11 @@ class Tablefunction():
             self.header.append(name)
         return self.header
 
-
+    """
+    creates a header for the table, with a list of the names of the columns
+    input: paths: array[string], vars: [array[string]]
+    output: header: array[strings]
+    """
     def return_header_names(self):
         self.header_reset()
         names = list(self.data)

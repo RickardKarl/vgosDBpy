@@ -22,6 +22,9 @@ from vgosDBpy.data.tableToASCII import convertToAscii_script
 
 from vgosDBpy.editing.newFileNames import new_netCDF_name
 
+"""
+Handels the parsing and all comands for the script driven feature
+"""
 class script_class():
 
     def __init__(self):
@@ -35,7 +38,11 @@ class script_class():
     def get_save_path(self):
         return self._save_path
 
-    # function that is called from outisde, takes in a path to a txt file with info of what to do.
+    """
+    function that is called from outisde, takes in a path to a txt-file and then handels all calls to perform
+    the comands given in the txt-file
+    input: path [string]
+    """
     def script(self,path):
 
         plot_list, table_list = self._parse_script(path)
@@ -45,7 +52,11 @@ class script_class():
         for table in table_list:
             self._script_table(table)
 
-    # private function that parses the .txt file and creates a list of things to plot and put in tables
+    """
+    private function that parses the .txt file and creates a list of variables to plot and put in tables
+    input: path: [string]
+    output: plot_list: [array], table_list: [array]
+    """
     def _parse_script(self,path):
 
         plot_list = []
@@ -67,18 +78,9 @@ class script_class():
                     split = line.split(' ')
                     self._save_path = split[1].strip()
 
-                #elif save_file == True:
-                #    split = line.split(' ')
-                #    self._save_path = split[1]
-                #    #save_file= False
-
                 elif l.startswith('new_wrapper'): #line before giving a new wrapper
                     split = line.split(' ')
                     self._wrp_path = split[1].strip()
-
-                #elif wrapper == True:
-                #    self._wrp_path = create_wrp_path(line)
-                #    wrapper = False
 
                 elif l  ==  'begin_plot':
                     plot = True
@@ -113,17 +115,19 @@ class script_class():
                         str += '--' + words[i]
 
                     temp_table_list.append(str)
-                    #temp_table_list.append(createFullPath(self.wrp_path,line))
-
 
                 else:
                     print('The format of the file is not correct')
                     break
         return plot_list, table_list
 
+    """
+    private function that takes in a list of strings in the form " 'path' -- 'var' ", loopse though the list
+    and creates and saves plots
+    input: list: [array[string]]
+    output: saved png figures
 
-    # private function that takes in a list of strings in the form 'path' -- 'var', loopse though the list and creates and saves the
-    #plots
+    """
     def _script_plot(self,list):
 
         plt_function = Plotfunction_class()
@@ -147,9 +151,13 @@ class script_class():
         axis, data = plt_function.plotFunction(paths,vars,fig,-1)
         plt.savefig(new_name)
 
-    ## private function that takes in a list of strings in the form 'path' -- 'var',
-    # loopse though the list and creates and saves the
-    # tables with the content of the varibales
+    """
+    Private function that takes in a list of strings in the form " 'path' -- 'var' ",
+    loopse though the list and creates and saves tables
+    input: list: [array[string]]
+    output: saved ASCII tables
+
+    """
     def _script_table(self,list):
         table_function = Tablefunction()
 

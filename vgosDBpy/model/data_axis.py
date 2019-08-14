@@ -133,9 +133,8 @@ class DataAxis:
     def updateLines(self):
         if self.axisExists():
             self.main_curve.set_ydata(self._edited_data)
-
             smooth_data = createSmoothCurve(self._edited_data, return_data = True)
-            if type(smooth_data) != None:
+            if type(smooth_data) != 'NoneType':
                 self.smooth_curve.set_ydata(smooth_data.array)
 
             marked_data = createMarkedCurve(self._edited_data, self._marked_data, return_data = True)
