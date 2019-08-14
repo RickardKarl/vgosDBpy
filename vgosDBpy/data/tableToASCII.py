@@ -1,6 +1,11 @@
 from prettytable import PrettyTable
 
 def convertToAscii(tableview):
+    '''
+    Turn a QTableView into a PrettyTable
+
+    tableview [QTableView]
+    '''
 
     model = tableview.getModel() # Get model of table view
     table_out = PrettyTable() # Setup instance
@@ -39,13 +44,14 @@ def convertToAscii_script(directory, info, path):
         table_out.add_row(row)
     write_ascii_file(table_out, info, path)
 
-def write_ascii_file(ptable, other_info, file_path):
+def write_ascii_file(ptable, info, file_path):
     '''
     ptable [PrettyTable] is the table that should be written to a file in ASCII format
-    other_info [string]
+    other_info [string] is information to be displayed in the file
+    file_path [string]
     '''
     table_txt = ptable.get_string()
     with open(file_path,'w') as file:
-            file.write(other_info)
+            file.write(info)
             file.write('\n')
             file.write(table_txt)
