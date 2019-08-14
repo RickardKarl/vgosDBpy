@@ -272,7 +272,6 @@ class AxesToolBox(QWidget):
         self._showLine()
         self._showMarkers()
         self._showSmoothCurve()
-        self._showLegend()
 
         # Update table
         self.table_widget.updateFromDataAxis(self.data_axis)
