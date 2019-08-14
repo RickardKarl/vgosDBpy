@@ -22,6 +22,7 @@ class Parser:
     # Methods which keep track of the current scope in the wrapper_path
     # Represented as a queue which keeps the most recent mentioned scope
     # Scopes are defined in wrapper.py
+    
     def get_wrp_path(self):
         return self.path_to_wrp
 

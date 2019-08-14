@@ -186,7 +186,8 @@ class Node(object):
     def __init__(self, name, parent, path):
         '''
         name [string]
-        parent [string]
+        parent [string] to the node
+        path [string] to the file which the Node represents
         '''
         self.name = name
         self.children = []
@@ -306,21 +307,44 @@ class Node(object):
         return self.name
 
 class NetCDF_File(Node):
+    '''
+    Subclass to Node which should point to netCDF files in the tree structure
+    '''
+
     def __init__(self, name, parent, path):
+        '''
+        name [string]
+        parent [string] to the node
+        path [string] to the file which the Node represents
+        '''
         super().__init__(name, parent, path)
         self.children = None
         self.netCDF = True
 
     def addChildNode(self, obj):
+        '''
+        Overwrite Node's method to make sure that a netCDF file can not have child nodes
+        '''
         raise TypeError('Tried assigning files to another file, needs to be a folder.')
 
 class HistFile(Node):
+    '''
+    Subclass to Node which should point to history files in the tree structure
+    '''
     def __init__(self, name, parent, path):
+        '''
+        name [string]
+        parent [string] to the node
+        path [string] to the file which the Node represents
+        '''
         super().__init__(name, parent, path)
         self.children = None
         self.hist = True
 
     def addChildNode(self, obj):
+        '''
+        Overwrite Node's method to make sure that a history file can not have child nodes
+        '''
         raise TypeError('Tried assigning files to another file, needs to be a folder.')
 
 class PointerMap():
