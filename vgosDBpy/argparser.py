@@ -1,19 +1,15 @@
+import argparse
+import sys
 
 # Wrapper related
 from PySide2.QtWidgets import QApplication
 from vgosDBpy.view.app import vgosDBpyGUI
 from vgosDBpy.wrapper.parser import Parser
 
-# Log related
-from vgosDBpy.read_log.parser import LogInfo
-from vgosDBpy.read_log.plotter import plotSeries
-
 # Script-driven
 from vgosDBpy.script_driven.script_main import script_class
-
 from vgosDBpy.data.getName import create_wrp_path
-import argparse
-import sys
+
 
 class CommandLineInterface(argparse.ArgumentParser):
 

@@ -1,6 +1,6 @@
 # Main method
 import sys
-from vgosDBpy.script_driven.argparser import CommandLineInterface
+from vgosDBpy.argparser import CommandLineInterface
 
 #Hanna
 from vgosDBpy.data.netCDFdebug import print_name_dtype_dim_length, get_dimensions
