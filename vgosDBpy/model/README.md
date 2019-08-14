@@ -39,4 +39,9 @@ A version of QNodeItem for nodes that points to one data_point contained in each
 
 ###### TableModel (Inherits from QStandardItemModel)
 Qt-model for all of the tables used in the interface.
-Reads input from different sources, all methods are not needed for each instance of the class.
+
+###### VariableModel (Inherits from TableModel)
+Qt-model to store variables from a netCDF file in a table
+
+###### DataModel (Inherits from TableModel)
+Qt-model to store data values from a netCDF variable in a table
