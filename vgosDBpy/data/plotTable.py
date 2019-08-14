@@ -28,7 +28,6 @@ class Tablefunction():
     output:
         data: [directory '{}']
     """
-    function that is called from other files
     def tableFunctionGeneral(self,paths,vars):
         self.data_reset()
         timePath = findCorrespondingTime(paths[0].strip())
