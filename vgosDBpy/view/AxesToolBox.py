@@ -277,8 +277,6 @@ class AxesToolBox(QWidget):
         self.table_widget.updateFromDataAxis(self.data_axis)
 
 
-
-
     ######## Button methods that control appearance
 
     def _showLine(self):
