@@ -44,39 +44,71 @@ class DataAxis:
 
 
     def __eq__(self, other):
+        '''
+        Makes it possible to use the equal operator with this Class
+        other [Object]
+        '''
         if isinstance(other, self.__class__):
             return self._item == other.getItem() and self._data.equals(other.getData())
         else:
             return False
 
     def __hash__(self):
+        '''
+        Hash-function
+        '''
         series_data = self._edited_data.values # Gives a numpy array
         return hash(self._item)*22 + hash(series_data.tostring())*11 # Combines has of the node and the numpy array
 
     def axisExists(self):
+        '''
+        Check if this DataAxis has a plot axis
+        '''
         return self._axes != None
 
     ########## Getters and setters
 
     def getAxis(self):
+        '''
+        Return matplotlib.Axes
+        '''
         return self._axes
 
     def getData(self):
+        '''
+        Return data belonging to this DataAxis [pandas.Series]
+        '''
         return self._data
 
     def getItem(self):
+        '''
+        Returns model.standardtree.Variable
+        '''
         return self._item
 
     def getEditedData(self):
+        '''
+        Returns edited data [pandas.Series]
+        '''
         return self._edited_data
 
-    def setEditedData(self, edited_data):
-        self._edited_data = edited_data
-
     def getMarkedData(self):
+        '''
+        Return list of int
+        '''
         return self._marked_data
 
+    def setEditedData(self, edited_data):
+        '''
+        edited_data [pandas.Series]
+        '''
+
+        self._edited_data = edited_data
+
     def resetEditedData(self):
+        '''
+        Reset edited_data to original data
+        '''
         self._edited_data = self._data.copy(deep = True)
 
     def clearMarkedData(self):
@@ -88,6 +120,11 @@ class DataAxis:
     ######### Appearance methods
 
     def setMarkerSize(self, marker_size):
+        '''
+        Set marker size for all lines in the DataAxis
+
+        marker_size [float]
+        '''
         if self.axisExists():
             if DataAxis.lineExists(self.main_curve):
                 self.main_curve.set_markersize(marker_size)
@@ -97,6 +134,11 @@ class DataAxis:
                 self.marked_data_curve.set_markersize(marker_size*1.2)
 
     def displayMainCurve(self, bool):
+        '''
+        Decides whether to display main line with the data
+
+        bool [boolean]
+        '''
         if self.axisExists():
             if bool == True:
                 self.main_curve.set_linestyle('-')
@@ -104,6 +146,11 @@ class DataAxis:
                 self.main_curve.set_linestyle('None')
 
     def displayMarkers(self, bool):
+        '''
+        Decides whether to display markers on the main line
+
+        bool [boolean]
+        '''
         if self.axisExists():
             if bool == True:
                 self.main_curve.set_marker('o')
@@ -111,10 +158,20 @@ class DataAxis:
                 self.main_curve.set_marker('None')
 
     def displayMarkedDataCurve(self, bool):
+        '''
+        Decides whether to display the markers with marked data
+
+        bool [boolean]
+        '''
         if self.axisExists():
             self.marked_data_curve.set_visible(bool)
 
     def displaySmoothCurve(self, bool):
+        '''
+        Decides whether to display a smoothened fit of the main line
+
+        bool [boolean]
+        '''
         if self.axisExists():
             if DataAxis.lineExists(self.smooth_curve):
                 self.smooth_curve.set_visible(bool)
@@ -125,12 +182,17 @@ class DataAxis:
 
     def addLine(self, line):
         '''
+        Add line to this DataAxis instance
+
         line [matplotlib.Line2D]
         '''
         if self.axisExists():
             return self._axes.add_line(line)
 
     def updateLines(self):
+        '''
+        Updates the data to all of the lines in this DataAxis
+        '''
         if self.axisExists():
             self.main_curve.set_ydata(self._edited_data)
             smooth_data = createSmoothCurve(self._edited_data, return_data = True)
@@ -152,10 +214,12 @@ class DataAxis:
 
     def updateMarkedData(self, data, remove_existing = False):
         '''
+        Updates the marked_data with the indices of the currently selected data points
+
+
         data [pd.Series] is the selected data to be added to the marked data list
         remove_existing [bool]
 
-        Updates the marked_data with the indices of the currently selected data points
         if remove_existing is True:
             Selected data will be removed if already added to the marked data list
         else:
@@ -180,6 +244,11 @@ class DataAxis:
     #### Class methods
 
     def lineExists(line):
+        '''
+        Check if the line exists be seeing if it belongs to any matplotlib.Axes
+        
+        line [matplotlib.lines.line2D]
+        '''
         if line != None:
             if line.axes != None:
                 return True

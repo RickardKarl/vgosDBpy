@@ -16,12 +16,22 @@ class Wrapper:
 
         wrapper_path [string] is the path to the wrapper file
         '''
-        self.wrapper_path = wrapper_path # Path to wrapper file
+
+        # Path to wrapper file
+        self.wrapper_path = wrapper_path
+
+        # Get session name
         path = wrapper_path.split('/')
         self.session_name = path[-2]
-        path.pop() #removes last which is the name of the wrapper file
-        self.root_path = '/'.join(path) # Path to seesion folder
+
+        # Removes last which is the name of the wrapper file and get path to session folder
+        path.pop()
+        self.root_path = '/'.join(path)
+
+        # Create root node
         self.root = Node(self.session_name, None, self.root_path)
+
+        # Other instance variables
         self.pointer_map = {} # Keep track of pointers with a map
         self.hist_file = [] # Keeps track of the .hist files that the wrapper points to
 
@@ -36,6 +46,7 @@ class Wrapper:
         type [string] is the type of node, currently there exist 'node', 'netCDF' or 'hist'
         '''
 
+        # Checks for parent
         if parent == None:
             parent_node = self.root
         else:
@@ -43,20 +54,30 @@ class Wrapper:
 
         path = self.generatePath(name, parent_node)
 
+        # Checks the type of Node to be created
         if type == 'node':
+
             if not parent_node.childNodeExists(name):
                 new_node = Node(name, parent_node, path)
             else:
                 new_node = None
+
         elif type == 'netCDF':
+
             new_node = NetCDF_File(name, parent_node, path)
+
         elif type == 'hist':
+
             new_node = HistFile(name, parent_node, path)
             self.hist_file.append(new_node)
+
         else:
+
             raise InvalidArgument('Invalid type in', type)
 
+        # Adds node to tree
         if new_node != None:
+
             parent_node.addChildNode(new_node)
             self.addPointer(new_node)
 
@@ -70,6 +91,8 @@ class Wrapper:
 
     def getNode(self, name):
         '''
+        NOTE: Will not work if there exists several files with the same name.
+
         Get a node by using the map of pointers
 
         name [string] is the name of the desired node
@@ -78,16 +101,21 @@ class Wrapper:
 
     def getRoot(self):
         '''
-        Returns the root node
+        Returns the root node [Node]
         '''
         return self.root
 
     def getHistFile(self):
+        '''
+        Returns list of the history files [list of HistFile]
+        '''
         return self.hist_file
 
     def getHistory(hist_path):
         '''
-        Returns history file as string
+        Returns history file in text format [string]
+
+        hist_path [string] is the path to the history file
         '''
         if os.path.isfile(hist_path):
             text = ''
@@ -103,12 +131,14 @@ class Wrapper:
         Checks if a name is defined in the scopes
 
         name [string]
+
+        Returns boolean
         '''
         return name.lower() in Wrapper.scopes
 
     def generatePath(self, name, parent):
         '''
-        Return file path to a desired node with the given name
+        Return file path [string] to a desired node with the given name
 
         name [string]
         parent [Node]
@@ -156,7 +186,8 @@ class Node(object):
     def __init__(self, name, parent, path):
         '''
         name [string]
-        parent [string]
+        parent [string] to the node
+        path [string] to the file which the Node represents
         '''
         self.name = name
         self.children = []
@@ -204,6 +235,10 @@ class Node(object):
         raise AttributeError(name + ' was not found in the ' + str(self) + ' folder')
 
     def getChildCount(self):
+        '''
+        Returns number of children to the Node [int]
+
+        '''
         return len(self.children)
 
     def getName(self):
@@ -213,9 +248,17 @@ class Node(object):
         return self.name
 
     def getPath(self):
+        '''
+        Return path belonging to the Node [string]
+        '''
         return self.path
 
     def hasChildren(self):
+        '''
+        Checks if the Node has children
+
+        Returns boolean
+        '''
         if self.children == None:
             return False
         else:
@@ -242,9 +285,19 @@ class Node(object):
         return self.name == str(name)
 
     def isNetCDF(self):
+        '''
+        Checks if the Node is a netCDF
+
+        Used to seperate subclasses
+        '''
         return self.netCDF
 
     def isHistFile(self):
+        '''
+        Checks if the Node is a history file
+
+        Used to seperate subclasses
+        '''
         return self.hist
 
     def __str__(self):
@@ -254,21 +307,44 @@ class Node(object):
         return self.name
 
 class NetCDF_File(Node):
+    '''
+    Subclass to Node which should point to netCDF files in the tree structure
+    '''
+
     def __init__(self, name, parent, path):
+        '''
+        name [string]
+        parent [string] to the node
+        path [string] to the file which the Node represents
+        '''
         super().__init__(name, parent, path)
         self.children = None
         self.netCDF = True
 
     def addChildNode(self, obj):
+        '''
+        Overwrite Node's method to make sure that a netCDF file can not have child nodes
+        '''
         raise TypeError('Tried assigning files to another file, needs to be a folder.')
 
 class HistFile(Node):
+    '''
+    Subclass to Node which should point to history files in the tree structure
+    '''
     def __init__(self, name, parent, path):
+        '''
+        name [string]
+        parent [string] to the node
+        path [string] to the file which the Node represents
+        '''
         super().__init__(name, parent, path)
         self.children = None
         self.hist = True
 
     def addChildNode(self, obj):
+        '''
+        Overwrite Node's method to make sure that a history file can not have child nodes
+        '''
         raise TypeError('Tried assigning files to another file, needs to be a folder.')
 
 class PointerMap():

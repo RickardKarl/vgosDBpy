@@ -1,10 +1,6 @@
 # Main method
 import sys
-from PySide2.QtWidgets import QApplication
-from netCDF4 import Dataset
-from vgosDBpy.view.app import App
-from vgosDBpy.read_log.plotter import plotSeries
-from vgosDBpy.script_driven.argparser import CommandLineInterface
+from vgosDBpy.argparser import CommandLineInterface
 
 #Hanna
 from vgosDBpy.data.netCDFdebug import print_name_dtype_dim_length, get_dimensions

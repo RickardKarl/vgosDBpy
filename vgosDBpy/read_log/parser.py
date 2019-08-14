@@ -40,6 +40,13 @@ class LogInfo():
 
 
     def printFile(number_of_lines):
+        '''
+        Print the log file up to a certain number of lines
+
+        number_of_lines [int]
+
+        Used for debugging
+        '''
         with open(self.file_path,'r') as src:
             i = 0
             while i < number_of_lines:
@@ -50,6 +57,8 @@ class LogInfo():
     def readData(file_path):
         '''
         Read met data and cablecal from log files
+
+        file_path [string] to the log file
         '''
 
         Time = []
@@ -102,7 +111,14 @@ class LogInfo():
     def mergeSeries(series1, series2, timedelta = pd.Timedelta(seconds = 5), return_left = True,
                     return_right = True):
         '''
-        Merge two series with similar timestamps
+        Return two series where the data have corresponding time indices given by
+        a certain time difference tolerance
+
+        series1 [pandas.Series] is the first dataset
+        series2 [pandas.Series] is the second dataset
+        timedelta [pd.Timedelta] is the time difference tolerance within which it is allowed to merge the series
+        return_left [boolean] decides if the dataset in series1 should be returned
+        return_left [boolean] decides if the dataset in series2 should be returned
         '''
         # Setup of variables
         index1 = series1.index
@@ -157,11 +173,12 @@ class LogInfo():
     def createTimeStamp(date, time_stamp):
         '''
         Creates a timestamp
+
+        date [string] with the date given in the log files
+        time_stamp [string] with the time given in the log files
         '''
         time_stamp = list(map(int, time_stamp.strip().split(':')))
         date = list(map(int, date))
         time = pd.Timestamp(year = date[0], month = 1, day = 1, hour = time_stamp[0], minute = time_stamp[1], second = time_stamp[2])
         time = time + pd.Timedelta(days = date[1])
         return time
-
-    

@@ -16,15 +16,15 @@ class TableModel(QStandardItemModel):
     Internal representation of items in a table
 
     Imports QStandardItemModel
-
-    Constructor needs:
-    header [list of strings] is the header on the top of the table
-    parent [QWidget]
     '''
 
 
     # Constructor
     def __init__(self, header, parent=None):
+        '''
+        header [list of strings] is the header on the top of the table
+        parent [QWidget]
+        '''
         super(TableModel,self).__init__(parent)
         self._header = header
         self.setHorizontalHeaderLabels(self._header)
@@ -47,6 +47,8 @@ class TableModel(QStandardItemModel):
         '''
         Resets content of the table without removing the header
         (Has to be done since clear otherwise would remove the header)
+
+        reset_header [boolean]
         '''
         self.clear()
         if reset_header:
@@ -56,21 +58,45 @@ class TableModel(QStandardItemModel):
 
     ########### Header methods
     def getHeader(self):
+        '''
+        Returns list of strings
+        '''
         return self._header
 
     def update_header(self,names):
+        '''
+        Clears old header and updates it
+
+        names [list of string]
+        '''
         self._header = names
         self.setHorizontalHeaderLabels(self._header)
 
     def append_header(self,names):
+        '''
+        Append new labels to the header
+
+        names [list of string]
+        '''
         for name in names:
             self._header.append(name)
         self.setHorizontalHeaderLabels(self._header)
 
 class VariableModel(TableModel):
 
+    '''
+    Internal representation of netCDF variables in a table
+
+    Inherits from TableModel
+    '''
+
+
     def __init__(self, header, parent=None):
-            super(VariableModel,self).__init__(header, parent)
+        '''
+        header [list of strings] is the header on the top of the table
+        parent [QWidget]
+        '''
+        super(VariableModel,self).__init__(header, parent)
 
     ########### Update methods ############
 
@@ -97,22 +123,33 @@ class VariableModel(TableModel):
 
 class DataModel(TableModel):
 
+    '''
+    Internal representation of data points from netCDF variables in a table
+
+    Inherits from TableModel
+    '''
+
     # Decides which one is the standard time-column when displaying data from plot
     time_col = 0
 
+    # Custom signal to detect when data is changed, used to avoid bugs
     dataChanged_customSignal = QtCore.Signal(int)
 
     def __init__(self, header, parent=None):
-            super(DataModel,self).__init__(header, parent)
+        '''
+        header [list of strings] is the header on the top of the table
+        parent [QWidget]
+        '''
+        super(DataModel,self).__init__(header, parent)
 
-            # Hanna
-            self.tabfunc = TF()
+        # Class that retrieves data for table
+        self.tabfunc = TF()
 
-            # Map to keep track of which column that belongs to each DataAxis (USED BY DataTable)
-            self.data_axis = [] # Keep track of the DataAxis that it shows from the plot
-            self.time_index = None
-            self.dataaxis_to_column_map = {} # DataAxis : Column index
-            self.column_to_dataaxis_map = {}
+        # Map to keep track of which column that belongs to each DataAxis (USED BY DataTable)
+        self.data_axis = [] # Keep track of the DataAxis that it shows from the plot
+        self.time_index = None
+        self.dataaxis_to_column_map = {} # DataAxis : Column index
+        self.column_to_dataaxis_map = {}
 
 
 
@@ -133,6 +170,11 @@ class DataModel(TableModel):
     ############# Getter method & setters
 
     def resetModel(self, reset_header = True):
+        '''
+        Reset model
+
+        reset_header [boolean]
+        '''
         super(DataModel,self).resetModel(reset_header = reset_header)
         self.data_axis = []
         self.time_index = None
@@ -140,21 +182,46 @@ class DataModel(TableModel):
         self.tabfunc.header_reset()
 
     def getAllDataAxis(self):
+        '''
+        Return list of DataAxis
+        '''
         return self.data_axis
 
     def getExistingItems(self):
+        '''
+        Return list of QStandardItems
+        '''
         items  = []
         for ax in self.data_axis:
             items.append(ax.getItem())
         return items
 
     def getDataAxis(self, column):
+        '''
+        Given a table column index, return the corresponding DataAxis
+
+        column [int]
+        '''
         return self.column_to_dataaxis_map.get(column)
 
     def getColumn(self, data_axis):
+        '''
+        Given a DataAxis, return the corresponding table column index
+
+        data_axis [DataAxis]
+        '''
         return self.dataaxis_to_column_map.get(data_axis)
 
     def getData(self, column_index, data_axis = None, get_time = False):
+        '''
+        Get data that belongs to a certain table column (or DataAxis)
+
+        column_index [int]
+        data_axis [DataAxis]
+        get_time [boolean] return the Series with time indices added
+
+        returns a pandas.Series with the column data
+        '''
 
         # List to append data to
         data = []
@@ -179,10 +246,15 @@ class DataModel(TableModel):
             return pd.Series(data)
 
 
-    def isTimeColumn(self, col_index):
-        header_label = self._header[col_index]
+    def isTimeColumn(self, column_index):
+        '''
+        Checks if the column is displaying time
 
-        return header_label == TF.time_lable
+        col_index [int]
+        '''
+        header_label = self._header[column_index]
+
+        return header_label == TF.time_label
 
 
     ###########  methods ############
@@ -194,9 +266,7 @@ class DataModel(TableModel):
         '''
         Resets content and then replaces it with data
 
-        data [dict] which contains data to fill the table with. E.g. {'time': time, "var_data": var_data}
         item [QStandardItems] contains the item which contains the variable with the data
-        data_axis [DataAxis] contains a list of DataAxis that corresponds to the data being plotted
         '''
         self.resetModel()
 
@@ -207,9 +277,12 @@ class DataModel(TableModel):
             for itm in items:
                 path.append(itm.getPath())
                 var.append(itm.labels)
-            data = self.tabfunc.tableFunctionGeneral(path, var) # returns a map
-            items = self.updateItems(data, items)
-         ## Update data_axis
+            data = self.tabfunc.tableFunctionGeneral(path, var) # returns a dictionary
+            items = DataModel.updateItems(data, items)
+
+
+            ### Update data_axis
+
             # Get time indices if they exists
             for key, var in data.items():
                 if key == TF.time_key:
@@ -217,7 +290,6 @@ class DataModel(TableModel):
 
             # Turn data into DataAxis
             index = 0
-            #updateItems(items)
             for key, var in data.items():
                 if key != TF.time_key:
                     if self.time_index != None:
@@ -268,7 +340,7 @@ class DataModel(TableModel):
                 path.append(itm.getPath())
                 var.append(itm.labels)
             data_new = self.tabfunc.append_table(path, var)
-            items = self.updateItems(data_new, items)
+            items = DataModel.updateItems(data_new, items)
             ## Update data_axis
             # Get time indices if they exists
             for key, var in data_new.items():
@@ -297,13 +369,13 @@ class DataModel(TableModel):
 
     ######## DataAxis related methods
 
-
     def updateFromDataAxis(self, data_axis, get_edited_data = True):
         '''
 
         Update table model from one/several DataAxis
 
         data_axis [list of DataAxis] is what should be displayed in the table
+        get_edited_data [boolean] decides if edited data or original should be given in the table
         '''
 
         if len(data_axis) > 0:
@@ -380,19 +452,26 @@ class DataModel(TableModel):
         '''
         selected_items [list of QModelIndex]
         current_axis [DataAxis]
+
+        return pandas.Series with selected data
         '''
-        time_index = []
-        value = []
+        # Get column from selected data_axis
         current_col = self.dataaxis_to_column_map.get(current_axis)
 
+        time_index = []
+        value = []
+
+        # Loop through indices
         for index in selected_items:
 
             # Get indices in table
             item_col = index.column()
             item_row = index.row()
 
+            # Get item
             item = self.itemFromIndex(index)
 
+            # Checks that it is the correct column
             if item_col != DataModel.time_col and item_col == current_col:
 
                 # Get timestamp
@@ -406,18 +485,27 @@ class DataModel(TableModel):
 
 
     def updateDataAxisfromTable(self):
+        '''
+        Updates an DataAxis given the data in the table
+        '''
 
+        # Loop through all columns
         for column_index in range(self.columnCount()):
 
-            if column_index == DataModel.time_col:
+            # Checks if time is displayed in that column
+            if self.isTimeColumn(column_index):
                 continue
 
+            # If not, then we are good
             else:
+
+                # Get DataAxis
                 current_data_axis = self.column_to_dataaxis_map.get(column_index)
 
                 if current_data_axis == None:
                     continue
 
+                # Retrieve data
                 time_index = []
                 data = []
 
@@ -428,5 +516,6 @@ class DataModel(TableModel):
 
                     time_index.append(self.item(row_index, DataModel.time_col).value)
 
+                # Create a pandas.Series and set the edited data for each DataAxis to that
                 edited_series = pd.Series(data, index = time_index)
                 current_data_axis.setEditedData(edited_series)

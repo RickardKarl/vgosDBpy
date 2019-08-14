@@ -12,13 +12,13 @@ with open('requirements.txt') as f:
 setup(
     name='vgosDBpy',
     version='1.0.0',
-    description='Utilities to visualise and edit VLBI data in the vgosdDB format for space geodesy',
+    description='Utilities to visualise and perform simple editing VLBI data in the vgosdDB format.',
     long_description=readme,
     author='Rickard Karlsson, Hanna Ek',
     author_email='rickkarl@student.chalmers.se',
-    url='https://github.com/RickardKarl/NVI_vgosDB_openv2',
+    url='https://github.com/RickardKarl/vgosDBpy',
     license=license,
-    packages=find_packages(exclude=('Hanna')),
+    packages=find_packages(),
     install_requires = requirements,
     python_requires='>=3'
 )

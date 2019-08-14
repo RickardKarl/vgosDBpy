@@ -19,7 +19,6 @@ class PlotFigure(FigureCanvas):
     def __init__(self, figure = Figure(tight_layout = True), parent = None):
 
         '''
-        Constructor:
         figure [matplotlib.Figure]
         parent [QWidget]
         '''
@@ -28,21 +27,26 @@ class PlotFigure(FigureCanvas):
         self.figure = figure
         super(PlotFigure, self).__init__(self.figure)
 
+        # Plot-related functions and variables
+        self.plot_function = Plotfunction_class()
         self.timeInt = 1
-
-        # To be initiated
-        self._ax = []
-        self.draw()
-
         self.paths = []
         self.vars = []
         self.items = []
-
         self.Mult_item_added = False
-        self.plot_function = Plotfunction_class()
+
+        # Saves list of DataAxis belonging to the figure
+        self._ax = []
+
+
+        self.draw()
+
 
 
     def isPlotting(self):
+        '''
+        Checks if any DataAxis exists to this plot
+        '''
         return len(self._ax) > 0
 
     ############### Getters & Setters
@@ -68,6 +72,9 @@ class PlotFigure(FigureCanvas):
     ############### Update graphics
 
     def updatePlot(self):
+        '''
+        Updates drawing of the plot
+        '''
         self.figure.autofmt_xdate()
         self.draw()
 
@@ -95,6 +102,11 @@ class PlotFigure(FigureCanvas):
 
 
     def exists(self, data_axis):
+        '''
+        Checks if the data_axis is in the figure
+
+        data_axis [DataAxis]
+        '''
         return data_axis in self._ax
 
     def updateFigure(self, items, timeUpdated = False):
@@ -103,8 +115,12 @@ class PlotFigure(FigureCanvas):
         Updates figure with the given items
 
         items [list of QStandardItem]
+
+        timeUpdated [boolean] decides whether this function is called when switching the indices between time / non-time
         '''
+        # Checks if items exists
         if len(items) > 0:
+
             # Discards the old graph
             self.clearAxes()
 
@@ -144,7 +160,6 @@ class PlotFigure(FigureCanvas):
                 time: int
         """
         self.clearAxes()
-
         axis, data = self.plot_function.plotFunction(paths, vars, figure, -1)
         for i in range(len(axis)):
             self.addAxis(DataAxis(axis[i], data[i], items[i]))
@@ -185,6 +200,9 @@ class PlotFigure(FigureCanvas):
     ###### Resetting methods
 
     def clearFigure(self):
+        '''
+        Reset the entire figure
+        '''
         self.paths = []
         self.vars = []
         self.items = []
@@ -195,6 +213,9 @@ class PlotFigure(FigureCanvas):
 
 
     def clearAxes(self):
+        '''
+        Resets the list of DataAxis and removes them from the figure
+        '''
         self.figure.clear()
         for ax in self._ax:
             self.removeAxis(ax)
@@ -219,6 +240,9 @@ class PlotWidget(QWidget):
     matplotlib features such as zoom and move in plot.
     '''
     def __init__(self, parent = None):
+        '''
+        parent [QWidget]
+        '''
         super(PlotWidget, self).__init__(parent)
 
         self.plot_canvas = PlotFigure(parent = self)
@@ -230,10 +254,19 @@ class PlotWidget(QWidget):
         self.setLayout(layout)
 
     def getPlotToolBar(self):
+        '''
+        Get the AxesToolBox belonging to this instance
+        '''
         return self.parentWidget().parentWidget().parentWidget().plot_toolbox
 
     def getDataAxis(self):
+        '''
+        Get the list of DataAxis active in this instance
+        '''
         return self.plot_canvas.getDataAxis()
 
     def getItems(self):
+        '''
+        Get list of QStandardItems in this instance
+        '''
         return self.plot_canvas.getItems()
