@@ -18,7 +18,7 @@ output:
     y: [array[var_dtype]]
 """
 def get_data_to_plot(pathToNetCDF,var):
-    with Dataset(pathToNetCDF, 'r', format = 'NETCDF4_CLASSIC') as nc:
+    with Dataset(pathToNetCDF, 'r') as nc:
         marker= is_multdim_var(pathToNetCDF, var)
         if marker != -1:
             y = _getDataFromVar_multDim(pathToNetCDF,var) #if matrix stored in variable, all data read in
@@ -108,7 +108,7 @@ output:
     dtype
 """
 def get_dtype_var(path, var):
-    with Dataset(path, "r", format = "NETCDF4_CLASSIC" ) as nc:
+    with Dataset(path, "r") as nc:
         return nc.variables[var].dtype
 
 
@@ -122,7 +122,7 @@ output:
     string
 """
 def get_dtype_var_str(path, var):
-    with Dataset(path,'r', format = 'NETCDF4_CLASSIC') as nc:
+    with Dataset(path,'r') as nc:
         return str(nc.variables[var].dtype)
 
 
@@ -135,7 +135,7 @@ output:
     dimension: [str]
 """
 def get_dimension_var(pathToNetCDF, var):
-    with Dataset(pathToNetCDF, "r", format="NETCDF4_CLASSIC") as nc:
+    with Dataset(pathToNetCDF, "r") as nc:
         dimension = nc.variables[var].get_dims()[0].name
     return dimension
 
@@ -145,7 +145,7 @@ output:
     [int]
 """
 def _get_len_dims(path, var):
-    with Dataset(path, 'r', format= 'NETCDF4_CLASSIC') as nc:
+    with Dataset(path, 'r') as nc:
         dims = nc.variables[var].get_dims()
         return len(dims)
 
@@ -160,7 +160,7 @@ output:
 def is_multdim_var(path,var):
     marker = -1
     c=0
-    with Dataset(path, 'r', format='NETCDF4_CLASSIC') as nc:
+    with Dataset(path, 'r') as nc:
         if len(nc.variables[var.strip()].get_dims()) > 1:
             marker = c
         c += 1
@@ -177,7 +177,7 @@ output:
     boolean
 """
 def is_Numscans(path, var):
-    with Dataset(path, 'r', format = 'NETCDF4_CLASSIC') as nc:
+    with Dataset(path, 'r') as nc:
         dimensions = nc.variables[var].get_dims()
         for dim in dimensions:
             name = dim.name
@@ -195,7 +195,7 @@ output:
     boolean
 """
 def is_NumsSation(path,var):
-    with Dataset(path, 'r', format = 'NETCDF4_CLASSIC') as nc:
+    with Dataset(path, 'r') as nc:
         dimensions = nc.variables[var].get_dims()
         for dim in dimensions:
             name = dim.name
@@ -214,7 +214,7 @@ output:
     boolean
 """
 def is_NumObs(path, var):
-    with Dataset(path, 'r', format = 'NETCDF4_CLASSIC') as nc:
+    with Dataset(path, 'r') as nc:
         dimensions = nc.variables[var].get_dims()
         for dim in dimensions:
             name = dim.name
@@ -236,7 +236,7 @@ output:
     dtype: [array[string]]
 """
 def get_dtype_netCDF(pathToNetCDF):
-    with Dataset(pathToNetCDF, "r", format="NETCDF4_CLASSIC") as nc:
+    with Dataset(pathToNetCDF, "r") as nc:
         vars= nc.variables
         dtype= []
         for var in vars:
@@ -259,7 +259,7 @@ output:
     [array]
 """
 def getDataFromVar(path, var):
-    with Dataset(path, "r", format="NETCDF4_CLASSIC") as nc:
+    with Dataset(path, "r") as nc:
         return(nc.variables[var][:])
 
 
@@ -273,7 +273,7 @@ output:
 """
 def _getDataFromVar_table(path, var):
      return_data = []
-     with Dataset(path, "r", format="NETCDF4_CLASSIC") as nc:
+     with Dataset(path, "r") as nc:
          return_data.append(nc.variables[var][:])
          return(return_data)
 
@@ -288,7 +288,7 @@ output:
 def _get_S1_tableData(pathToNetCDF, var):
     return_data = []
     data = []
-    with Dataset(pathToNetCDF, "r", format="NETCDF4_CLASSIC") as nc:
+    with Dataset(pathToNetCDF, "r") as nc:
         data= nc.variables[var][:]
         for line in data:
 
@@ -312,7 +312,7 @@ output:
 def _get_NumStation_S1_table(pathToNetCDF,var):
     table = []
     return_data  = []
-    with Dataset(pathToNetCDF, 'r', format= 'NETCDF4_CLASSIC') as nc:
+    with Dataset(pathToNetCDF, 'r') as nc:
         dimensions= nc.variables[var].get_dims()
         content = getDataFromVar(pathToNetCDF,var)
         length = []
@@ -341,7 +341,7 @@ output:
 def _get_QualityCode_table(pathToNetCDF,var):
     return_data = []
     data_arr = []
-    with Dataset(pathToNetCDF, "r", format="NETCDF4_CLASSIC") as nc:
+    with Dataset(pathToNetCDF, "r") as nc:
         data= nc.variables[var][:]
         for line in data:
             temp = ''
@@ -362,7 +362,7 @@ output:
 """
 def _getDataFromVar_multDim(pathToNetCDF, var):
     return_data = []
-    with Dataset(pathToNetCDF, 'r', format= 'NETCDF4_CLASSIC') as nc:
+    with Dataset(pathToNetCDF, 'r') as nc:
         length = len(nc.variables[var.strip()].get_dims())
         length2 = len(nc.variables[var][0,:])
         for i in range (0,length2):
@@ -391,7 +391,7 @@ output:
 def _get_dataBaseline(pathToNetCDF):
     baseline_table = []
     return_data  = []
-    with Dataset(pathToNetCDF, 'r', format= 'NETCDF4_CLASSIC') as nc:
+    with Dataset(pathToNetCDF, 'r') as nc:
         dimensions= nc.variables['Baseline'].get_dims()
         content = getDataFromVar(pathToNetCDF, 'Baseline')
         length = []
@@ -444,7 +444,7 @@ output:
     head: [string]
 """
 def get_var_content_S1(var,pathToNetCDF):
-    with Dataset(pathToNetCDF, "r", format= "NETCDF4_CLASSIC") as nc:
+    with Dataset(pathToNetCDF, "r") as nc:
 
         dimensions = nc.variables[var].get_dims()
         lengths = []
@@ -485,7 +485,7 @@ output:
 """
 def get_var_content_constant(pathToNetCDF, var):
     name = var
-    with Dataset(pathToNetCDF, 'r', format = 'NETCDF4_CLASSIC') as nc:
+    with Dataset(pathToNetCDF, 'r') as nc:
         data= nc.variables[var][:]
         head = name +": \n"
         for column in data:
@@ -513,7 +513,7 @@ def is_multdim_var_list(paths, vars):
         var=vars[i]
         marker = -1
         c=0
-        with Dataset(path, 'r', format='NETCDF4_CLASSIC') as nc:
+        with Dataset(path, 'r') as nc:
             if len(nc.variables[var.strip()].get_dims()) > 1:
                 marker = c
             c += 1
@@ -528,7 +528,7 @@ output:
     variables [array]
 """
 def get_netCDF_variables(pathToNetCDF):
-    with Dataset(pathToNetCDF, "r", format="NETCDF4_CLASSIC") as nc:
+    with Dataset(pathToNetCDF, "r") as nc:
         vars= nc.variables
         variables= []
         for var in vars:
@@ -546,7 +546,7 @@ output:
 """
 def not_S1(paths, vars):
     for i in range(len(paths)):
-        with Dataset(paths[i], 'r', format = 'NETCDF4_CLASSIC') as nc:
+        with Dataset(paths[i], 'r') as nc:
             dtype = nc.variables[vars[i]].dtype.name
             if dtype.strip() == 'S1':
                 return False
