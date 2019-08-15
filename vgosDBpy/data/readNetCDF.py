@@ -181,7 +181,7 @@ def is_Numscans(path, var):
         dimensions = nc.variables[var].get_dims()
         for dim in dimensions:
             name = dim.name
-            if name.strip() == 'NumScans':
+            if name.strip() == 'NumScans' or name.strip() == 'NumStatScan':
                 return True
     return False
 
