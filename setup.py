@@ -20,5 +20,5 @@ setup(
     license=license,
     packages=find_packages(),
     install_requires = requirements,
-    python_requires='>=3'
+    python_requires='>=3.5'
 )
