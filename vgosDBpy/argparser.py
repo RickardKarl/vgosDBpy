@@ -45,7 +45,7 @@ class CommandLineInterface(argparse.ArgumentParser):
                 app = QApplication(sys.argv)
 
 
-                window = vgosDBpyGUI(wrp_path)
+                window = vgosDBpyGUI(self.args.file)
                 window.show()
 
                 # Run the main Qt loop
@@ -53,7 +53,7 @@ class CommandLineInterface(argparse.ArgumentParser):
 
             # Non-GUI
             else:
-                parser = Parser(wrp_path)
+                parser = Parser(self.args.file)
                 wrapper = parser.parseWrapper()
                 print(wrapper)
 
