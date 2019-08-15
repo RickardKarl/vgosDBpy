@@ -8,7 +8,6 @@ from vgosDBpy.view.plot_widget_new import AxesToolBox, PlotWidget
 from vgosDBpy.editing.track_edits import EditTracking
 from vgosDBpy.wrapper.tree import Wrapper
 
-
 class vgosDBpyGUI(QWidget):
     '''
     Application that is the entire interface for the utilities
