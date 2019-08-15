@@ -167,13 +167,10 @@ class PlotFigure(FigureCanvas):
 
 
     def append_plot(self, item):
-    """
+        """
         Appends excisting figue with the given item
         item: [QStandardItem]
-    """
-
-
-
+        """
         #add new item
         self.paths.append(item.getPath())
         self.vars.append(item.labels)
