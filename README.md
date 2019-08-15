@@ -16,4 +16,4 @@ Either download the zip-file from the github repository or enter 'git clone http
 Read user manual in /Manuals/.
 
 
-## Overview of code 
+## Overview of code
