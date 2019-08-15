@@ -17,6 +17,8 @@ Read user manual in /Manuals/.
 
 
 # Overview of code
+Inside each folder is a README.md file that gives a brief explanation of each file.
+
 ###### __main__.py
 Code block that is running when executing vgosDBpy.
 
