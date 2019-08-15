@@ -26,4 +26,8 @@ This file have the purpose of structuring the data from NetCDF files which shoul
 retrieves and stores data that should be shown in a table.It creates and returns a directory that holds the columns-names as keys and the columns-data as values.
 
 ## readNetCDF.py
-This file holds all the function that collects data from netCDF files, both variables, variables dtype, dimension, length and data. All interaction with netCDF files is done here.
+This file holds all the function that collects data from netCDF files, both variables, variables' dtype, dimension, length and data. All interaction with netCDF files is done here.
+
+
+## tableToASCII.py
+Contains methods that export a Qt-table to ASCII format and write it to a .txt file.
