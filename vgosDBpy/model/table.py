@@ -304,7 +304,7 @@ class DataModel(TableModel):
             # Update model
             self.updateFromDataAxis(self.data_axis)
         else:
-        raise ValueError('Argument items can not be empty.')
+            raise ValueError('Argument items can not be empty.')
 
 
 

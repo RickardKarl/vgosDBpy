@@ -11,10 +11,11 @@
 !
 save_at ./../some_folder 
 !
-new_wrapper ../../path_to_wrp or just a wrapper name if the path is on the form ./500/vgosDB/YEAR/wrapper_name
+new_wrapper ../../path_to_wrp 
 !
 !
-!Everything between begin_table and end_table is shown in ONE table, if you want several just write many scopes like this:
+!Everything between begin_table and end_table is shown in ONE table,
+! if you want several just write many scopes like this:
 !
 begin_table
 !
@@ -24,18 +25,22 @@ path_to_netCDF_from_wrapper -- name_of_variable_one ...
 end_table
 !
 !
-!Everything between begin_plot and end_plot is shown in ONE plot, if you want several just write many scopes like this:
+!Everything between begin_plot and end_plot is shown in ONE plot,
+! if you want several just write many scopes like this:
+!
 begin_plot
 !
-path_to_netCDF_from_wrapper -- name_of_variable_one -- name_of_variable_2 -- ... -- name_of_variabale_n
+path_to_netCDF_from_wrapper -- name_of_variable_one -- ... -- name_of_variabale_n
 path_to_netCDF_from_wrapper -- name_of_variable_one ...
 end_plot
 !
+!
 !It is possible change wrapper just use the keyword 'new_wrapper' again
-new_wrapper ../../path_to_wrp or just a wrapper name if the path is on the form ./500/vgosDB/YEAR/wrapper_name
+!
+new_wrapper ../../path_to_wrp 
 !
 begin_plot
-path_to_netCDF_from_wrapper -- name_of_variable_one -- name_of_variable_2 -- ... -- name_of_variable_n
+path_to_netCDF_from_wrapper -- name_of_variable_one --- ... -- name_of_variable_n
 path_to_netCDF_from_wrapper -- name_of_variable_one ...
 end_plot
 !
@@ -75,6 +80,8 @@ end_plot
 !
 !
 !
-! This will generate two plot figures saved on the format *.png and one table saved as an ASCII *.txt file
-! The three files will be saved in the folder '../saved' meaning '../saved/*.txt' for example
+! This will generate two plot figures saved on the format *.png and 
+! one table saved as an ASCII *.txt file
+! The three files will be saved in the folder 
+! '../saved' meaning '../saved/*.txt' for example
 
