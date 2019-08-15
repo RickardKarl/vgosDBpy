@@ -1,9 +1,10 @@
-# How to copy a file
+import os
+from datetime import datetime
+
 from vgosDBpy.wrapper.parser import Parser
 from vgosDBpy.data.PathParser import PathParser
 from vgosDBpy.editing.newFileNames import new_netCDF_name, new_wrapper_path
 from vgosDBpy.wrapper.equalWrapper import equal
-import os
 
     # from split find directory by going trough all words
     # and see if they matches any in the predefined list of directories possible, which is found by
@@ -94,12 +95,13 @@ def create_new_wrapper(list_changed_files, new_file_names, path_to_old_wrp, hist
     return path_to_new_wrp
 
 def writeHistoryBlock(file, hist_file_name, timestamp, information):
+
     file.write('!\n')
     file.write('Begin Process vgosDBpy\n')
     file.write('Version ----\n')
-    file.write('CreatedBy'+information+'\n')
+    file.write('CreatedBy '+information+'\n')
     file.write('Default_dir History\n')
-    file.write('RunTimeTag'+ timestamp.strftime('%Y-%m-%d %H:%M:%S') +'\n')
+    file.write('RunTimeTag '+ timestamp.strftime('%Y/%m/%d') +'\n')
     file.write('History ' + hist_file_name + '\n')
     file.write('End Process vgosDBpy\n')
 
