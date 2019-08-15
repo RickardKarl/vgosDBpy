@@ -150,7 +150,6 @@ class PlotFigure(FigureCanvas):
 
 
     def plot_script(self,paths,vars,figure, time):
-
         """
             Create a plot with the given data on the given figure
             input:
@@ -168,7 +167,7 @@ class PlotFigure(FigureCanvas):
 
     def append_plot(self, item):
         """
-        Appends excisting figue with the given item
+        Appends existing figue with the given item
         item: [QStandardItem]
         """
         #add new item
@@ -187,10 +186,11 @@ class PlotFigure(FigureCanvas):
         else:
             raise ValueError('Can not plot a string')
 
-    """
-    Keeps track on if the user changed the status of default plotting time on x-axis
-    """
+
     def timeChanged(self):
+        """
+        Keeps track if the user changed the status of default plotting time on x-axis
+        """
         self.updateFigure(self.items, timeUpdated = True)
         self.parentWidget().getPlotToolBar().updateDataAxis(self._ax)
 
@@ -206,8 +206,6 @@ class PlotFigure(FigureCanvas):
         self.Mult_item_added = False
 
         self.clearAxes()
-        self.updatePlot()
-
 
     def clearAxes(self):
         '''
@@ -217,6 +215,7 @@ class PlotFigure(FigureCanvas):
         for ax in self._ax:
             self.removeAxis(ax)
         self._ax = []
+        self.updatePlot()
 
 
     ######## Methods for saving figure as image

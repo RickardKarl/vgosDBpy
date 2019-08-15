@@ -1,6 +1,5 @@
 from PySide2.QtWidgets import QApplication, QTreeView, QAbstractItemView, QWidget, QTextEdit, QPushButton, QVBoxLayout, QGridLayout, QTabWidget
 from PySide2 import QtCore
-
 from pandas.plotting import register_matplotlib_converters
 
 from vgosDBpy.view.widgets import QWrapper, VariableTable, DataTable
@@ -8,7 +7,6 @@ from vgosDBpy.data.readNetCDF import get_netCDF_vars_info, is_string
 from vgosDBpy.view.plot_widget_new import AxesToolBox, PlotWidget
 from vgosDBpy.editing.track_edits import EditTracking
 from vgosDBpy.wrapper.tree import Wrapper
-
 
 class vgosDBpyGUI(QWidget):
     '''

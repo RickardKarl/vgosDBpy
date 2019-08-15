@@ -13,7 +13,7 @@ def combineYMDHMwithSec(timeFilePath):
     '''
     Note: Executes very slowly because of the loop, no fix found.
     '''
-    with Dataset(timeFilePath,"r", format="NETCDF4_CLASSIC") as time_file:
+    with Dataset(timeFilePath,"r") as time_file:
 
         seconds = time_file.variables["Second"]
         YMDHM = time_file.variables["YMDHM"]
@@ -68,7 +68,7 @@ Returns the timeUTC netCDF that is related to the netCDF-file given as input
 input:
     path: [string]
 output:
-    time_path: [string] 
+    time_path: [string]
 """
 def findCorrespondingTime(pathToNetCDF):
     time_path = " "

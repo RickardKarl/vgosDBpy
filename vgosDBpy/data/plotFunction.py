@@ -159,10 +159,7 @@ class Plotfunction_class():
     """
     def _add_time_to_xAxis(self,path,var='Time',data= []): # help function to add_to_x_axis
         timePath = findCorrespondingTime(path)
-        time_data = []
-        time = combineYMDHMwithSec(timePath)
-        for t in time:
-            time_data.append(t)
+        time_data = combineYMDHMwithSec(timePath)
         self.add_to_x_axis(path,'Time',time_data)
 
 
@@ -277,7 +274,6 @@ class Plotfunction_class():
         return self.axis, self.data
 
 
-
 """
 checks if a specific netCDF file and varible has a related timestamp
 input : paths: [array[string], vars: [array[string]]
@@ -289,10 +285,7 @@ def checkIfTimeAvailable(paths,vars):
         timePath = findCorrespondingTime(path)
         if timePath is "":
             return False
-        time_data = []
-        time = combineYMDHMwithSec(timePath)
-        for t in time:
-            time_data.append(t)
+        time_data = combineYMDHMwithSec(timePath)
         y = get_data_to_plot(path,vars[c])
         if len(time_data) != len(y[0]):
             return False

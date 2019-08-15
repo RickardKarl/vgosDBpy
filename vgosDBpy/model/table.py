@@ -302,7 +302,9 @@ class DataModel(TableModel):
                     index += 1
 
             # Update model
+
             self.updateFromDataAxis(self.data_axis)
+
         else:
             raise ValueError('Argument items can not be empty.')
 
@@ -313,7 +315,7 @@ class DataModel(TableModel):
     input: data: [array[data_arrays[variable_dtype]]], items: [array[Items]]
     output: items [array[items]] - fixed
     """
-    def updateItems(self,data,items):
+    def updateItems(data,items):
         names = list(data)
         prev = names[0]
         i = 1
@@ -512,7 +514,7 @@ class DataModel(TableModel):
                 for row_index in range(self.rowCount()):
 
                     value = self.item(row_index, column_index).value
-                    data.append(float(value))
+                    data.append(value)
 
                     time_index.append(self.item(row_index, DataModel.time_col).value)
 

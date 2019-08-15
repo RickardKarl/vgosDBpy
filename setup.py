@@ -1,5 +1,10 @@
 from setuptools import setup, find_packages
 
+'''
+    Currently not in use
+'''
+
+
 with open('README.md') as f:
     readme = f.read()
 
@@ -20,5 +25,5 @@ setup(
     license=license,
     packages=find_packages(),
     install_requires = requirements,
-    python_requires='>=3'
+    python_requires='>=3.5'
 )

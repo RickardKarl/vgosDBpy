@@ -13,13 +13,11 @@ end table
 
 from matplotlib.figure import Figure
 import matplotlib.pyplot as plt
+
 from vgosDBpy.data.plotFunction import Plotfunction_class
 from vgosDBpy.data.getName import create_wrp_path, createFullPath
-
-
 from vgosDBpy.data.plotTable import Tablefunction
 from vgosDBpy.data.tableToASCII import convertToAscii_script
-
 from vgosDBpy.editing.newFileNames import new_netCDF_name
 
 """

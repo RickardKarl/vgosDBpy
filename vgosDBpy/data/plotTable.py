@@ -4,7 +4,6 @@ import numpy as np
 import pandas as pd
 import os
 
-
 from vgosDBpy.data.combineYMDHMS import combineYMDHMwithSec, findCorrespondingTime
 from vgosDBpy.data.readNetCDF import get_data_to_table
 from vgosDBpy.data.getName import get_name_to_print as name, get_unit_to_print as unit
@@ -28,7 +27,7 @@ class Tablefunction():
     output:
         data: [directory '{}']
     """
-    
+
     def tableFunctionGeneral(self,paths,vars):
         self.data_reset()
         timePath = findCorrespondingTime(paths[0].strip())
