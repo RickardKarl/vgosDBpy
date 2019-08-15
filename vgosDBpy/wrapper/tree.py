@@ -22,6 +22,7 @@ class Wrapper:
 
         # Get session name
         path = wrapper_path.split('/')
+        print(path)
         self.session_name = path[-2]
 
         # Removes last which is the name of the wrapper file and get path to session folder
