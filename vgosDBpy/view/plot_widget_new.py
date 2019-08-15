@@ -207,8 +207,6 @@ class PlotFigure(FigureCanvas):
         self.Mult_item_added = False
 
         self.clearAxes()
-        self.updatePlot()
-
 
     def clearAxes(self):
         '''
@@ -218,6 +216,7 @@ class PlotFigure(FigureCanvas):
         for ax in self._ax:
             self.removeAxis(ax)
         self._ax = []
+        self.updatePlot()
 
 
     ######## Methods for saving figure as image

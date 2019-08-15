@@ -141,6 +141,8 @@ class AxesToolBox(QWidget):
         self._updateDisplayedData(update_plot_only = True)
         data_axis.setMarkerSize(AxesToolBox.marker_size)
 
+        self.canvas.updatePlot()
+
     def resetToolBox(self):
         '''
         Reset the selector and list of DataAxis belonging to the figure
