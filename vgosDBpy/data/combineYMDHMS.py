@@ -24,7 +24,14 @@ def combineYMDHMwithSec(timeFilePath):
 
         # match each Timestamp with the corresponding second
         for i in range(len(YMDHM)):
-            YMDHMS.append(pd.Timestamp(int(YMDHM[i][0]),int(YMDHM[i][1]),int(YMDHM[i][2]),int(YMDHM[i][3]),int(YMDHM[i][4]),int(seconds[i])))
+            # Sometimes the year is only denoted by the last two digit
+            # It is assumed that  the year belongs to 2000-2999 which is why we add 2000
+            if YMDHM[i][0] < 100:
+                year = int(YMDHM[i][0]) + 2000
+            else:
+                year = int(YMDHM[i][0])
+
+            YMDHMS.append(pd.Timestamp(year,int(YMDHM[i][1]),int(YMDHM[i][2]),int(YMDHM[i][3]),int(YMDHM[i][4]),int(seconds[i])))
     return YMDHMS
 
 
