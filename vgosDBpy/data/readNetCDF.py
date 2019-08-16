@@ -1,7 +1,7 @@
 from netCDF4 import Dataset
 
 from vgosDBpy.data.combineYMDHMS import combineYMDHMwithSec,findCorrespondingTime
-
+from vgosDBpy.data.convertDimensionName import get_folder_name, get_correct_dimension_name
 """
 ___________________________________________________________________________________________
 Functions to create plot
@@ -68,6 +68,8 @@ def get_data_to_table(pathToNetCDF, var):
         y = _get_dataBaseline(pathToNetCDF)
     elif var.strip() == 'QualityCode':
         y = _get_QualityCode_table(pathToNetCDF,var)
+    elif var.strip() == 'Dis-OceanLoad':
+        y= _get_dis_oceanLoad(pathToNetCDF)
     elif dim.strip() == 'NumStation' and dtype == 'S1':
         y = _get_NumStation_S1_table(pathToNetCDF, var)
     elif dim.strip() == 'NumObs' and dtype == 'S1':
@@ -180,8 +182,8 @@ def is_Numscans(path, var):
     with Dataset(path, 'r') as nc:
         dimensions = nc.variables[var].get_dims()
         for dim in dimensions:
-            name = dim.name
-            if name.strip() == 'NumScans' or name.strip() == 'NumStatScan':
+            name = dim.name.lower().strip()
+            if name.strip() == get_correct_dimension_name(path):
                 return True
     return False
 
@@ -198,8 +200,8 @@ def is_NumsSation(path,var):
     with Dataset(path, 'r') as nc:
         dimensions = nc.variables[var].get_dims()
         for dim in dimensions:
-            name = dim.name
-            if name.strip() == 'NumStation':
+            name = dim.name.lower().strip()
+            if name.strip() == 'NumStations':
                 return True
     return False
 
@@ -214,11 +216,14 @@ output:
     boolean
 """
 def is_NumObs(path, var):
+    folder= get_folder_name(path)
+    if folder != 'Observables':
+        return False
     with Dataset(path, 'r') as nc:
         dimensions = nc.variables[var].get_dims()
         for dim in dimensions:
-            name = dim.name
-            if name.strip() == 'NumObs':
+            name = dim.name.lower().strip()
+            if name.strip() == get_correct_dimension_name(path):
                 return True
     return False
 
@@ -410,6 +415,26 @@ def _get_dataBaseline(pathToNetCDF):
     return return_data
 
 
+def _get_dis_oceanLoad(pathToNetCDF):
+    disOcean_table = []
+    return_data  = []
+    with Dataset(pathToNetCDF, 'r') as nc:
+        dimensions= nc.variables['Dis-OceanLoad'].get_dims()
+        content = getDataFromVar(pathToNetCDF, 'Dis-OceanLoad')
+        length = []
+        for dim in dimensions:
+            length.append(len(dim))
+
+        temp = ''
+        for i in range(length[0]):
+            temp = ''
+            for j in range(length[1]):
+                for k in range(length[2]):
+                    temp += str(content[i,j,k])
+                temp += '    '
+            disOcean_table.append(temp)
+        return_data.append(disOcean_table)
+    return return_data
 
 #### Functions below returns strings instead of arrays ####
 
