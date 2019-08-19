@@ -70,6 +70,8 @@ def get_data_to_table(pathToNetCDF, var):
         y = _get_QualityCode_table(pathToNetCDF,var)
     elif var.strip() == 'Dis-OceanLoad':
         y= _get_dis_oceanLoad(pathToNetCDF)
+    elif var.strip() == 'CROOTFIL':
+        y= get_cRoot(pathToNetCDF)
     elif dim.strip() == 'NumStation' and dtype == 'S1':
         y = _get_NumStation_S1_table(pathToNetCDF, var)
     elif dim.strip() == 'NumObs' and dtype == 'S1':
@@ -435,6 +437,30 @@ def _get_dis_oceanLoad(pathToNetCDF):
             disOcean_table.append(temp)
         return_data.append(disOcean_table)
     return return_data
+
+def get_cRoot(pathToNetCDF):
+    table = []
+    return_data  = []
+    with Dataset(pathToNetCDF, 'r') as nc:
+        dimensions= nc.variables['CROOTFIL'].get_dims()
+        content = getDataFromVar(pathToNetCDF, 'CROOTFIL')
+        length = []
+        for dim in dimensions:
+            length.append(len(dim))
+        temp = ''
+        for i in range(length[0]):
+            temp = ''
+            for j in range(0,length[1]):
+                try:
+                    temp += content[i][j].decode('ASCII')
+                except:
+                    break
+            temp += '    '
+            table.append(temp)
+        return_data.append(table)
+    return return_data
+
+
 
 #### Functions below returns strings instead of arrays ####
 
