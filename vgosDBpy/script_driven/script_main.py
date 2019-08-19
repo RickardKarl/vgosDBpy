@@ -67,56 +67,64 @@ class script_class():
 
         with open(path, 'r') as txt:
 
+            line_count = 1
             for line in txt:
 
-                l= line.lower().strip()
-                if l == '!' or l =='':
-                    pass
-                elif l.startswith('save_at'): # line before giving a new save_path
-                    split = line.split(' ')
-                    self._save_path = split[1].strip()
+                try:
 
-                elif l.startswith('new_wrapper'): #line before giving a new wrapper
-                    split = line.split(' ')
-                    self._wrp_path = split[1].strip()
+                    l= line.lower().strip()
+                    if l == '!' or l =='':
+                        pass
 
-                elif l  ==  'begin_plot':
-                    plot = True
-                    temp_plot_list = []
+                    elif l.startswith('save_at'): # line before giving a new save_path
+                        split = line.split(' ')
+                        self._save_path = split[1].strip()
 
-                elif l == 'end_plot':
-                    plot_list.append(temp_plot_list)
-                    plot = False
+                    elif l.startswith('new_wrapper'): #line before giving a new wrapper
+                        split = line.split(' ')
+                        self._wrp_path = split[1].strip()
 
-                elif l == 'begin_table' :
-                    table = True
-                    temp_table_list = []
+                    elif l  ==  'begin_plot':
+                        plot = True
+                        temp_plot_list = []
 
-                elif l == 'end_table':
-                    table = False
-                    table_list.append(temp_table_list)
+                    elif l == 'end_plot':
+                        plot_list.append(temp_plot_list)
+                        plot = False
 
-                elif plot == True:
-                    words = line.split('--')
-                    path = createFullPath(self._wrp_path,words[0])
-                    str = path
-                    for i in range(1,len(words)):
-                        str += '--' + words[i]
+                    elif l == 'begin_table' :
+                        table = True
+                        temp_table_list = []
 
-                    temp_plot_list.append(str)
+                    elif l == 'end_table':
+                        table = False
+                        table_list.append(temp_table_list)
 
-                elif table == True:
-                    words = line.split('--')
-                    path = createFullPath(self._wrp_path,words[0])
-                    str = path
-                    for i in range(1,len(words)):
-                        str += '--' + words[i]
+                    elif plot == True:
+                        words = line.split('--')
+                        path = createFullPath(self._wrp_path,words[0])
+                        str = path
+                        for i in range(1,len(words)):
+                            str += '--' + words[i]
 
-                    temp_table_list.append(str)
+                        temp_plot_list.append(str)
 
-                else:
-                    print('The format of the file is not correct')
-                    break
+                    elif table == True:
+                        words = line.split('--')
+                        path = createFullPath(self._wrp_path,words[0])
+                        str = path
+                        for i in range(1,len(words)):
+                            str += '--' + words[i]
+
+                        temp_table_list.append(str)
+
+                    line_count += 1
+
+                except:
+                    
+                    text  = 'Can not parse line ' + str(line_count) + ':\n ' + line
+                    raise ValueError(text)
+
         return plot_list, table_list
 
     """
