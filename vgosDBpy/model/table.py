@@ -514,7 +514,7 @@ class DataModel(TableModel):
                 for row_index in range(self.rowCount()):
 
                     value = self.item(row_index, column_index).value
-                    data.append(value)
+                    data.append(float(value))
 
                     time_index.append(self.item(row_index, DataModel.time_col).value)
 
