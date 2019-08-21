@@ -511,13 +511,20 @@ class DataModel(TableModel):
                 time_index = []
                 data = []
 
+                error_given = False
+
                 for row_index in range(self.rowCount()):
 
                     value = self.item(row_index, column_index).value
-                    data.append(float(value))
+
+                    try:
+                        data.append(float(value))
+                    except:
+                        error_given = True
 
                     time_index.append(self.item(row_index, DataModel.time_col).value)
 
                 # Create a pandas.Series and set the edited data for each DataAxis to that
-                edited_series = pd.Series(data, index = time_index)
-                current_data_axis.setEditedData(edited_series)
+                if not error_given:
+                    edited_series = pd.Series(data, index = time_index)
+                    current_data_axis.setEditedData(edited_series)
