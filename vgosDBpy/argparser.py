@@ -1,5 +1,6 @@
 import argparse
 import sys
+import os
 
 # Wrapper related
 from PySide2.QtWidgets import QApplication
@@ -34,6 +35,9 @@ class CommandLineInterface(argparse.ArgumentParser):
         ####### Control flow based on input ###################
 
         # Wrapper file input
+
+        if not os.path.exists(self.args.file):
+            raise ValueError('Path does not exist', self.args.file)
 
         # Checking if file looks correctly
         if self.args.file.endswith('.wrp'):
