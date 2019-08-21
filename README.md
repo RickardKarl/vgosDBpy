@@ -41,7 +41,8 @@ Makes it possible to edit/save data in the netCDF files. Also contains the metho
 A working, but unpolished, set of code that can parse a log file and plot weather data as well as cable calibration data.
 
 ###### data
+Reads netCDF files, and also code that retrieves information for the plots and tables
 
 ###### script_driven
-
+Code that controls the script driven features of vgosDBpy
 
